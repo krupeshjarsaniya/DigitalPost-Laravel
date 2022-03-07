@@ -1,0 +1,670 @@
+[2022-02-25 12:55:34] laravel.EMERGENCY: Unable to create configured logger. Using emergency logger. {"exception":"[object] (Error(code: 0): Class \"Illuminate\\Support\\Collection\" not found at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php:110)
+[stacktrace]
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(240): collect(Array)
+#1 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(202): Illuminate\\Log\\LogManager->createStackDriver(Array)
+#2 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(118): Illuminate\\Log\\LogManager->resolve('stack')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(98): Illuminate\\Log\\LogManager->get('stack')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(543): Illuminate\\Log\\LogManager->driver()
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(123): Illuminate\\Log\\LogManager->error('During inherita...', Array)
+#6 /opt/lampp/htdocs/digital-post/app/Exceptions/Handler.php(38): Illuminate\\Foundation\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(88): App\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(130): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleException(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#9 [internal function]: Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleShutdown()
+#10 {main}
+"} 
+[2022-02-25 12:55:34] laravel.ERROR: During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\Support\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\Autoload\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\Autoload\ClassLoader->loadClass('Illuminate\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\Foundation\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\Foundation\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\Foundation\Bootstrap\RegisterFacades->bootstrap(Object(Illuminate\Foundation\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\Foundation\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\Foundation\Http\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter(Object(Illuminate\Http\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#12 /opt/lampp/htdocs/digital-post/index.php(24): require_once('/opt/lampp/htdo...')
+#13 {main} {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\\Support\\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\\Autoload\\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\\Autoload\\ClassLoader->loadClass('Illuminate\\\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\\Foundation\\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\\Foundation\\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\\Foundation\\Bootstrap\\RegisterFacades->bootstrap(Object(Illuminate\\Foundation\\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\\Foundation\\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\\Foundation\\Http\\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#12 /opt/lampp/htdocs/digital-post/index.php(24): require_once('/opt/lampp/htdo...')
+#13 {main} at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:11)
+[stacktrace]
+#0 {main}
+"} 
+[2022-02-25 12:55:47] laravel.EMERGENCY: Unable to create configured logger. Using emergency logger. {"exception":"[object] (Error(code: 0): Class \"Illuminate\\Support\\Collection\" not found at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php:110)
+[stacktrace]
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(240): collect(Array)
+#1 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(202): Illuminate\\Log\\LogManager->createStackDriver(Array)
+#2 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(118): Illuminate\\Log\\LogManager->resolve('stack')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(98): Illuminate\\Log\\LogManager->get('stack')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(543): Illuminate\\Log\\LogManager->driver()
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(123): Illuminate\\Log\\LogManager->error('During inherita...', Array)
+#6 /opt/lampp/htdocs/digital-post/app/Exceptions/Handler.php(38): Illuminate\\Foundation\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(88): App\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(130): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleException(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#9 [internal function]: Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleShutdown()
+#10 {main}
+"} 
+[2022-02-25 12:55:47] laravel.ERROR: During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\Support\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\Autoload\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\Autoload\ClassLoader->loadClass('Illuminate\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\Foundation\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\Foundation\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\Foundation\Bootstrap\RegisterFacades->bootstrap(Object(Illuminate\Foundation\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\Foundation\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\Foundation\Http\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter(Object(Illuminate\Http\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#12 /opt/lampp/htdocs/digital-post/index.php(24): require_once('/opt/lampp/htdo...')
+#13 {main} {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\\Support\\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\\Autoload\\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\\Autoload\\ClassLoader->loadClass('Illuminate\\\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\\Foundation\\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\\Foundation\\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\\Foundation\\Bootstrap\\RegisterFacades->bootstrap(Object(Illuminate\\Foundation\\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\\Foundation\\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\\Foundation\\Http\\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#12 /opt/lampp/htdocs/digital-post/index.php(24): require_once('/opt/lampp/htdo...')
+#13 {main} at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:11)
+[stacktrace]
+#0 {main}
+"} 
+[2022-02-25 12:56:37] laravel.EMERGENCY: Unable to create configured logger. Using emergency logger. {"exception":"[object] (Error(code: 0): Class \"Illuminate\\Support\\Collection\" not found at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php:110)
+[stacktrace]
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(240): collect(Array)
+#1 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(202): Illuminate\\Log\\LogManager->createStackDriver(Array)
+#2 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(118): Illuminate\\Log\\LogManager->resolve('stack')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(98): Illuminate\\Log\\LogManager->get('stack')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(543): Illuminate\\Log\\LogManager->driver()
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(123): Illuminate\\Log\\LogManager->error('During inherita...', Array)
+#6 /opt/lampp/htdocs/digital-post/app/Exceptions/Handler.php(38): Illuminate\\Foundation\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(88): App\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(130): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleException(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#9 [internal function]: Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleShutdown()
+#10 {main}
+"} 
+[2022-02-25 12:56:37] laravel.ERROR: During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\Support\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\Autoload\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\Autoload\ClassLoader->loadClass('Illuminate\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\Foundation\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\Foundation\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\Foundation\Bootstrap\RegisterFacades->bootstrap(Object(Illuminate\Foundation\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\Foundation\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\Foundation\Http\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter(Object(Illuminate\Http\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#12 /opt/lampp/htdocs/digital-post/index.php(24): require_once('/opt/lampp/htdo...')
+#13 {main} {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\\Support\\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\\Autoload\\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\\Autoload\\ClassLoader->loadClass('Illuminate\\\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\\Foundation\\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\\Foundation\\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\\Foundation\\Bootstrap\\RegisterFacades->bootstrap(Object(Illuminate\\Foundation\\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\\Foundation\\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\\Foundation\\Http\\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#12 /opt/lampp/htdocs/digital-post/index.php(24): require_once('/opt/lampp/htdo...')
+#13 {main} at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:11)
+[stacktrace]
+#0 {main}
+"} 
+[2022-02-25 12:57:43] laravel.EMERGENCY: Unable to create configured logger. Using emergency logger. {"exception":"[object] (Error(code: 0): Class \"Illuminate\\Support\\Collection\" not found at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php:110)
+[stacktrace]
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(240): collect(Array)
+#1 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(202): Illuminate\\Log\\LogManager->createStackDriver(Array)
+#2 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(118): Illuminate\\Log\\LogManager->resolve('stack')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(98): Illuminate\\Log\\LogManager->get('stack')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(543): Illuminate\\Log\\LogManager->driver()
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(123): Illuminate\\Log\\LogManager->error('During inherita...', Array)
+#6 /opt/lampp/htdocs/digital-post/app/Exceptions/Handler.php(38): Illuminate\\Foundation\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(88): App\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(130): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleException(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#9 [internal function]: Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleShutdown()
+#10 {main}
+"} 
+[2022-02-25 12:57:43] laravel.ERROR: During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\Support\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\Autoload\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\Autoload\ClassLoader->loadClass('Illuminate\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\Foundation\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\Foundation\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\Foundation\Bootstrap\RegisterFacades->bootstrap(Object(Illuminate\Foundation\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\Foundation\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\Foundation\Http\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter(Object(Illuminate\Http\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#12 /opt/lampp/htdocs/digital-post/index.php(24): require_once('/opt/lampp/htdo...')
+#13 {main} {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\\Support\\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\\Autoload\\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\\Autoload\\ClassLoader->loadClass('Illuminate\\\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\\Foundation\\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\\Foundation\\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\\Foundation\\Bootstrap\\RegisterFacades->bootstrap(Object(Illuminate\\Foundation\\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\\Foundation\\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\\Foundation\\Http\\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#12 /opt/lampp/htdocs/digital-post/index.php(24): require_once('/opt/lampp/htdo...')
+#13 {main} at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:11)
+[stacktrace]
+#0 {main}
+"} 
+[2022-02-25 13:00:18] laravel.EMERGENCY: Unable to create configured logger. Using emergency logger. {"exception":"[object] (Error(code: 0): Class \"Illuminate\\Support\\Collection\" not found at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php:110)
+[stacktrace]
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(240): collect(Array)
+#1 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(202): Illuminate\\Log\\LogManager->createStackDriver(Array)
+#2 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(118): Illuminate\\Log\\LogManager->resolve('stack')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(98): Illuminate\\Log\\LogManager->get('stack')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(543): Illuminate\\Log\\LogManager->driver()
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(123): Illuminate\\Log\\LogManager->error('During inherita...', Array)
+#6 /opt/lampp/htdocs/digital-post/app/Exceptions/Handler.php(38): Illuminate\\Foundation\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(88): App\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(130): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleException(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#9 [internal function]: Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleShutdown()
+#10 {main}
+"} 
+[2022-02-25 13:00:18] laravel.ERROR: During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\Support\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\Autoload\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\Autoload\ClassLoader->loadClass('Illuminate\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\Foundation\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\Foundation\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\Foundation\Bootstrap\RegisterFacades->bootstrap(Object(Illuminate\Foundation\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\Foundation\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\Foundation\Http\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter(Object(Illuminate\Http\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#12 /opt/lampp/htdocs/digital-post/index.php(24): require_once('/opt/lampp/htdo...')
+#13 {main} {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\\Support\\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\\Autoload\\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\\Autoload\\ClassLoader->loadClass('Illuminate\\\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\\Foundation\\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\\Foundation\\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\\Foundation\\Bootstrap\\RegisterFacades->bootstrap(Object(Illuminate\\Foundation\\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\\Foundation\\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\\Foundation\\Http\\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#12 /opt/lampp/htdocs/digital-post/index.php(24): require_once('/opt/lampp/htdo...')
+#13 {main} at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:11)
+[stacktrace]
+#0 {main}
+"} 
+[2022-02-25 13:00:53] laravel.EMERGENCY: Unable to create configured logger. Using emergency logger. {"exception":"[object] (Error(code: 0): Class \"Illuminate\\Support\\Collection\" not found at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php:110)
+[stacktrace]
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(240): collect(Array)
+#1 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(202): Illuminate\\Log\\LogManager->createStackDriver(Array)
+#2 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(118): Illuminate\\Log\\LogManager->resolve('stack')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(98): Illuminate\\Log\\LogManager->get('stack')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(543): Illuminate\\Log\\LogManager->driver()
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(123): Illuminate\\Log\\LogManager->error('During inherita...', Array)
+#6 /opt/lampp/htdocs/digital-post/app/Exceptions/Handler.php(38): Illuminate\\Foundation\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(88): App\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(130): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleException(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#9 [internal function]: Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleShutdown()
+#10 {main}
+"} 
+[2022-02-25 13:00:53] laravel.ERROR: During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\Support\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\Autoload\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\Autoload\ClassLoader->loadClass('Illuminate\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\Foundation\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\Foundation\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\Foundation\Bootstrap\RegisterFacades->bootstrap(Object(Illuminate\Foundation\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\Foundation\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\Foundation\Http\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter(Object(Illuminate\Http\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#12 /opt/lampp/htdocs/digital-post/index.php(24): require_once('/opt/lampp/htdo...')
+#13 {main} {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\\Support\\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\\Autoload\\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\\Autoload\\ClassLoader->loadClass('Illuminate\\\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\\Foundation\\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\\Foundation\\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\\Foundation\\Bootstrap\\RegisterFacades->bootstrap(Object(Illuminate\\Foundation\\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\\Foundation\\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\\Foundation\\Http\\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#12 /opt/lampp/htdocs/digital-post/index.php(24): require_once('/opt/lampp/htdo...')
+#13 {main} at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:11)
+[stacktrace]
+#0 {main}
+"} 
+[2022-02-25 13:01:31] laravel.EMERGENCY: Unable to create configured logger. Using emergency logger. {"exception":"[object] (Error(code: 0): Class \"Illuminate\\Support\\Collection\" not found at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php:110)
+[stacktrace]
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(240): collect(Array)
+#1 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(202): Illuminate\\Log\\LogManager->createStackDriver(Array)
+#2 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(118): Illuminate\\Log\\LogManager->resolve('stack')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(98): Illuminate\\Log\\LogManager->get('stack')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(543): Illuminate\\Log\\LogManager->driver()
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(123): Illuminate\\Log\\LogManager->error('During inherita...', Array)
+#6 /opt/lampp/htdocs/digital-post/app/Exceptions/Handler.php(38): Illuminate\\Foundation\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(88): App\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(130): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleException(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#9 [internal function]: Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleShutdown()
+#10 {main}
+"} 
+[2022-02-25 13:01:31] laravel.ERROR: During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\Support\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\Autoload\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\Autoload\ClassLoader->loadClass('Illuminate\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\Foundation\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\Foundation\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\Foundation\Bootstrap\RegisterFacades->bootstrap(Object(Illuminate\Foundation\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\Foundation\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\Foundation\Http\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter(Object(Illuminate\Http\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#12 /opt/lampp/htdocs/digital-post/index.php(24): require_once('/opt/lampp/htdo...')
+#13 {main} {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\\Support\\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\\Autoload\\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\\Autoload\\ClassLoader->loadClass('Illuminate\\\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\\Foundation\\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\\Foundation\\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\\Foundation\\Bootstrap\\RegisterFacades->bootstrap(Object(Illuminate\\Foundation\\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\\Foundation\\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\\Foundation\\Http\\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#12 /opt/lampp/htdocs/digital-post/index.php(24): require_once('/opt/lampp/htdo...')
+#13 {main} at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:11)
+[stacktrace]
+#0 {main}
+"} 
+[2022-02-25 13:01:35] laravel.EMERGENCY: Unable to create configured logger. Using emergency logger. {"exception":"[object] (Error(code: 0): Class \"Illuminate\\Support\\Collection\" not found at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php:110)
+[stacktrace]
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(240): collect(Array)
+#1 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(202): Illuminate\\Log\\LogManager->createStackDriver(Array)
+#2 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(118): Illuminate\\Log\\LogManager->resolve('stack')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(98): Illuminate\\Log\\LogManager->get('stack')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(543): Illuminate\\Log\\LogManager->driver()
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(123): Illuminate\\Log\\LogManager->error('During inherita...', Array)
+#6 /opt/lampp/htdocs/digital-post/app/Exceptions/Handler.php(38): Illuminate\\Foundation\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(88): App\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(130): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleException(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#9 [internal function]: Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleShutdown()
+#10 {main}
+"} 
+[2022-02-25 13:01:35] laravel.ERROR: During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\Support\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\Autoload\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\Autoload\ClassLoader->loadClass('Illuminate\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\Foundation\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\Foundation\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\Foundation\Bootstrap\RegisterFacades->bootstrap(Object(Illuminate\Foundation\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\Foundation\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\Foundation\Http\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter(Object(Illuminate\Http\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#12 /opt/lampp/htdocs/digital-post/index.php(24): require_once('/opt/lampp/htdo...')
+#13 {main} {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\\Support\\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\\Autoload\\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\\Autoload\\ClassLoader->loadClass('Illuminate\\\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\\Foundation\\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\\Foundation\\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\\Foundation\\Bootstrap\\RegisterFacades->bootstrap(Object(Illuminate\\Foundation\\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\\Foundation\\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\\Foundation\\Http\\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#12 /opt/lampp/htdocs/digital-post/index.php(24): require_once('/opt/lampp/htdo...')
+#13 {main} at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:11)
+[stacktrace]
+#0 {main}
+"} 
+[2022-02-25 13:02:06] laravel.EMERGENCY: Unable to create configured logger. Using emergency logger. {"exception":"[object] (Error(code: 0): Class \"Illuminate\\Support\\Collection\" not found at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php:110)
+[stacktrace]
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(240): collect(Array)
+#1 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(202): Illuminate\\Log\\LogManager->createStackDriver(Array)
+#2 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(118): Illuminate\\Log\\LogManager->resolve('stack')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(98): Illuminate\\Log\\LogManager->get('stack')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(543): Illuminate\\Log\\LogManager->driver()
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(123): Illuminate\\Log\\LogManager->error('During inherita...', Array)
+#6 /opt/lampp/htdocs/digital-post/app/Exceptions/Handler.php(38): Illuminate\\Foundation\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(88): App\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(130): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleException(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#9 [internal function]: Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleShutdown()
+#10 {main}
+"} 
+[2022-02-25 13:02:06] laravel.ERROR: During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\Support\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\Autoload\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\Autoload\ClassLoader->loadClass('Illuminate\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\Foundation\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\Foundation\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\Foundation\Bootstrap\RegisterFacades->bootstrap(Object(Illuminate\Foundation\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\Foundation\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\Foundation\Http\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter(Object(Illuminate\Http\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#12 /opt/lampp/htdocs/digital-post/index.php(24): require_once('/opt/lampp/htdo...')
+#13 {main} {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\\Support\\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\\Autoload\\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\\Autoload\\ClassLoader->loadClass('Illuminate\\\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\\Foundation\\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\\Foundation\\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\\Foundation\\Bootstrap\\RegisterFacades->bootstrap(Object(Illuminate\\Foundation\\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\\Foundation\\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\\Foundation\\Http\\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#12 /opt/lampp/htdocs/digital-post/index.php(24): require_once('/opt/lampp/htdo...')
+#13 {main} at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:11)
+[stacktrace]
+#0 {main}
+"} 
+[2022-02-25 13:02:20] laravel.EMERGENCY: Unable to create configured logger. Using emergency logger. {"exception":"[object] (Error(code: 0): Class \"Illuminate\\Support\\Collection\" not found at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php:110)
+[stacktrace]
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(240): collect(Array)
+#1 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(202): Illuminate\\Log\\LogManager->createStackDriver(Array)
+#2 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(118): Illuminate\\Log\\LogManager->resolve('stack')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(98): Illuminate\\Log\\LogManager->get('stack')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(543): Illuminate\\Log\\LogManager->driver()
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(123): Illuminate\\Log\\LogManager->error('During inherita...', Array)
+#6 /opt/lampp/htdocs/digital-post/app/Exceptions/Handler.php(38): Illuminate\\Foundation\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(88): App\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(130): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleException(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#9 [internal function]: Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleShutdown()
+#10 {main}
+"} 
+[2022-02-25 13:02:20] laravel.ERROR: During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\Support\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\Autoload\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\Autoload\ClassLoader->loadClass('Illuminate\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\Foundation\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\Foundation\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\Foundation\Bootstrap\RegisterFacades->bootstrap(Object(Illuminate\Foundation\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\Foundation\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\Foundation\Http\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter(Object(Illuminate\Http\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#12 /opt/lampp/htdocs/digital-post/index.php(24): require_once('/opt/lampp/htdo...')
+#13 {main} {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\\Support\\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\\Autoload\\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\\Autoload\\ClassLoader->loadClass('Illuminate\\\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\\Foundation\\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\\Foundation\\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\\Foundation\\Bootstrap\\RegisterFacades->bootstrap(Object(Illuminate\\Foundation\\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\\Foundation\\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\\Foundation\\Http\\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#12 /opt/lampp/htdocs/digital-post/index.php(24): require_once('/opt/lampp/htdo...')
+#13 {main} at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:11)
+[stacktrace]
+#0 {main}
+"} 
+[2022-02-25 13:04:31] laravel.EMERGENCY: Unable to create configured logger. Using emergency logger. {"exception":"[object] (Error(code: 0): Class \"Illuminate\\Support\\Collection\" not found at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php:110)
+[stacktrace]
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(240): collect(Array)
+#1 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(202): Illuminate\\Log\\LogManager->createStackDriver(Array)
+#2 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(118): Illuminate\\Log\\LogManager->resolve('stack')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(98): Illuminate\\Log\\LogManager->get('stack')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(543): Illuminate\\Log\\LogManager->driver()
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(123): Illuminate\\Log\\LogManager->error('During inherita...', Array)
+#6 /opt/lampp/htdocs/digital-post/app/Exceptions/Handler.php(38): Illuminate\\Foundation\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(88): App\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(130): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleException(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#9 [internal function]: Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleShutdown()
+#10 {main}
+"} 
+[2022-02-25 13:04:31] laravel.ERROR: During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\Support\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\Autoload\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\Autoload\ClassLoader->loadClass('Illuminate\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\Foundation\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\Foundation\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\Foundation\Bootstrap\RegisterFacades->bootstrap(Object(Illuminate\Foundation\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\Foundation\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\Foundation\Http\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter(Object(Illuminate\Http\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#12 /opt/lampp/htdocs/digital-post/index.php(24): require_once('/opt/lampp/htdo...')
+#13 {main} {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\\Support\\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\\Autoload\\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\\Autoload\\ClassLoader->loadClass('Illuminate\\\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\\Foundation\\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\\Foundation\\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\\Foundation\\Bootstrap\\RegisterFacades->bootstrap(Object(Illuminate\\Foundation\\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\\Foundation\\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\\Foundation\\Http\\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#12 /opt/lampp/htdocs/digital-post/index.php(24): require_once('/opt/lampp/htdo...')
+#13 {main} at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:11)
+[stacktrace]
+#0 {main}
+"} 
+[2022-02-25 13:15:14] laravel.EMERGENCY: Unable to create configured logger. Using emergency logger. {"exception":"[object] (Error(code: 0): Class \"Illuminate\\Support\\Collection\" not found at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php:110)
+[stacktrace]
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(240): collect(Array)
+#1 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(202): Illuminate\\Log\\LogManager->createStackDriver(Array)
+#2 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(118): Illuminate\\Log\\LogManager->resolve('stack')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(98): Illuminate\\Log\\LogManager->get('stack')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(543): Illuminate\\Log\\LogManager->driver()
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(123): Illuminate\\Log\\LogManager->error('During inherita...', Array)
+#6 /opt/lampp/htdocs/digital-post/app/Exceptions/Handler.php(38): Illuminate\\Foundation\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(88): App\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(130): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleException(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#9 [internal function]: Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleShutdown()
+#10 {main}
+"} 
+[2022-02-25 13:15:14] laravel.ERROR: During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\Support\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\Autoload\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\Autoload\ClassLoader->loadClass('Illuminate\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\Foundation\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\Foundation\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\Foundation\Bootstrap\RegisterFacades->bootstrap(Object(Illuminate\Foundation\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\Foundation\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\Foundation\Http\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter(Object(Illuminate\Http\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#12 /opt/lampp/htdocs/digital-post/index.php(24): require_once('/opt/lampp/htdo...')
+#13 {main} {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\\Support\\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\\Autoload\\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\\Autoload\\ClassLoader->loadClass('Illuminate\\\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\\Foundation\\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\\Foundation\\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\\Foundation\\Bootstrap\\RegisterFacades->bootstrap(Object(Illuminate\\Foundation\\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\\Foundation\\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\\Foundation\\Http\\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#12 /opt/lampp/htdocs/digital-post/index.php(24): require_once('/opt/lampp/htdo...')
+#13 {main} at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:11)
+[stacktrace]
+#0 {main}
+"} 
+[2022-02-25 13:15:21] laravel.EMERGENCY: Unable to create configured logger. Using emergency logger. {"exception":"[object] (Error(code: 0): Class \"Illuminate\\Support\\Collection\" not found at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php:110)
+[stacktrace]
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(240): collect(Array)
+#1 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(202): Illuminate\\Log\\LogManager->createStackDriver(Array)
+#2 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(118): Illuminate\\Log\\LogManager->resolve('stack')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(98): Illuminate\\Log\\LogManager->get('stack')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(543): Illuminate\\Log\\LogManager->driver()
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(123): Illuminate\\Log\\LogManager->error('During inherita...', Array)
+#6 /opt/lampp/htdocs/digital-post/app/Exceptions/Handler.php(38): Illuminate\\Foundation\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(88): App\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(130): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleException(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#9 [internal function]: Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleShutdown()
+#10 {main}
+"} 
+[2022-02-25 13:15:21] laravel.ERROR: During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\Support\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\Autoload\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\Autoload\ClassLoader->loadClass('Illuminate\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\Foundation\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\Foundation\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\Foundation\Bootstrap\RegisterFacades->bootstrap(Object(Illuminate\Foundation\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\Foundation\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\Foundation\Http\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter(Object(Illuminate\Http\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#12 {main} {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\\Support\\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\\Autoload\\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\\Autoload\\ClassLoader->loadClass('Illuminate\\\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\\Foundation\\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\\Foundation\\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\\Foundation\\Bootstrap\\RegisterFacades->bootstrap(Object(Illuminate\\Foundation\\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\\Foundation\\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\\Foundation\\Http\\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#12 {main} at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:11)
+[stacktrace]
+#0 {main}
+"} 
+[2022-02-25 13:15:26] laravel.EMERGENCY: Unable to create configured logger. Using emergency logger. {"exception":"[object] (Error(code: 0): Class \"Illuminate\\Support\\Collection\" not found at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php:110)
+[stacktrace]
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(240): collect(Array)
+#1 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(202): Illuminate\\Log\\LogManager->createStackDriver(Array)
+#2 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(118): Illuminate\\Log\\LogManager->resolve('stack')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(98): Illuminate\\Log\\LogManager->get('stack')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(543): Illuminate\\Log\\LogManager->driver()
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(123): Illuminate\\Log\\LogManager->error('During inherita...', Array)
+#6 /opt/lampp/htdocs/digital-post/app/Exceptions/Handler.php(38): Illuminate\\Foundation\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(88): App\\Exceptions\\Handler->report(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(130): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleException(Object(Symfony\\Component\\ErrorHandler\\Error\\FatalError))
+#9 [internal function]: Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleShutdown()
+#10 {main}
+"} 
+[2022-02-25 13:15:26] laravel.ERROR: During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\Support\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\Autoload\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\Autoload\ClassLoader->loadClass('Illuminate\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\Foundation\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\Foundation\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\Foundation\Bootstrap\RegisterFacades->bootstrap(Object(Illuminate\Foundation\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\Foundation\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\Foundation\Http\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter(Object(Illuminate\Http\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#12 /opt/lampp/htdocs/digital-post/index.php(24): require_once('/opt/lampp/htdo...')
+#13 {main} {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): During inheritance of ArrayAccess: Uncaught ErrorException: Return type of Illuminate\\Support\\Collection::offsetExists($key) should either be compatible with ArrayAccess::offsetExists(mixed $offset): bool, or the #[\\ReturnTypeWillChange] attribute should be used to temporarily suppress the notice in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:1349
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php(11): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError(8192, 'Return type of ...', '/opt/lampp/htdo...', 1349)
+#1 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(571): include('/opt/lampp/htdo...')
+#2 /opt/lampp/htdocs/digital-post/vendor/composer/ClassLoader.php(428): Composer\\Autoload\\includeFile('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/helpers.php(110): Composer\\Autoload\\ClassLoader->loadClass('Illuminate\\\\Supp...')
+#4 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(89): collect(Array)
+#5 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/PackageManifest.php(78): Illuminate\\Foundation\\PackageManifest->config('aliases')
+#6 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/RegisterFacades.php(26): Illuminate\\Foundation\\PackageManifest->aliases()
+#7 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(230): Illuminate\\Foundation\\Bootstrap\\RegisterFacades->bootstrap(Object(Illuminate\\Foundation\\Application))
+#8 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(151): Illuminate\\Foundation\\Application->bootstrapWith(Array)
+#9 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(135): Illuminate\\Foundation\\Http\\Kernel->bootstrap()
+#10 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(109): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#11 /opt/lampp/htdocs/digital-post/public/index.php(55): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#12 /opt/lampp/htdocs/digital-post/index.php(24): require_once('/opt/lampp/htdo...')
+#13 {main} at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Support/Collection.php:11)
+[stacktrace]
+#0 {main}
+"} 

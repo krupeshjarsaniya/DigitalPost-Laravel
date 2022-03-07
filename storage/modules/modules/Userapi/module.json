@@ -1,0 +1,13 @@
+{
+    "name": "Userapi",
+    "alias": "userapi",
+    "description": "",
+    "keywords": [],
+    "order": 0,
+    "providers": [
+        "Modules\\Userapi\\Providers\\UserapiServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

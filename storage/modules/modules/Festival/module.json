@@ -1,0 +1,13 @@
+{
+    "name": "Festival",
+    "alias": "festival",
+    "description": "",
+    "keywords": [],
+    "order": 0,
+    "providers": [
+        "Modules\\Festival\\Providers\\FestivalServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

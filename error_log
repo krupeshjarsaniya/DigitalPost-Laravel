@@ -1,0 +1,11 @@
+[18-Apr-2021 17:10:32 UTC] PHP Parse error:  syntax error, unexpected '=' in /home/digitalp/public_html/admin/vendor/laravel/framework/src/Illuminate/Support/Arr.php on line 416
+[18-Apr-2021 17:10:52 UTC] PHP Parse error:  syntax error, unexpected '=' in /home/digitalp/public_html/admin/vendor/laravel/framework/src/Illuminate/Support/Arr.php on line 416
+[18-Apr-2021 17:10:56 UTC] PHP Parse error:  syntax error, unexpected '=' in /home/digitalp/public_html/admin/vendor/laravel/framework/src/Illuminate/Support/Arr.php on line 416
+[18-Apr-2021 17:11:00 UTC] PHP Parse error:  syntax error, unexpected '=' in /home/digitalp/public_html/admin/vendor/laravel/framework/src/Illuminate/Support/Arr.php on line 416
+[19-Apr-2021 05:37:55 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/digitalp/public_html/admin/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[19-Apr-2021 05:37:55 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/digitalp/public_html/admin/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[19-Apr-2021 05:38:07 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/digitalp/public_html/admin/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[19-Apr-2021 05:38:10 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/digitalp/public_html/admin/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[19-Apr-2021 05:38:12 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/digitalp/public_html/admin/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[19-Apr-2021 05:38:14 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/digitalp/public_html/admin/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[19-Apr-2021 05:38:15 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/digitalp/public_html/admin/vendor/symfony/polyfill-php80/bootstrap.php on line 23

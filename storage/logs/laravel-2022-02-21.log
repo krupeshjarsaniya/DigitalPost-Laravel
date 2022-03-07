@@ -1,0 +1,205 @@
+[2022-02-21 05:28:24] local.INFO: shareSocialMediaJob called  
+[2022-02-21 05:30:01] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 05:30:01] local.ERROR: Undefined variable: post_id {"exception":"[object] (ErrorException(code: 0): Undefined variable: post_id at /var/www/html/admin/app/Console/Commands/ShareSocialPost.php:51)
+[stacktrace]
+#0 /var/www/html/admin/app/Console/Commands/ShareSocialPost.php(51): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError()
+#1 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): App\\Console\\Commands\\ShareSocialPost->handle()
+#2 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/Util.php(37): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#3 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure()
+#4 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(37): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#5 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/Container.php(596): Illuminate\\Container\\BoundMethod::call()
+#6 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Console/Command.php(134): Illuminate\\Container\\Container->call()
+#7 /var/www/html/admin/vendor/symfony/console/Command/Command.php(298): Illuminate\\Console\\Command->execute()
+#8 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Console/Command.php(121): Symfony\\Component\\Console\\Command\\Command->run()
+#9 /var/www/html/admin/vendor/symfony/console/Application.php(1005): Illuminate\\Console\\Command->run()
+#10 /var/www/html/admin/vendor/symfony/console/Application.php(299): Symfony\\Component\\Console\\Application->doRunCommand()
+#11 /var/www/html/admin/vendor/symfony/console/Application.php(171): Symfony\\Component\\Console\\Application->doRun()
+#12 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Console/Application.php(93): Symfony\\Component\\Console\\Application->run()
+#13 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(129): Illuminate\\Console\\Application->run()
+#14 /var/www/html/admin/artisan(37): Illuminate\\Foundation\\Console\\Kernel->handle()
+#15 {main}
+"} 
+[2022-02-21 05:30:59] local.INFO: shareSocialMediaJob called  
+[2022-02-21 06:00:02] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 06:07:25] local.INFO: shareSocialMediaJob called  
+[2022-02-21 06:07:25] local.ERROR: (#200) If posting to a group, requires app being installed in the group, and \
+          either publish_to_groups permission with user token, or both pages_read_engagement \
+          and pages_manage_posts permission with page token; If posting to a page, \
+          requires both pages_read_engagement and pages_manage_posts as an admin with \
+          sufficient administrative permission {"exception":"[object] (Facebook\\Exceptions\\FacebookResponseException(code: 200): (#200) If posting to a group, requires app being installed in the group, and \\
+          either publish_to_groups permission with user token, or both pages_read_engagement \\
+          and pages_manage_posts permission with page token; If posting to a page, \\
+          requires both pages_read_engagement and pages_manage_posts as an admin with \\
+          sufficient administrative permission at /var/www/html/admin/vendor/facebook/graph-sdk/src/Facebook/Exceptions/FacebookResponseException.php:137)
+[stacktrace]
+#0 /var/www/html/admin/vendor/facebook/graph-sdk/src/Facebook/FacebookResponse.php(210): Facebook\\Exceptions\\FacebookResponseException::create()
+#1 /var/www/html/admin/vendor/facebook/graph-sdk/src/Facebook/FacebookResponse.php(255): Facebook\\FacebookResponse->makeException()
+#2 /var/www/html/admin/vendor/facebook/graph-sdk/src/Facebook/FacebookResponse.php(82): Facebook\\FacebookResponse->decodeBody()
+#3 /var/www/html/admin/vendor/facebook/graph-sdk/src/Facebook/FacebookClient.php(224): Facebook\\FacebookResponse->__construct()
+#4 /var/www/html/admin/vendor/facebook/graph-sdk/src/Facebook/Facebook.php(469): Facebook\\FacebookClient->sendRequest()
+#5 /var/www/html/admin/vendor/facebook/graph-sdk/src/Facebook/Facebook.php(361): Facebook\\Facebook->sendRequest()
+#6 /var/www/html/admin/app/Helper.php(216): Facebook\\Facebook->post()
+#7 /var/www/html/admin/app/Helper.php(142): App\\Helper::postToFacebook()
+#8 /var/www/html/admin/app/Helper.php(117): App\\Helper::sharePostToSocialMedia()
+#9 /var/www/html/admin/app/Jobs/ShareSocialPostJob.php(39): App\\Helper::shareSocialMedia()
+#10 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): App\\Jobs\\ShareSocialPostJob->handle()
+#11 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/Util.php(37): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#12 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure()
+#13 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(37): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#14 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/Container.php(596): Illuminate\\Container\\BoundMethod::call()
+#15 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Bus/Dispatcher.php(94): Illuminate\\Container\\Container->call()
+#16 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(128): Illuminate\\Bus\\Dispatcher->Illuminate\\Bus\\{closure}()
+#17 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(103): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#18 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Bus/Dispatcher.php(98): Illuminate\\Pipeline\\Pipeline->then()
+#19 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Queue/CallQueuedHandler.php(83): Illuminate\\Bus\\Dispatcher->dispatchNow()
+#20 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(128): Illuminate\\Queue\\CallQueuedHandler->Illuminate\\Queue\\{closure}()
+#21 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(103): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#22 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Queue/CallQueuedHandler.php(85): Illuminate\\Pipeline\\Pipeline->then()
+#23 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Queue/CallQueuedHandler.php(59): Illuminate\\Queue\\CallQueuedHandler->dispatchThroughMiddleware()
+#24 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Queue/Jobs/Job.php(98): Illuminate\\Queue\\CallQueuedHandler->call()
+#25 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Queue/Worker.php(356): Illuminate\\Queue\\Jobs\\Job->fire()
+#26 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Queue/Worker.php(306): Illuminate\\Queue\\Worker->process()
+#27 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Queue/Worker.php(132): Illuminate\\Queue\\Worker->runJob()
+#28 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Queue/Console/WorkCommand.php(112): Illuminate\\Queue\\Worker->daemon()
+#29 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Queue/Console/WorkCommand.php(96): Illuminate\\Queue\\Console\\WorkCommand->runWorker()
+#30 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate\\Queue\\Console\\WorkCommand->handle()
+#31 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/Util.php(37): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#32 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure()
+#33 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(37): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#34 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/Container.php(596): Illuminate\\Container\\BoundMethod::call()
+#35 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Console/Command.php(134): Illuminate\\Container\\Container->call()
+#36 /var/www/html/admin/vendor/symfony/console/Command/Command.php(298): Illuminate\\Console\\Command->execute()
+#37 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Console/Command.php(121): Symfony\\Component\\Console\\Command\\Command->run()
+#38 /var/www/html/admin/vendor/symfony/console/Application.php(1005): Illuminate\\Console\\Command->run()
+#39 /var/www/html/admin/vendor/symfony/console/Application.php(299): Symfony\\Component\\Console\\Application->doRunCommand()
+#40 /var/www/html/admin/vendor/symfony/console/Application.php(171): Symfony\\Component\\Console\\Application->doRun()
+#41 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Console/Application.php(93): Symfony\\Component\\Console\\Application->run()
+#42 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(129): Illuminate\\Console\\Application->run()
+#43 /var/www/html/admin/artisan(37): Illuminate\\Foundation\\Console\\Kernel->handle()
+#44 {main}
+
+[previous exception] [object] (Facebook\\Exceptions\\FacebookAuthorizationException(code: 200): (#200) If posting to a group, requires app being installed in the group, and \\
+          either publish_to_groups permission with user token, or both pages_read_engagement \\
+          and pages_manage_posts permission with page token; If posting to a page, \\
+          requires both pages_read_engagement and pages_manage_posts as an admin with \\
+          sufficient administrative permission at /var/www/html/admin/vendor/facebook/graph-sdk/src/Facebook/Exceptions/FacebookResponseException.php:137)
+[stacktrace]
+#0 /var/www/html/admin/vendor/facebook/graph-sdk/src/Facebook/FacebookResponse.php(210): Facebook\\Exceptions\\FacebookResponseException::create()
+#1 /var/www/html/admin/vendor/facebook/graph-sdk/src/Facebook/FacebookResponse.php(255): Facebook\\FacebookResponse->makeException()
+#2 /var/www/html/admin/vendor/facebook/graph-sdk/src/Facebook/FacebookResponse.php(82): Facebook\\FacebookResponse->decodeBody()
+#3 /var/www/html/admin/vendor/facebook/graph-sdk/src/Facebook/FacebookClient.php(224): Facebook\\FacebookResponse->__construct()
+#4 /var/www/html/admin/vendor/facebook/graph-sdk/src/Facebook/Facebook.php(469): Facebook\\FacebookClient->sendRequest()
+#5 /var/www/html/admin/vendor/facebook/graph-sdk/src/Facebook/Facebook.php(361): Facebook\\Facebook->sendRequest()
+#6 /var/www/html/admin/app/Helper.php(216): Facebook\\Facebook->post()
+#7 /var/www/html/admin/app/Helper.php(142): App\\Helper::postToFacebook()
+#8 /var/www/html/admin/app/Helper.php(117): App\\Helper::sharePostToSocialMedia()
+#9 /var/www/html/admin/app/Jobs/ShareSocialPostJob.php(39): App\\Helper::shareSocialMedia()
+#10 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): App\\Jobs\\ShareSocialPostJob->handle()
+#11 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/Util.php(37): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#12 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure()
+#13 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(37): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#14 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/Container.php(596): Illuminate\\Container\\BoundMethod::call()
+#15 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Bus/Dispatcher.php(94): Illuminate\\Container\\Container->call()
+#16 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(128): Illuminate\\Bus\\Dispatcher->Illuminate\\Bus\\{closure}()
+#17 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(103): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#18 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Bus/Dispatcher.php(98): Illuminate\\Pipeline\\Pipeline->then()
+#19 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Queue/CallQueuedHandler.php(83): Illuminate\\Bus\\Dispatcher->dispatchNow()
+#20 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(128): Illuminate\\Queue\\CallQueuedHandler->Illuminate\\Queue\\{closure}()
+#21 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(103): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#22 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Queue/CallQueuedHandler.php(85): Illuminate\\Pipeline\\Pipeline->then()
+#23 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Queue/CallQueuedHandler.php(59): Illuminate\\Queue\\CallQueuedHandler->dispatchThroughMiddleware()
+#24 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Queue/Jobs/Job.php(98): Illuminate\\Queue\\CallQueuedHandler->call()
+#25 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Queue/Worker.php(356): Illuminate\\Queue\\Jobs\\Job->fire()
+#26 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Queue/Worker.php(306): Illuminate\\Queue\\Worker->process()
+#27 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Queue/Worker.php(132): Illuminate\\Queue\\Worker->runJob()
+#28 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Queue/Console/WorkCommand.php(112): Illuminate\\Queue\\Worker->daemon()
+#29 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Queue/Console/WorkCommand.php(96): Illuminate\\Queue\\Console\\WorkCommand->runWorker()
+#30 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate\\Queue\\Console\\WorkCommand->handle()
+#31 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/Util.php(37): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#32 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure()
+#33 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(37): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#34 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/Container.php(596): Illuminate\\Container\\BoundMethod::call()
+#35 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Console/Command.php(134): Illuminate\\Container\\Container->call()
+#36 /var/www/html/admin/vendor/symfony/console/Command/Command.php(298): Illuminate\\Console\\Command->execute()
+#37 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Console/Command.php(121): Symfony\\Component\\Console\\Command\\Command->run()
+#38 /var/www/html/admin/vendor/symfony/console/Application.php(1005): Illuminate\\Console\\Command->run()
+#39 /var/www/html/admin/vendor/symfony/console/Application.php(299): Symfony\\Component\\Console\\Application->doRunCommand()
+#40 /var/www/html/admin/vendor/symfony/console/Application.php(171): Symfony\\Component\\Console\\Application->doRun()
+#41 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Console/Application.php(93): Symfony\\Component\\Console\\Application->run()
+#42 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(129): Illuminate\\Console\\Application->run()
+#43 /var/www/html/admin/artisan(37): Illuminate\\Foundation\\Console\\Kernel->handle()
+#44 {main}
+"} 
+[2022-02-21 06:30:01] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 06:30:01] local.ERROR: Undefined variable: post_id {"exception":"[object] (ErrorException(code: 0): Undefined variable: post_id at /var/www/html/admin/app/Console/Commands/ShareSocialPost.php:51)
+[stacktrace]
+#0 /var/www/html/admin/app/Console/Commands/ShareSocialPost.php(51): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError()
+#1 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): App\\Console\\Commands\\ShareSocialPost->handle()
+#2 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/Util.php(37): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#3 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure()
+#4 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(37): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#5 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/Container.php(596): Illuminate\\Container\\BoundMethod::call()
+#6 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Console/Command.php(134): Illuminate\\Container\\Container->call()
+#7 /var/www/html/admin/vendor/symfony/console/Command/Command.php(298): Illuminate\\Console\\Command->execute()
+#8 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Console/Command.php(121): Symfony\\Component\\Console\\Command\\Command->run()
+#9 /var/www/html/admin/vendor/symfony/console/Application.php(1005): Illuminate\\Console\\Command->run()
+#10 /var/www/html/admin/vendor/symfony/console/Application.php(299): Symfony\\Component\\Console\\Application->doRunCommand()
+#11 /var/www/html/admin/vendor/symfony/console/Application.php(171): Symfony\\Component\\Console\\Application->doRun()
+#12 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Console/Application.php(93): Symfony\\Component\\Console\\Application->run()
+#13 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(129): Illuminate\\Console\\Application->run()
+#14 /var/www/html/admin/artisan(37): Illuminate\\Foundation\\Console\\Kernel->handle()
+#15 {main}
+"} 
+[2022-02-21 07:00:02] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 07:30:01] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 08:00:02] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 08:30:02] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 09:00:02] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 09:30:01] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 10:00:01] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 10:30:01] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 10:30:01] local.ERROR: Undefined variable: post_id {"exception":"[object] (ErrorException(code: 0): Undefined variable: post_id at /var/www/html/admin/app/Console/Commands/ShareSocialPost.php:51)
+[stacktrace]
+#0 /var/www/html/admin/app/Console/Commands/ShareSocialPost.php(51): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError()
+#1 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): App\\Console\\Commands\\ShareSocialPost->handle()
+#2 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/Util.php(37): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#3 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure()
+#4 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(37): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#5 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Container/Container.php(596): Illuminate\\Container\\BoundMethod::call()
+#6 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Console/Command.php(134): Illuminate\\Container\\Container->call()
+#7 /var/www/html/admin/vendor/symfony/console/Command/Command.php(298): Illuminate\\Console\\Command->execute()
+#8 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Console/Command.php(121): Symfony\\Component\\Console\\Command\\Command->run()
+#9 /var/www/html/admin/vendor/symfony/console/Application.php(1005): Illuminate\\Console\\Command->run()
+#10 /var/www/html/admin/vendor/symfony/console/Application.php(299): Symfony\\Component\\Console\\Application->doRunCommand()
+#11 /var/www/html/admin/vendor/symfony/console/Application.php(171): Symfony\\Component\\Console\\Application->doRun()
+#12 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Console/Application.php(93): Symfony\\Component\\Console\\Application->run()
+#13 /var/www/html/admin/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(129): Illuminate\\Console\\Application->run()
+#14 /var/www/html/admin/artisan(37): Illuminate\\Foundation\\Console\\Kernel->handle()
+#15 {main}
+"} 
+[2022-02-21 11:00:02] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 11:30:02] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 12:00:01] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 12:30:02] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 13:00:01] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 13:30:01] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 14:00:02] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 14:30:02] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 15:00:02] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 15:30:01] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 16:00:01] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 16:30:02] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 17:00:02] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 17:30:02] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 18:00:02] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 18:30:02] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 19:00:02] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 19:30:01] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 20:00:01] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 20:30:02] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 21:00:02] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 21:30:02] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 22:00:02] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 22:30:02] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 23:00:02] local.INFO: ShareSocialPost Cron Executed  
+[2022-02-21 23:30:01] local.INFO: ShareSocialPost Cron Executed  
