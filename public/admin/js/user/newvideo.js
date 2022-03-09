@@ -276,8 +276,14 @@ function editVideoPost(id){
 									
 
 								}
-								var vp_url = APP_URL+'/'+response.images[i]['video_url'];
-								vp_data.push(vp_url);
+								if(response.images[i]['video_store'] == "LOCAL") {
+									var vp_url = APP_URL+'/'+response.images[i]['video_url'];
+									vp_data.push(vp_url);
+								}
+								else {
+									var vp_url = SPACE_STORE_URL+''+response.images[i]['video_url'];
+									vp_data.push(vp_url);
+								}
 						}
 
 						

@@ -3038,7 +3038,12 @@ class UserapiControllerV6 extends Controller
 
             $data['id'] = strval($value->id);
             $data['image'] = !empty($value->thumbnail)?Storage::url($value->thumbnail):"";
-            $data['video'] = !empty($value->video_url)?url('/').'/'.$value->video_url:"";
+            if($value->video_store == "LOCAL") {
+                $data['video'] = !empty($value->video_url)?url('/').'/'.$value->video_url:"";
+            }
+            else {
+                $data['video'] = !empty($value->video_url)?Storage::url($value->video_url):"";
+            }
             $data['type'] = strval($value->image_type);
             $data['color'] = !empty($value->color)?$value->color:"";
             array_push($videos, $data);

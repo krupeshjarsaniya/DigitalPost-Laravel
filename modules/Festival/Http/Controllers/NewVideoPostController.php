@@ -160,10 +160,10 @@ class NewVideoPostController extends Controller
             {
                $name = "";
                $video_file = "";
-                $name = Str::random(7).time().'.'.$v_image->getClientOriginalExtension();
-                $v_image->move(public_path('images/videopost/videos'), $name);
-                $video_file = 'public/images/videopost/videos/'.$name;
-                //$video_file = $this->multipleUploadFile($v_image,'video-post');
+                // $name = Str::random(7).time().'.'.$v_image->getClientOriginalExtension();
+                // $v_image->move(public_path('images/videopost/videos'), $name);
+                // $video_file = 'public/images/videopost/videos/'.$name;
+                $video_file = $this->multipleUploadFile($v_image,'video-post');
                 array_push($videos_path, $video_file);
             }
 
@@ -174,7 +174,7 @@ class NewVideoPostController extends Controller
                 $path = $this->multipleUploadFileThumb($image,'video-post-thumb',true,300,300);
 
                 DB::table('video_post_data')->insert(
-                ['video_post_id' => $videoid, 'thumbnail' => $path, 'video_url' => $videos_path[$key], 'image_type'=>$image_ty[$key],'language_id'=>$flanguage[$key],'color'=>$color[$key], 'sub_category_id' => $fsubcategory[$key]]
+                ['video_post_id' => $videoid, 'thumbnail' => $path, 'video_url' => $videos_path[$key], 'image_type'=>$image_ty[$key],'language_id'=>$flanguage[$key],'color'=>$color[$key], 'sub_category_id' => $fsubcategory[$key], 'video_store' => 'LIVE']
             );
             }
         }
