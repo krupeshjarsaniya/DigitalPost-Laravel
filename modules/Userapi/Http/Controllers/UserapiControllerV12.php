@@ -1960,7 +1960,7 @@ class UserapiControllerV12 extends Controller
                     else {
                         $img_data['id'] = strval($img_value->id);
                         $img_data['image'] = !empty($img_value->video_thumbnail) ? Storage::url($img_value->video_thumbnail) :"";
-                        $img_data['video'] = !empty($img_value->video_url) ? Storage::url($img_value->video_url) : Storage::url($img_value->thumbnail);
+                        $img_data['video'] = !empty($img_value->video_url)?url('/').'/'.$img_value->video_url:"";
                         $img_data['type'] = strval($img_value->image_type);
                         $img_data['color'] = "";
                     }
@@ -2150,7 +2150,7 @@ class UserapiControllerV12 extends Controller
                     else {
                         $img_data['id'] = strval($img_value->id);
                         $img_data['image'] = !empty($img_value->video_thumbnail) ? Storage::url($img_value->video_thumbnail) :"";
-                        $img_data['video'] = !empty($img_value->video_url) ? Storage::url($img_value->video_url) : Storage::url($img_value->thumbnail);
+                        $img_data['video'] = !empty($img_value->video_url)?url('/').'/'.$img_value->video_url:"";
                         $img_data['type'] = strval($img_value->image_type);
                         $img_data['color'] = "";
                     }
@@ -2170,7 +2170,8 @@ class UserapiControllerV12 extends Controller
                     $data['video'] = !empty($value->video_url)?url('/').'/'.$value->video_url:"";
                 }
                 else {
-                    $data['video'] = !empty($value->video_url)?Storage::url($value->video_url):"";
+                    $data['video'] = !empty($value->video_url)?url('/').'/'.$value->video_url:"";
+                    // $data['video'] = !empty($value->video_url)?Storage::url($value->video_url):"";
                 }
                 $data['type'] = strval($value->image_type);
                 $data['color'] = !empty($value->color)?$value->color:"";
@@ -4023,7 +4024,8 @@ class UserapiControllerV12 extends Controller
                 $data['video'] = !empty($value->video_url)?url('/').'/'.$value->video_url:"";
             }
             else {
-                $data['video'] = !empty($value->video_url)?Storage::url($value->video_url):"";
+                $data['video'] = !empty($value->video_url)?url('/').'/'.$value->video_url:"";
+                // $data['video'] = !empty($value->video_url)?Storage::url($value->video_url):"";
             }
 
 
@@ -4624,7 +4626,7 @@ class UserapiControllerV12 extends Controller
                 else {
                     $img_data['video_id'] = strval($img_value->id);
                     $img_data['video_thumbnail'] = !empty($img_value->video_thumbnail) ? Storage::url($img_value->video_thumbnail) :"";
-                    $img_data['video_url'] = !empty($img_value->video_url) ? Storage::url($img_value->video_url) : Storage::url($img_value->thumbnail);
+                    $img_data['video_url'] = !empty($img_value->video_url)?url('/').'/'.$img_value->video_url:"";
                     $img_data['video_type'] = strval($img_value->image_type);
                     $img_data['video_language_id'] = !empty($img_value->language_id) ? strval($img_value->language_id) :"";
                 }
@@ -4795,7 +4797,7 @@ class UserapiControllerV12 extends Controller
                 }
                 else {
                     $img_data['id'] = strval($img_value->id);
-                    $img_data['video'] = !empty($img_value->video_url) ? Storage::url($img_value->video_url) :"";
+                    $img_data['video'] = !empty($img_value->video_url)?url('/').'/'.$img_value->video_url:"";
                     $img_data['image'] = !empty($img_value->video_thumbnail) ? Storage::url($img_value->video_thumbnail) : Storage::url($img_value->thumbnail);
                     $img_data['type'] = strval($img_value->image_type);
                     $img_data['video_language_id'] = !empty($img_value->language_id) ? strval($img_value->language_id) :"";

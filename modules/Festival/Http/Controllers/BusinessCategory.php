@@ -89,6 +89,7 @@ class BusinessCategory extends Controller
 
     public function ShowCategoryVideoStore(Request $request) {
         $temp = $request->all();
+        // dd($temp);
         $image_ty = array();
         $flanguage = $temp['flanguage'];
         $fsubcategory = $temp['fsubcategory'];
@@ -111,7 +112,10 @@ class BusinessCategory extends Controller
                 array_push($thumb_path, $video_thumb);
             }
             foreach ($request->file('video_file') as $key => $image) {
-                $path = $this->multipleUploadFile($image,'bussness-post-video');
+                $name = Str::random(7).time().'.'.$image->getClientOriginalExtension();
+                $image->move(public_path('images/videopost/bussness-post-video'), $name);
+                $path = 'public/images/videopost/bussness-post-video/'.$name;
+                //$path = $this->multipleUploadFile($image,'bussness-post-video');
                 DB::table('business_category_post_data')->insert(
                     ['buss_cat_post_id' => $temp['business_category_id'], 'video_thumbnail' => $thumb_path[$key], 'video_url'=>$path, 'post_type' => 'video', 'image_type'=>$image_ty[$key],'language_id'=>$flanguage[$key],'business_sub_category_id'=>$fsubcategory[$key]]
                 );

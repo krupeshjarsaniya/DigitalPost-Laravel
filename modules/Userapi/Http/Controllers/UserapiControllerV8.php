@@ -3482,7 +3482,8 @@ class UserapiControllerV8 extends Controller
                 $data['video'] = !empty($value->video_url)?url('/').'/'.$value->video_url:"";
             }
             else {
-                $data['video'] = !empty($value->video_url)?Storage::url($value->video_url):"";
+                $data['video'] = !empty($value->video_url)?url('/').'/'.$value->video_url:"";
+                // $data['video'] = !empty($value->video_url)?Storage::url($value->video_url):"";
             }
             $data['type'] = strval($value->image_type);
             $data['color'] = !empty($value->color)?$value->color:"";

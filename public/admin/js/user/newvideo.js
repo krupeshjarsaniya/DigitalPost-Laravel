@@ -282,6 +282,7 @@ function editVideoPost(id){
 								}
 								else {
 									var vp_url = SPACE_STORE_URL+''+response.images[i]['video_url'];
+									var vp_url = APP_URL+'/'+response.images[i]['video_url'];
 									vp_data.push(vp_url);
 								}
 						}

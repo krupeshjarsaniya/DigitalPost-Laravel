@@ -59,7 +59,7 @@
                             <span class="pip">
                                 <div class="row">
                                     <div class="col-md-5">
-                                        <img class="imageThumb" data-video="{{ Storage::url($post->video_url) }}" src="{{ Storage::url($post->video_thumbnail) }}" onclick="showvideo(this)" />
+                                        <img class="imageThumb" data-video="{{ url($post->video_url) }}" src="{{ Storage::url($post->video_thumbnail) }}" onclick="showvideo(this)" />
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-check">
