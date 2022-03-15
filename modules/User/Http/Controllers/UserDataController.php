@@ -800,6 +800,25 @@ class UserDataController extends Controller
             }
        
         }
+        $userData = User::find($user_id);
+
+        if($userData->referral_by != 0 && $userData->referral_premium == 0) {
+            $settingData = DB::table('setting')->first();
+            $referral_subscription_amount = 0;
+            if(!empty($settingData)) {
+                $referral_subscription_amount = $settingData->referral_subscription_amount;
+            }
+
+            $userReferralData = UserReferral::where('user_id', $userData->referral_by)->first();
+            $total_earning = $userReferralData->total_earning + $referral_subscription_amount;
+            $current_balance = $userReferralData->current_balance + $referral_subscription_amount;
+            $userReferralData->total_earning = $total_earning;
+            $userReferralData->current_balance = $current_balance;
+            $userReferralData->save();
+
+            $userData->referral_premium = 1;
+            $userData->save();
+        }
  
         $start_date = date('Y-m-d');
         //$plantrial = Plan::where('plan_sku','=','premium_2599')->select('plan_validity')->first();
@@ -1993,6 +2012,26 @@ class UserDataController extends Controller
               ));
             }
        
+        }
+
+        $userData = User::find($user_id);
+
+        if($userData->referral_by != 0 && $userData->referral_premium == 0) {
+            $settingData = DB::table('setting')->first();
+            $referral_subscription_amount = 0;
+            if(!empty($settingData)) {
+                $referral_subscription_amount = $settingData->referral_subscription_amount;
+            }
+
+            $userReferralData = UserReferral::where('user_id', $userData->referral_by)->first();
+            $total_earning = $userReferralData->total_earning + $referral_subscription_amount;
+            $current_balance = $userReferralData->current_balance + $referral_subscription_amount;
+            $userReferralData->total_earning = $total_earning;
+            $userReferralData->current_balance = $current_balance;
+            $userReferralData->save();
+
+            $userData->referral_premium = 1;
+            $userData->save();
         }
  
         $start_date = date('Y-m-d');
