@@ -50,11 +50,10 @@
             <div class="card-header">
                 <div class="card-title" id="country-title"><?php echo e($category->name); ?> Add Video</div>
             </div>
-            <form id="buss_cat_form" name="buss_cat_form" action=<?php echo e(route('businesscategory.video.add')); ?> method="POST" enctype='multipart/form-data'>
+            <!-- <form id="buss_cat_form" name="buss_cat_form" action=<?php echo e(route('businesscategory.video.add')); ?> method="POST" enctype='multipart/form-data'> -->
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12 col-lg-12">
-                        <?php echo csrf_field(); ?>
                         <?php $__currentLoopData = $posts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $post): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <span class="pip">
                                 <div class="row">
@@ -108,6 +107,8 @@
                                 <span onclick="removeVideo(this)" data-id="<?php echo e($post->id); ?>" class="removevideo remove">Remove image</span>
                             </span>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <form id="buss_cat_form" name="buss_cat_form" action=<?php echo e(route('businesscategory.video.add')); ?> method="POST" enctype='multipart/form-data'>
+                        <?php echo csrf_field(); ?>
                         <input type="hidden" name="business_category_id" value="<?php echo e($category->id); ?>">
                         <div class="form-group" id="showphotos">
                         <div id="addphotos">
@@ -166,14 +167,18 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="card-action text-right">
+                            <button class="btn btn-success" type="submit"  id="category-btn">Submit</button>&nbsp;&nbsp;
+                            <button class="btn btn-danger"  type="button">Cancel</button>
+                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
-            <div class="card-action text-right">
+            <!-- <div class="card-action text-right">
                 <button class="btn btn-success" type="submit"  id="category-btn">Submit</button>&nbsp;&nbsp;
                 <button class="btn btn-danger"  type="button">Cancel</button>
-            </div>
-             </form>
+            </div> -->
         </div>
     </div>
 </div>

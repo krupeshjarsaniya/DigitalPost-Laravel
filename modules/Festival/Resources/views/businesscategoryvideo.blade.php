@@ -50,11 +50,10 @@
             <div class="card-header">
                 <div class="card-title" id="country-title">{{ $category->name }} Add Video</div>
             </div>
-            <form id="buss_cat_form" name="buss_cat_form" action={{route('businesscategory.video.add')}} method="POST" enctype='multipart/form-data'>
+            <!-- <form id="buss_cat_form" name="buss_cat_form" action={{route('businesscategory.video.add')}} method="POST" enctype='multipart/form-data'> -->
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12 col-lg-12">
-                        @csrf
                         @foreach ($posts as $post)
                             <span class="pip">
                                 <div class="row">
@@ -108,6 +107,8 @@
                                 <span onclick="removeVideo(this)" data-id="{{$post->id}}" class="removevideo remove">Remove image</span>
                             </span>
                         @endforeach
+                        <form id="buss_cat_form" name="buss_cat_form" action={{route('businesscategory.video.add')}} method="POST" enctype='multipart/form-data'>
+                        @csrf
                         <input type="hidden" name="business_category_id" value="{{$category->id}}">
                         <div class="form-group" id="showphotos">
                         <div id="addphotos">
@@ -166,14 +167,18 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="card-action text-right">
+                            <button class="btn btn-success" type="submit"  id="category-btn">Submit</button>&nbsp;&nbsp;
+                            <button class="btn btn-danger"  type="button">Cancel</button>
+                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
-            <div class="card-action text-right">
+            <!-- <div class="card-action text-right">
                 <button class="btn btn-success" type="submit"  id="category-btn">Submit</button>&nbsp;&nbsp;
                 <button class="btn btn-danger"  type="button">Cancel</button>
-            </div>
-             </form>
+            </div> -->
         </div>
     </div>
 </div>

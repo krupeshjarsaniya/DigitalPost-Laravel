@@ -90,7 +90,10 @@ function search_category() {
 function addcategory() {
 
 
-
+    var file = "";
+    if($('#fimage')[0].files.length > 0) {
+        file = $('#fimage')[0].files[0];
+    }           
     var name = $('#categoryname').val();
     var categoryid = $('#categoryid').val();
     var img = $('#fimage').val();
@@ -109,8 +112,11 @@ function addcategory() {
             $('.loader-custom').css('display', 'block');
             var form = document.getElementById('buss_cat_form');
             data = new FormData(form);
-            /* data.append('categoryname', name);
-             data.append('categoryid', categoryid);*/
+             data.append('categoryname', name);
+             data.append('categoryid', categoryid);
+             if(file != "") {
+                data.append('thumnail', file);
+             }
 
 
             $.ajaxSetup({

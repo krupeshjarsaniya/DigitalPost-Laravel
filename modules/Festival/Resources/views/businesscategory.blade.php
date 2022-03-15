@@ -82,7 +82,7 @@
             <div class="card-header">
                 <div class="card-title" id="country-title">Add Category</div>
             </div>
-            <form id="buss_cat_form" name="buss_cat_form" {{-- action={{route('addcategory')}} --}} method="POST" enctype='multipart/form-data' onsubmit="return false;">
+            
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12 col-lg-12">
@@ -112,72 +112,73 @@
                             <div class="form-group" id="showphotos">
                             <label for="addphotos">Add Photos</label></div>
                             <div id="addphotos">
-                                <div class="row" >
-                                    <div class="col-md-8">
-                                        <div class="form-group">
-                                            <input type="file" id="files" {{-- onchange="photos(this)" --}} multiple  name="files[]" class="form-control photos" placeholder="Add photos">
+                                <form id="buss_cat_form" name="buss_cat_form" {{-- action={{route('addcategory')}} --}} method="POST" enctype='multipart/form-data' onsubmit="return false;">
+                                    <div class="row" >
+                                        <div class="col-md-8">
+                                            <div class="form-group">
+                                                <input type="file" id="files" {{-- onchange="photos(this)" --}} multiple  name="files[]" class="form-control photos" placeholder="Add photos">
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="information">Type</label>
+                                                    </div>
+                                                    <div class="form-check-inline">
+                                                      <label class="form-check-label">
+                                                        <input type="radio" class="form-check-input" name="btype" id="btypefree" value="0" checked="checked">Free
+                                                      </label>
+                                                    </div>
+                                                    <div class="form-check-inline">
+                                                      <label class="form-check-label">
+                                                        <input type="radio" class="form-check-input" name="btype" id="btypepremium" value="1">Premium
+                                                      </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group err_flanguage">
+                                                      <label for="flanguage">Select Language:</label>
+                                                      <select class="form-control" name="flanguage[]" id="flanguage">
+                                                        <option value="">Select Language</option>
+                                                        @foreach($language as $value)
+                                                            <option value="{{$value->id}}">{{$value->name}}</option>
+                                                        @endforeach
+                                                      </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                      <label for="fsubcategory">Select Sub Category:</label>
+                                                      <select class="form-control" name="fsubcategory[]" id="fsubcategory" required>
+                                                      </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                      <label for="ffestivalId">Select Festival:</label>
+                                                      <select class="form-control festivals_select" name="ffestivalId[]" id="ffestivalId" required>
+                                                        <option value="0">Select Festival</option>
+                                                        @foreach($festivals as $festival)
+                                                            <option value="{{$festival->fest_id}}">{{$festival->fest_name}}</option>
+                                                        @endforeach
+                                                      </select>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="information">Type</label>
-                                                </div>
-                                                <div class="form-check-inline">
-                                                  <label class="form-check-label">
-                                                    <input type="radio" class="form-check-input" name="btype" id="btypefree" value="0" checked="checked">Free
-                                                  </label>
-                                                </div>
-                                                <div class="form-check-inline">
-                                                  <label class="form-check-label">
-                                                    <input type="radio" class="form-check-input" name="btype" id="btypepremium" value="1">Premium
-                                                  </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group err_flanguage">
-                                                  <label for="flanguage">Select Language:</label>
-                                                  <select class="form-control" name="flanguage[]" id="flanguage">
-                                                    <option value="">Select Language</option>
-                                                    @foreach($language as $value)
-                                                        <option value="{{$value->id}}">{{$value->name}}</option>
-                                                    @endforeach
-                                                  </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                  <label for="fsubcategory">Select Sub Category:</label>
-                                                  <select class="form-control" name="fsubcategory[]" id="fsubcategory" required>
-                                                  </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                  <label for="ffestivalId">Select Festival:</label>
-                                                  <select class="form-control festivals_select" name="ffestivalId[]" id="ffestivalId" required>
-                                                    <option value="0">Select Festival</option>
-                                                    @foreach($festivals as $festival)
-                                                        <option value="{{$festival->fest_id}}">{{$festival->fest_name}}</option>
-                                                    @endforeach
-                                                  </select>
-                                                </div>
-                                            </div>
+                                        <div class="col-md-2 form-group">
+                                            <button type="button" onclick="addbox()" class="btn btn-primary"><i class="fa fa-plus"></i></button>
                                         </div>
                                     </div>
-                                    <div class="col-md-2 form-group">
-                                        <button type="button" onclick="addbox()" class="btn btn-primary"><i class="fa fa-plus"></i></button>
-                                    </div>
-                                </div>
+                                </form>
                             </div>
 
                     </div>
                 </div>
             </div>
             <div class="card-action text-right">
-                <button class="btn btn-success" type="submit"  id="category-btn" onclick="addcategory()">Submit</button>&nbsp;&nbsp;
+                <button class="btn btn-success" id="category-btn" onclick="addcategory()">Submit</button>&nbsp;&nbsp;
                 <button class="btn btn-danger"  type="button" onclick="showcategorylist()">Cancel</button>
             </div>
-             </form>
         </div>
     </div>
 </div>
