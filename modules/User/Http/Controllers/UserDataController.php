@@ -800,7 +800,7 @@ class UserDataController extends Controller
             }
        
         }
-        $userData = User::find($user_id);
+        $userData = User::find($user_id->user_id);
 
         if($userData->referral_by != 0 && $userData->referral_premium == 0) {
             $settingData = DB::table('setting')->first();
@@ -2014,7 +2014,7 @@ class UserDataController extends Controller
        
         }
 
-        $userData = User::find($user_id);
+        $userData = User::find($user_id->user_id);
 
         if($userData->referral_by != 0 && $userData->referral_premium == 0) {
             $settingData = DB::table('setting')->first();

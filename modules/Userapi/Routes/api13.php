@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 
+Route::post('getInstagramAccount', 'UserapiControllerV13@getInstagramAccount');
+
 Route::post('sendLoginOTP', 'UserapiControllerV13@sendLoginOTP');
 
 Route::post('login', 'UserapiControllerV13@login');

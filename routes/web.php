@@ -31,6 +31,14 @@ Route::get('termsandcondition', 'ConditionController@termcondition');
 Route::get('referralpolicy', 'ConditionController@referralpolicy');
 
 
+Route::get('facebook', 'HomeController@facebookLogin');
+
+Route::get('instagram', 'HomeController@instagramLogin');
+
+Route::get('facebook/callback', 'HomeController@facebookCallback');
+
+Route::get('facebook/access_token', 'HomeController@facebookAccessToken')->name('facebookAccessToken');
+
 Route::group(['middleware' => 'auth'], function()
 {
     

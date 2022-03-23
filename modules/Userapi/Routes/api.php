@@ -1290,4 +1290,8 @@ Route::prefix('userapi/v12')->group(function() {
 });
 
 //version v12 end
+
+//version v13 start
 Route::prefix('userapi/v13')->group(base_path('modules/Userapi/Routes/api13.php'));
+Route::prefix('userapi/v13_ios')->group(base_path('modules/Userapi/Routes/api13_ios.php'));
+//version v13 end

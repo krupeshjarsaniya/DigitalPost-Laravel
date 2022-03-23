@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use App\Logic\Providers\FacebookRepository;
 use App\Permission;
 use App\Menu;
 use DB;
@@ -18,6 +19,14 @@ use App\User;
 
 class Helper extends Model
 {
+
+    protected $facebook;
+
+    public function __construct()
+    {
+        $this->facebook = new FacebookRepository();
+    }
+
     public static function GetLimit()
     {
         return 20;
@@ -83,6 +92,36 @@ class Helper extends Model
         }
     }
 
+    public static function GetInstaBusinessId($pageId,$accessToken)
+    {
+        $curl_handle=curl_init();
+        $access_token = $accessToken;
+        $endpoint = $pageId.'?fields=instagram_business_account';
+        $data = [];
+        $get_post_status = $this->facebook->InstaGetData($accessToken, $endpoint);
+        $insta_user_id = $get_post_status['instagram_business_account']['id'];
+
+        if(empty($insta_user_id))
+        {
+            $insta_user_id = '';
+        }
+        else
+        {
+            $endpoint = $insta_user_id.'?fields=biography%2Cid%2Cusername%2Cwebsite%2Cprofile_picture_url';
+            $insta_profile = $this->facebook->InstaGetData($accessToken, $endpoint);
+            if(!empty($insta_profile))
+            {
+                $insta_user_id = $insta_profile;
+            }
+            else
+            {
+                $insta_user_id = '';
+            }
+        }
+        return $insta_user_id;
+        
+    }
+
     public static function checkAccountLinked($user_id, $type) {
         if($type == "twitter") {
             $checkAccount = SocialLogin::where('user_id', $user_id)->where('type', $type)->whereNotNull('access_token_twitter')->whereNotNull('access_token_secret_twitter')->first();
@@ -145,7 +184,7 @@ class Helper extends Model
             self::postToFacebookPage($user_id, $path, $profile_page_id, $full_caption, $post_type);
         }
         if($type == 'instagram') {
-            self::postToInstgram($user_id, $path, $profile_page_id, $full_caption);
+            self::postToInstgram($user_id, $path, $profile_page_id, $full_caption, $post_type);
         }
     }
 
@@ -262,7 +301,43 @@ class Helper extends Model
         }
     }
 
-    public static function postToInstgram($user_id, $path, $profile_id, $caption){  
+    public static function postToInstgram($user_id, $path, $profile_id, $caption, $isImage){
+        $accountData = SocialLogin::where('user_id', $user_id)->where('type', 'instagram')->where('profile_id', $profile_id)->first();
+        if(!empty($accountData)) {
+            $token = $accountData->auth_token;
+            $config = config('services.facebook');
+            $fb = new Facebook([
+                'app_id' => $config['client_id'],
+                'app_secret' => $config['client_secret'],
+                'default_graph_version' => 'v2.6',
+            ]);
+            $fb->setDefaultAccessToken($token);
+            try {
+                $endpoint = $profile_id.'/media';
+                if($isImage == 1) {
+                    $data =  [
+                        'message' => $caption,
+                        'image_url' => $path
+                    ];   
+                }
+                else {
+                    $data =  [
+                        'message' => $caption,
+                        'media_type' => 'VIDEO',
+                        'video_url' => $path
+                    ];
+                }
+                $response = $fb->post($endpoint, $data)->getGraphNode()->asArray();
+                if($response['id']){
+                    sleep(30);
+                    $endpoint_publish = $profile_id.'/media_publish?creation_id='.$response['id'];
+                    $responsePublish = $fb->post($endpoint_publish, array())->getGraphNode()->asArray();
+                    dd($responsePublish);
+                    // post created
+                }
+            } catch (FacebookSDKException $e) {
+            }
+        }
     }
 
     public static function deleteDuplicateDevice($device_id) {

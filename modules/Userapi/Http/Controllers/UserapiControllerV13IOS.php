@@ -54,18 +54,10 @@ use App\PaymentDetail;
 use Carbon\Carbon;
 use App\Jobs\ShareSocialPostJob;
 use PDF;
-use App\Logic\Providers\FacebookRepository;
 
-class UserapiControllerV13 extends Controller
+class UserapiControllerV13IOS extends Controller
 {
     public $successStatus = 200;
-
-    protected $facebook;
-
-    public function __construct()
-    {
-        $this->facebook = new FacebookRepository();
-    }
 
     public function sendRegisterOTP(Request $request) {
         $input = $request->all();
@@ -1651,8 +1643,8 @@ class UserapiControllerV13 extends Controller
         {
             $data = array();
             $data['id'] = strval($value->id);
-            $data['category_name'] = !empty($value->name)?$value->name:"";
-            $data['image'] = !empty($value->image)? Storage::url($value->image):"";
+            $data['fest_name'] = !empty($value->name)?$value->name:"";
+            $data['fest_image'] = !empty($value->image)? Storage::url($value->image):"";
             array_push($category,$data);
             if(!empty($currntbusiness))
             {
@@ -1680,7 +1672,7 @@ class UserapiControllerV13 extends Controller
                 if(!empty($currntbusiness))
                 {
                    $currntbusiness_photos['id'] =  $currntbusiness_photo_id->id;
-                   $currntbusiness_photos['cat_name'] =  $currntbusiness->business_category;
+                   $currntbusiness_photos['category_name'] =  $currntbusiness->business_category;
                    $currntbusiness_photos['images'] =  [];
 
                     /*foreach ($currntbusiness_photo as $key => $value)
@@ -1695,7 +1687,7 @@ class UserapiControllerV13 extends Controller
 
                         $img_data['image_id'] = strval($img_value->id);
                         //$img_data['image_url'] = !empty($img_value->thumbnail) ? Storage::url($img_value->thumbnail) :"";
-                        $img_data['image_url'] = !empty($img_value->post_thumb) ? Storage::url($img_value->post_thumb) : Storage::url($img_value->thumbnail);
+                        $img_data['fest_image'] = !empty($img_value->post_thumb) ? Storage::url($img_value->post_thumb) : Storage::url($img_value->thumbnail);
                         $img_data['image_type'] = strval($img_value->image_type);
                         $img_data['image_language_id'] = !empty($img_value->language_id) ? strval($img_value->language_id) :"";
 
@@ -1716,7 +1708,7 @@ class UserapiControllerV13 extends Controller
         for ($i=0; $i < sizeof($new_category_data); $i++) {
 
             $temp['id'] = $new_category_data[$i]['fest_id'];
-            $temp['title'] = $new_category_data[$i]['fest_name'];
+            $temp['fest_name'] = $new_category_data[$i]['fest_name'];
             $temp['type'] = $new_category_data[$i]['new_cat'];
 
             $temp['img_url'] = array();
@@ -1739,7 +1731,7 @@ class UserapiControllerV13 extends Controller
             foreach ($post as $img_key => $img_value)
             {
                 $data_ph['post_id'] = strval($img_value->id);
-                $data_ph['post_content'] = !empty($img_value->post_thumb) ? Storage::url($img_value->post_thumb) : Storage::url($img_value->thumbnail);
+                $data_ph['fest_image'] = !empty($img_value->post_thumb) ? Storage::url($img_value->post_thumb) : Storage::url($img_value->thumbnail);
                 $data_ph['image_type'] = !empty($img_value->image_type) ? strval($img_value->image_type) : 0;
                 $data_ph['post_category_id'] = $new_category_data[$i]['fest_id'];
 
@@ -1773,7 +1765,7 @@ class UserapiControllerV13 extends Controller
                 foreach($photo as $ph_value)
                 {
                     //$data_ph['post_content'] = !empty($ph_value->post_content) ? Storage::url($ph_value->post_content) :"";
-                    $data_ph['post_content'] = !empty($ph_value->post_thumb) ? Storage::url($ph_value->post_thumb) : Storage::url($ph_value->post_content);
+                    $data_ph['fest_image'] = !empty($ph_value->post_thumb) ? Storage::url($ph_value->post_thumb) : Storage::url($ph_value->post_content);
                     $data_ph['post_id'] = !empty($ph_value->post_id) ? strval($ph_value->post_id) :0;
                     $data_ph['image_type'] = !empty($ph_value->image_type) ? strval($ph_value->image_type) :0;
                     $data_ph['post_category_id'] = !empty($ph_value->post_category_id) ? strval($ph_value->post_category_id) :0;
@@ -5671,31 +5663,6 @@ class UserapiControllerV13 extends Controller
 
     // -------------------- Social Media API Start
 
-    public function getInstagramAccount(Request $request) {
-        $user_id = $this->get_userid($request->token);
-        if($user_id == 0){
-            return response()->json(['status'=>false,'message'=>'user not valid']);
-        }
-        $profile = Helper::getFacebookProfile($request->auth_token);
-        $profile_id = $profile['id'];
-        $pages = Helper::getUserFacebookPages($request->auth_token);
-        $pagesData = array();
-        foreach ($pages->data as $key => $page) {
-            $insta_info = $this->facebook->getInstaBusinessAccountId($page->id, $page->access_token);
-            if(isset($insta_info['instagram_business_account'])) {
-                $insta_id = $insta_info['instagram_business_account']['id'];
-                $endpoint = $insta_id.'?fields=biography%2Cid%2Cusername%2Cwebsite%2Cprofile_picture_url';
-                $get_post_status = $this->facebook->InstaGetData($request->auth_token, $endpoint);
-                $get_post_status['profile_id'] = $profile_id;
-                $get_post_status['access_token'] = $page->access_token;
-                array_push($pagesData, $get_post_status);
-            }
-
-        }
-        $accounts = SocialLogin::where('user_id', $user_id)->where('type', 'instagram')->get();
-        return response()->json(['status' => true,'message'=>'Page List', 'data' => $pagesData, 'access_token' => $request->auth_token, 'linkedAccounts' => $accounts]);
-    }
-
     public function SocialLogins(Request $request) {
 
         $default_profile_photo = url('public/images/default-profile.jpg');
@@ -5734,104 +5701,76 @@ class UserapiControllerV13 extends Controller
             $profile_name = $profile['name'];
             $profile_id = $profile['id'];
         }
-        if ($request->type == "instagram") {
-            $ids = explode(',', $request->instagram_ids); 
-            foreach ($ids as $key => $insta_id) {
-                $endpoint = $insta_id.'?fields=biography%2Cid%2Cusername%2Cwebsite%2Cprofile_picture_url';
-                $get_post_status = $this->facebook->InstaGetData($request->auth_token, $endpoint);
-                $get_post_status['profile_id'] = $profile_id;
-                $get_post_status['access_token'] = $request->auth_token;
+        elseif ($request->type == "instagram") {
+        }
 
-
-                $socialLogin = SocialLogin::where('user_id', $user_id)->where('type', $request->type)->where('profile_id', $insta_id)->first();
-                if(empty($socialLogin)) {
-                    $socialLogin = new SocialLogin;
-                }
-                $socialLogin->profile_added = 1;
-                $socialLogin->user_id = $user_id;
-                $socialLogin->type = $request->type;
-                $socialLogin->profile_id = $insta_id;
-                $socialLogin->profile_urn = "";
-                $socialLogin->profile_name = $get_post_status['username'];
-                $socialLogin->profile_photo = $get_post_status['profile_picture_url'];
-                $socialLogin->access_token_twitter = "";
-                $socialLogin->access_token_secret_twitter = "";
-                $socialLogin->auth_token = $request->auth_token;
-                $socialLogin->save();
-
-            }
-            return response()->json(['status' => true,'message'=>'Acount added successfully']);
+        $socialLogin = SocialLogin::where('user_id', $user_id)->where('type', $request->type)->where('profile_id', $profile_id)->first();
+        if(empty($socialLogin)) {
+            $socialLogin = new SocialLogin;
         }
         else {
-            $socialLogin = SocialLogin::where('user_id', $user_id)->where('type', $request->type)->where('profile_id', $profile_id)->first();
-            if(empty($socialLogin)) {
-                $socialLogin = new SocialLogin;
-            }
-            else {
-                if($socialLogin->profile_added == 0) {
-                    if($request->login_for == "profile") {
-                        $socialLogin->profile_added = 1;
-                    }
+            if($socialLogin->profile_added == 0) {
+                if($request->login_for == "profile") {
+                    $socialLogin->profile_added = 1;
                 }
             }
-            $socialLogin->user_id = $user_id;
-            $socialLogin->type = $request->type;
-            $socialLogin->profile_id = $profile_id;
-            $socialLogin->profile_urn = $profile_urn;
-            $socialLogin->profile_name = $profile_name;
-            $socialLogin->profile_photo = $profile_photo;
-            $socialLogin->access_token_twitter = $access_token_twitter;
-            $socialLogin->access_token_secret_twitter = $access_token_secret_twitter;
-            $socialLogin->auth_token = $auth_token;
-            $socialLogin->save();
-            if($request->type == 'twitter') {
-                SocialLogin::where('type', $request->type)->where('profile_id', $profile_id)->update(['access_token_twitter'=> $access_token_twitter, 'access_token_secret_twitter' => $access_token_secret_twitter, 'profile_name' => $profile_name, 'profile_photo' => $profile_photo]);
-            }
-            else {
-                SocialLogin::where('type', $request->type)->where('profile_id', $profile_id)->update(['auth_token'=> $auth_token, 'profile_name' => $profile_name, 'profile_photo' => $profile_photo]);
-            }
-
-            if($request->login_for == "page") {
-                if($request->type == "linkedin") {
-                    $pages = LinkedIn::getUserPages($auth_token)['elements'];
-                    $pageIds = array();
-                    foreach ($pages as $key => $page) {
-                        $id = explode(":", $page['organization']);
-                        array_push($pageIds, $id[3]);
-                    }
-                    $pageLists = LinkedIn::getPageList($auth_token, $pageIds);
-                    // dd($pageLists);
-                    $pageData = array();
-                    foreach($pageIds as $id) {
-                        $singlepageData = LinkedIn::getPage($auth_token, $id);
-
-                        $data['page_id'] = strval($pageLists['results'][$id]['id']);
-                        $data['page_name'] = $pageLists['results'][$id]['localizedName'];
-                        $data['page_photo'] = isset($singlepageData['logoV2']['original~']['elements'][0]['identifiers'][0]['identifier']) ? $singlepageData['logoV2']['original~']['elements'][0]['identifiers'][0]['identifier'] : $default_profile_photo;
-
-                        array_push($pageData, $data);
-                    }
-                    $linkedPages = LinkedInPage::where('user_id', $user_id)->where('profile_id', $profile_id)->pluck('page_id')->toArray();
-                    $data = ['pageList' => $pageData, "linkedPages" => $linkedPages, 'profile_id' => $profile_id];
-                    if(count($pageData) == 0) {
-                        return response()->json(['status' => false,'message'=>'No page found', 'data' => $data]);
-                    }
-                    return response()->json(['status' => true,'message'=>'Page List', 'data' => $data, 'profile_id' => $profile_id]);
-                }
-                if($request->type == "facebook") {
-                    $pages = Helper::getUserFacebookPages($auth_token);
-                    $pageData = $pages->data;
-                    if(count($pageData) == 0) {
-                        return response()->json(['status' => false,'message'=>'No page found', 'data' => $pageData]);
-                    }
-                    $facebookPages = FacebookPage::where('user_id', $user_id)->where('profile_id', $profile_id)->pluck('page_id')->toArray();
-                    $data = ['pageList' => $pageData, "facebookPages" => $facebookPages, 'profile_id' => $profile_id];
-                    return response()->json(['status' => true,'message'=>'Page List', 'data' => $data]);
-                }
-            }
-            return response()->json(['status' => true,'message'=>'Acount added successfully']);
+        }
+        $socialLogin->user_id = $user_id;
+        $socialLogin->type = $request->type;
+        $socialLogin->profile_id = $profile_id;
+        $socialLogin->profile_urn = $profile_urn;
+        $socialLogin->profile_name = $profile_name;
+        $socialLogin->profile_photo = $profile_photo;
+        $socialLogin->access_token_twitter = $access_token_twitter;
+        $socialLogin->access_token_secret_twitter = $access_token_secret_twitter;
+        $socialLogin->auth_token = $auth_token;
+        $socialLogin->save();
+        if($request->type == 'twitter') {
+            SocialLogin::where('type', $request->type)->where('profile_id', $profile_id)->update(['access_token_twitter'=> $access_token_twitter, 'access_token_secret_twitter' => $access_token_secret_twitter, 'profile_name' => $profile_name, 'profile_photo' => $profile_photo]);
+        }
+        else {
+            SocialLogin::where('type', $request->type)->where('profile_id', $profile_id)->update(['auth_token'=> $auth_token, 'profile_name' => $profile_name, 'profile_photo' => $profile_photo]);
         }
 
+        if($request->login_for == "page") {
+            if($request->type == "linkedin") {
+                $pages = LinkedIn::getUserPages($auth_token)['elements'];
+                $pageIds = array();
+                foreach ($pages as $key => $page) {
+                    $id = explode(":", $page['organization']);
+                    array_push($pageIds, $id[3]);
+                }
+                $pageLists = LinkedIn::getPageList($auth_token, $pageIds);
+                // dd($pageLists);
+                $pageData = array();
+                foreach($pageIds as $id) {
+                    $singlepageData = LinkedIn::getPage($auth_token, $id);
+
+                    $data['page_id'] = strval($pageLists['results'][$id]['id']);
+                    $data['page_name'] = $pageLists['results'][$id]['localizedName'];
+                    $data['page_photo'] = isset($singlepageData['logoV2']['original~']['elements'][0]['identifiers'][0]['identifier']) ? $singlepageData['logoV2']['original~']['elements'][0]['identifiers'][0]['identifier'] : $default_profile_photo;
+
+                    array_push($pageData, $data);
+                }
+                $linkedPages = LinkedInPage::where('user_id', $user_id)->where('profile_id', $profile_id)->pluck('page_id')->toArray();
+                $data = ['pageList' => $pageData, "linkedPages" => $linkedPages, 'profile_id' => $profile_id];
+                if(count($pageData) == 0) {
+                    return response()->json(['status' => false,'message'=>'No page found', 'data' => $data]);
+                }
+                return response()->json(['status' => true,'message'=>'Page List', 'data' => $data, 'profile_id' => $profile_id]);
+            }
+            if($request->type == "facebook") {
+                $pages = Helper::getUserFacebookPages($auth_token);
+                $pageData = $pages->data;
+                if(count($pageData) == 0) {
+                    return response()->json(['status' => false,'message'=>'No page found', 'data' => $pageData]);
+                }
+                $facebookPages = FacebookPage::where('user_id', $user_id)->where('profile_id', $profile_id)->pluck('page_id')->toArray();
+                $data = ['pageList' => $pageData, "facebookPages" => $facebookPages, 'profile_id' => $profile_id];
+                return response()->json(['status' => true,'message'=>'Page List', 'data' => $data]);
+            }
+        }
+        return response()->json(['status' => true,'message'=>'Acount added successfully']);
     }
 
     public function getSocialLoginPages(Request $request) {

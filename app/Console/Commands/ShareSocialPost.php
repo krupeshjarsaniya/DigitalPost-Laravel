@@ -44,11 +44,11 @@ class ShareSocialPost extends Command
     public function handle()
     {
         Log::info("ShareSocialPost Cron Executed");
-        $nowTime = Carbon::now();
-        $minTime = Carbon::now()->subMinutes(30);
+        $nowTime = Carbon::now()->addHours(5)->addMinutes(30);
+        $minTime = Carbon::now()->addHours(5);
         $posts = DB::table('schedule_post')->where('is_posted', 0)->where('sp_date_time', '>=', $minTime)->where('sp_date_time', '<=', $nowTime)->get();
         foreach($posts as $post) {
-            ShareSocialPostJob::dispatch($post_id);
+            ShareSocialPostJob::dispatch($post->sp_id);
         }
     }
 }

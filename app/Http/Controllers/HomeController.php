@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
+use App\Logic\Providers\FacebookRepository;
 class HomeController extends Controller
 {
     /**
@@ -11,9 +12,11 @@ class HomeController extends Controller
      *
      * @return void
      */
+    protected $facebook;
     public function __construct()
     {
-        $this->middleware('auth', ['except' => ['privacypolicy', 'termsandcondition']]);
+        $this->facebook = new FacebookRepository();
+        $this->middleware('auth', ['except' => ['privacypolicy', 'termsandcondition', 'facebookLogin', 'facebookCallback', 'instagramLogin', 'facebookAccessToken']]);
         // $this->middleware('auth', ['except' => '/privacypolicy']);
     }
 
@@ -25,6 +28,32 @@ class HomeController extends Controller
     public function index()
     {
         return view('home');
+    }
+
+    public function facebookLogin(Request $request) {
+        return redirect($this->facebook->redirectTo());
+    }
+
+    public function instagramLogin(Request $request) {
+        return redirect($this->facebook->redirectToInsta());
+    }
+
+    public function facebookCallback(Request $request) {
+        if (request('error') == 'access_denied') {
+            echo "";
+        }
+        else {
+            $accessToken = $this->facebook->handleCallback();
+            $url = route('facebookAccessToken') . '?access_token=' . $accessToken;
+            return redirect($url);
+            // echo  $accessToken;
+        }
+
+    }
+
+    public function facebookAccessToken(Request $request) {
+        echo $request->access_token;
+
     }
 
     public function our_backup_database(){
