@@ -5969,8 +5969,8 @@ class UserapiControllerV13 extends Controller
                     $checkPage->user_id = $user_id;
                     $checkPage->profile_id = $profile_id;
                     $checkPage->page_id = $page_id;
-                    $checkPage->auth_token = $auth_token;
                 }
+                $checkPage->auth_token = $auth_token;
                 $checkPage->page_name = $page_name;
                 $checkPage->page_photo = $page_photo;
                 $checkPage->save();
@@ -6024,7 +6024,8 @@ class UserapiControllerV13 extends Controller
 
         $twitterProfiles = SocialLogin::where('user_id', $user_id)->where('type', 'twitter')->where('profile_added', 1)->get();
         $linkedInProfiles = SocialLogin::where('user_id', $user_id)->where('type', 'linkedin')->where('profile_added', 1)->get();
-        $facebookProfiles = SocialLogin::where('user_id', $user_id)->where('type', 'facebook')->where('profile_added', 1)->get();
+        // $facebookProfiles = SocialLogin::where('user_id', $user_id)->where('type', 'facebook')->where('profile_added', 1)->get();
+        $facebookProfiles = array();
         $instagramProfiles = SocialLogin::where('user_id', $user_id)->where('type', 'instagram')->where('profile_added', 1)->get();
 
         $linkedInPages = LinkedInPage::where('user_id', $user_id)->get();
