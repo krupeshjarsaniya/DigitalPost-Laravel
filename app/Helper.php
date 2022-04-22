@@ -16,6 +16,7 @@ use App\SocialLogin;
 use App\LinkedInPage;
 use App\FacebookPage;
 use App\User;
+use App\Jobs\ShareSocialPostTypeJob;
 
 class Helper extends Model
 {
@@ -33,7 +34,7 @@ class Helper extends Model
     }
 
     public static function generateUniqueReferralCode() {
-        $str_result = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'; 
+        $str_result = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
         $referral_code = substr(str_shuffle($str_result), 0, 6);
         $checkCode = User::where('ref_code', $referral_code)->first();
         if(empty($referral_code)); {
@@ -119,7 +120,7 @@ class Helper extends Model
             }
         }
         return $insta_user_id;
-        
+
     }
 
     public static function checkAccountLinked($user_id, $type) {
@@ -142,6 +143,7 @@ class Helper extends Model
         $getPost = DB::table('schedule_post')->where('sp_id', $post_id)->first();
         if(!empty($getPost)) {
 
+            DB::table('schedule_post')->where('sp_id', $post_id)->update(['is_posted' => 1]);
             $path = Storage::url($getPost->sp_media_path);
             $Twitter_video_path = $getPost->sp_media_path;
             $user_id = $getPost->sp_user_id;
@@ -153,14 +155,19 @@ class Helper extends Model
             foreach($social_media_list as $social_media) {
                 $type = $social_media->social_media_type;
                 $profile_page_id = $social_media->profile_page_id;
-                self::sharePostToSocialMedia($user_id, $type, $profile_page_id, $path, $sp_media_type, $Twitter_video_path, $sp_caption, $sp_hashtag);
+                Log::info("Start Post :".$type);
+                ShareSocialPostTypeJob::dispatch($post_id, $user_id, $type, $profile_page_id, $path, $sp_media_type, $Twitter_video_path, $sp_caption, $sp_hashtag);
+                // self::sharePostToSocialMedia($post_id, $user_id, $type, $profile_page_id, $path, $sp_media_type, $Twitter_video_path, $sp_caption, $sp_hashtag);
+                Log::info("End Post :".$type);
+
             }
 
-            DB::table('schedule_post')->where('sp_id', $post_id)->update(['is_posted' => 1]);
+            Log::info("Update schedule_post sp_id :".$post_id);
+
         }
     }
 
-    public static function sharePostToSocialMedia($user_id, $type, $profile_page_id, $path, $post_type,$Twitter_video_path, $caption, $hashtag) {
+    public static function sharePostToSocialMedia($post_id, $user_id, $type, $profile_page_id, $path, $post_type,$Twitter_video_path, $caption, $hashtag) {
         $full_caption = "";
         if($caption != "") {
             $full_caption = $caption . " ";
@@ -169,35 +176,45 @@ class Helper extends Model
             $full_caption = $full_caption . $hashtag;
         }
         if($type == 'twitter') {
-            self::postToTwitter($user_id, $path, $post_type,$Twitter_video_path, $profile_page_id, $full_caption);
+            self::postToTwitter($post_id, $user_id, $path, $post_type,$Twitter_video_path, $profile_page_id, $full_caption);
         }
         if($type == 'linkedin') {
-            self::postToLinkedIn($user_id, $path, $post_type, $profile_page_id, $full_caption);
+            self::postToLinkedIn($post_id, $user_id, $path, $post_type, $profile_page_id, $full_caption);
         }
         if($type == 'linkedin_page') {
-            self::postToLinkedInPage($user_id, $path, $post_type, $profile_page_id, $full_caption);
+            self::postToLinkedInPage($post_id, $user_id, $path, $post_type, $profile_page_id, $full_caption);
         }
-        if($type == 'facebook') {
-            self::postToFacebook($user_id, $path, $profile_page_id, $full_caption, $post_type);
-        }
+        // if($type == 'facebook') {
+        //     self::postToFacebook($post_id, $user_id, $path, $profile_page_id, $full_caption, $post_type);
+        // }
         if($type == 'facebook_page') {
-            self::postToFacebookPage($user_id, $path, $profile_page_id, $full_caption, $post_type);
+            self::postToFacebookPage($post_id, $user_id, $path, $profile_page_id, $full_caption, $post_type);
         }
         if($type == 'instagram') {
-            self::postToInstgram($user_id, $path, $profile_page_id, $full_caption, $post_type);
+            self::postToInstgram($post_id, $user_id, $path, $profile_page_id, $full_caption, $post_type);
         }
     }
 
-    public static function postToTwitter($user_id, $path, $isImage,$Twitter_video_path, $profile_id, $caption){
+    public static function postToTwitter($post_id, $user_id, $path, $isImage,$Twitter_video_path, $profile_id, $caption){
         $accountData = SocialLogin::where('user_id', $user_id)->where('type', 'twitter')->where('profile_id', $profile_id)->first();
         if(!empty($accountData)) {
             $token = $accountData->access_token_twitter;
             $access_token = $accountData->access_token_secret_twitter;
             if($isImage == 1){
-                Twitter::shareImage($token, $access_token, $path, $caption);
+                try {
+                    Twitter::shareImage($token, $access_token, $path, $caption);
+                    Log::info("Twitter shareImage :".$profile_id);
+                    DB::table('schedule_post_type')->where('sp_id', $post_id)->where('social_media_type', 'twitter')->where('profile_page_id', $profile_id)->update(['is_posted' => 1]);
+                } catch (\Exception $e) {
+                }
             }
             else {
-                Twitter::shareVideo($token, $access_token, $Twitter_video_path, $caption);
+                try {
+                    Twitter::shareVideo($token, $access_token, $Twitter_video_path, $caption);
+                    Log::info("Twitter shareVideo :".$profile_id);
+                    DB::table('schedule_post_type')->where('sp_id', $post_id)->where('social_media_type', 'twitter')->where('profile_page_id', $profile_id)->update(['is_posted' => 1]);
+                } catch (\Exception $e) {
+                }
             }
         }
 
@@ -209,20 +226,31 @@ class Helper extends Model
         // Twitter::postTweet(['status' => 'Digital Post', 'media_ids' => $uploaded_media->media_id_string, 'response_format' => 'json']);
     }
 
-    public static function postToLinkedIn($user_id, $path, $isImage, $profile_id, $caption){
+    public static function postToLinkedIn($post_id, $user_id, $path, $isImage, $profile_id, $caption){
         $accountData = SocialLogin::where('user_id', $user_id)->where('type', 'linkedin')->where('profile_id', $profile_id)->first();
         if(!empty($accountData)) {
             $token = $accountData->auth_token;
             Log::info($token);
             if($isImage == 1){
-                $result = LinkedIn::shareImage($token, $path, $caption, 'access_token');
+                try {
+                    $result = LinkedIn::shareImage($token, $path, $caption, 'access_token');
+                    Log::info("LinkedIn shareImage :".$profile_id);
+                    DB::table('schedule_post_type')->where('sp_id', $post_id)->where('social_media_type', 'linkedin')->where('profile_page_id', $profile_id)->update(['is_posted' => 1]);
+                } catch (\Exception $e) {
+                }
             } else {
-                $result = LinkedIn::shareVideo($token, $path, $caption, 'access_token');
+                try {
+                    $result = LinkedIn::shareVideo($token, $path, $caption, 'access_token');
+                    Log::info("LinkedIn shareVideo :".$profile_id);
+                    DB::table('schedule_post_type')->where('sp_id', $post_id)->where('social_media_type', 'linkedin')->where('profile_page_id', $profile_id)->update(['is_posted' => 1]);
+                } catch (\Exception $e) {
+                }
             }
         }
     }
 
-    public static function postToLinkedInPage($user_id, $path, $isImage, $page_id, $caption){
+    public static function postToLinkedInPage($post_id, $user_id, $path, $isImage, $page_id, $caption){
+        Log::info("LinkedIn Post Start" . $page_id . ' user_id: ' . $user_id);
         $page_data = LinkedInPage::where('user_id', $user_id)->where('page_id', $page_id)->first();
         if(!empty($page_data)) {
             $accountData = SocialLogin::where('user_id', $user_id)->where('type', 'linkedin')->where('profile_id', $page_data->profile_id)->first();
@@ -230,15 +258,29 @@ class Helper extends Model
                 $token = $accountData->auth_token;
                 Log::info($token);
                 if($isImage == 1){
-                    $result = LinkedIn::shareImagePage($token, $path, $caption, 'access_token', $page_id);
+                    Log::info("LinkedIn Post Start Image " . $page_id . ' user_id: ' . $user_id);
+                    try {
+                        $result = LinkedIn::shareImagePage($token, $path, $caption, 'access_token', $page_id);
+                        Log::info("LinkedIn shareImagePage :".$page_id);
+                        DB::table('schedule_post_type')->where('sp_id', $post_id)->where('social_media_type', 'linkedin_page')->where('profile_page_id', $page_id)->update(['is_posted' => 1]);
+                    } catch (\Exception $e) {
+                        Log::info(print_r($e));
+                    }
                 } else {
-                    $result = LinkedIn::shareVideoPage($token, $path, $caption, 'access_token', $page_id);
+                    Log::info("LinkedIn Post Start Video " . $page_id . ' user_id: ' . $user_id);
+                    try {
+                        $result = LinkedIn::shareVideoPage($token, $path, $caption, 'access_token', $page_id);
+                        Log::info("LinkedIn shareVideoPage :".$page_id);
+                        DB::table('schedule_post_type')->where('sp_id', $post_id)->where('social_media_type', 'linkedin_page')->where('profile_page_id', $page_id)->update(['is_posted' => 1]);
+                    } catch (\Exception $e) {
+                        Log::info(print_r($e));
+                    }
                 }
             }
         }
     }
 
-    public static function postToFacebook($user_id, $path, $profile_id, $caption, $isImage){
+    public static function postToFacebook($post_id, $user_id, $path, $profile_id, $caption, $isImage){
         $accountData = SocialLogin::where('user_id', $user_id)->where('type', 'facebook')->where('profile_id', $profile_id)->first();
         if(!empty($accountData)) {
             $token = $accountData->auth_token;
@@ -257,13 +299,16 @@ class Helper extends Model
                 Log::info($response);
                 if($response['id']){
                     // post created
+                    Log::info("Facebook share :".$profile_id);
+                    DB::table('schedule_post_type')->where('sp_id', $post_id)->where('social_media_type', 'facebook')->where('profile_page_id', $profile_id)->update(['is_posted' => 1]);
                 }
             } catch (FacebookSDKException $e) {
             }
         }
     }
 
-    public static function postToFacebookPage($user_id, $path, $page_id, $caption, $isImage){
+    public static function postToFacebookPage($post_id, $user_id, $path, $page_id, $caption, $isImage){
+        Log::info("FacebookPage Post Start" . $page_id . ' user_id: ' . $user_id);
         $page_data = FacebookPage::where('user_id', $user_id)->where('page_id', $page_id)->first();
         if(!empty($page_data)) {
             $accountData = SocialLogin::where('user_id', $user_id)->where('type', 'facebook')->where('profile_id', $page_data->profile_id)->first();
@@ -278,30 +323,40 @@ class Helper extends Model
                 $fb->setDefaultAccessToken($token);
                 try {
                     if($isImage == 1) {
+                        Log::info("FacebookPage Post Image Start" . $page_id . ' user_id: ' . $user_id);
                         $response = $fb->post('/'.$page_id.'/photos', [
                             'message' => $caption,
                             'url' => $path
                         ])->getGraphNode()->asArray();
                         if($response['id']){
                             // post created
+                            Log::info("FacebookPage shareImage :".$page_id);
+                            // Log::info($response);
+                            DB::table('schedule_post_type')->where('sp_id', $post_id)->where('social_media_type', 'facebook_page')->where('profile_page_id', $page_id)->update(['is_posted' => 1]);
                         }
                     }
                     else {
+                        Log::info("FacebookPage Post Video Start" . $page_id . ' user_id: ' . $user_id);
                         $response = $fb->post('/'.$page_id.'/videos', [
+                            'description' => $caption,
                             'title' => $caption,
                             'file_url' => $path
                         ])->getGraphNode()->asArray();
                         if($response['id']){
                             // post created
+                            // Log::info($response);
+                            Log::info("FacebookPage shareVideo :".$page_id);
+                            DB::table('schedule_post_type')->where('sp_id', $post_id)->where('social_media_type', 'facebook_page')->where('profile_page_id', $page_id)->update(['is_posted' => 1]);
                         }
                     }
                 } catch (FacebookSDKException $e) {
+                    Log::info(print_r($e));
                 }
             }
         }
     }
 
-    public static function postToInstgram($user_id, $path, $profile_id, $caption, $isImage){
+    public static function postToInstgram($post_id, $user_id, $path, $profile_id, $caption, $isImage){
         $accountData = SocialLogin::where('user_id', $user_id)->where('type', 'instagram')->where('profile_id', $profile_id)->first();
         if(!empty($accountData)) {
             $token = $accountData->auth_token;
@@ -316,23 +371,28 @@ class Helper extends Model
                 $endpoint = $profile_id.'/media';
                 if($isImage == 1) {
                     $data =  [
-                        'message' => $caption,
+                        'caption' => $caption,
                         'image_url' => $path
-                    ];   
+                    ];
                 }
                 else {
                     $data =  [
-                        'message' => $caption,
+                        'caption' => $caption,
                         'media_type' => 'VIDEO',
                         'video_url' => $path
                     ];
+                    Log::info("video_url_for_instagram ".$path);
                 }
                 $response = $fb->post($endpoint, $data)->getGraphNode()->asArray();
+                Log::info("media_id ".$response['id']);
                 if($response['id']){
                     sleep(30);
                     $endpoint_publish = $profile_id.'/media_publish?creation_id='.$response['id'];
                     $responsePublish = $fb->post($endpoint_publish, array())->getGraphNode()->asArray();
-                    dd($responsePublish);
+                    //dd($responsePublish);
+                    Log::info("InstaGram Share ". $profile_id);
+                    DB::table('schedule_post_type')->where('sp_id', $post_id)->where('social_media_type', 'instagram')->where('profile_page_id', $profile_id)->update(['is_posted' => 1]);
+                    // Log::info("responsePublish_data ". $responsePublish);
                     // post created
                 }
             } catch (FacebookSDKException $e) {

@@ -26,7 +26,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('send:notification')->everyThirtyMinutes();
-        $schedule->command('social:sharepost')->everyThirtyMinutes();
+        $schedule->command('social:sharepost')->everyMinute();
+        //$schedule->command('social:sharepost')->everyThirtyMinutes();
         $schedule->command('expire:plan')->daily();
     }
 

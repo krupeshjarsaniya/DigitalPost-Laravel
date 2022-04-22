@@ -29,6 +29,7 @@ class FacebookRepository
         $permissions = [
             'pages_show_list',
             'pages_read_engagement',
+            'pages_manage_posts',
             'publish_video',
         ];
         $redirectUri = config('app.url') . 'facebook/callback';

@@ -1139,7 +1139,7 @@ class UserapiControllerV5 extends Controller
         $userdata = User::where('id','=',$user_id)->select('default_business_id')->first();
         
         $currntbusiness = Business::where('busi_id','=',$userdata->default_business_id)->where('busi_delete','=',0)->first();
-        $currntbusiness->purc_plan_id = 0;
+        // $currntbusiness->purc_plan_id = 0;
 
         $updatedCurrentBusinessDetails = array();
         $preference = DB::table('user_preference')->where('user_id', '=', $user_id)->get();

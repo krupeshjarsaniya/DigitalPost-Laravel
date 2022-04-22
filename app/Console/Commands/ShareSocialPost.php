@@ -47,8 +47,14 @@ class ShareSocialPost extends Command
         $nowTime = Carbon::now()->addHours(5)->addMinutes(30);
         $minTime = Carbon::now()->addHours(5);
         $posts = DB::table('schedule_post')->where('is_posted', 0)->where('sp_date_time', '>=', $minTime)->where('sp_date_time', '<=', $nowTime)->get();
+        Log::info("sp_date_time".$minTime."sp_date_time".$nowTime);
+
         foreach($posts as $post) {
+            Log::info("schedule_post ID ".$post->sp_id);
             ShareSocialPostJob::dispatch($post->sp_id);
+            Log::info("schedule_post Complate ".$post->sp_id);
+            //$posts = DB::table('schedule_post')->where('sp_id', $post->sp_id)->update(['is_posted'=>'1']);
         }
+
     }
 }

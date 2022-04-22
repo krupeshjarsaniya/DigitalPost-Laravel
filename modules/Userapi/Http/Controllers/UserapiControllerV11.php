@@ -5604,6 +5604,9 @@ class UserapiControllerV11 extends Controller
         $socialLogin = SocialLogin::where('user_id', $user_id)->where('type', $request->type)->where('profile_id', $profile_id)->first();
         if(empty($socialLogin)) {
             $socialLogin = new SocialLogin;
+            if($request->login_for == "profile") {
+                $socialLogin->profile_added = 1;
+            }
         }
         else {
             if($socialLogin->profile_added == 0) {
@@ -5659,10 +5662,15 @@ class UserapiControllerV11 extends Controller
             if($request->type == "facebook") {
                 $pages = Helper::getUserFacebookPages($auth_token);
                 $pageData = $pages->data;
-                if(count($pageData) == 0) {
-                    return response()->json(['status' => false,'message'=>'No page found', 'data' => $pageData]);
+                $pageList = array();
+                foreach($pageData as $page) {
+                    $page->image = "https://graph.facebook.com/" . $page->id . "/picture?type=large";
+                    array_push($pageList, $page);
                 }
-                return response()->json(['status' => true,'message'=>'Page List', 'data' => $pageData]);
+                if(count($pageData) == 0) {
+                    return response()->json(['status' => false,'message'=>'No page found', 'data' => $pageList]);
+                }
+                return response()->json(['status' => true,'message'=>'Page List', 'data' => $pageList]);
             }
         }
         return response()->json(['status' => true,'message'=>'Acount added successfully']);
@@ -5715,10 +5723,15 @@ class UserapiControllerV11 extends Controller
         if($request->type == "facebook") {
             $pages = Helper::getUserFacebookPages($auth_token);
             $pageData = $pages->data;
-            if(count($pageData) == 0) {
-                return response()->json(['status' => false,'message'=>'No page found', 'data' => $pageData]);
+            $pageList = array();
+            foreach($pageData as $page) {
+                $page->image = "https://graph.facebook.com/" . $page->id . "/picture?type=large";
+                array_push($pageList, $page);
             }
-            return response()->json(['status' => true,'message'=>'Page List', 'data' => $pageData]);
+            if(count($pageData) == 0) {
+                return response()->json(['status' => false,'message'=>'No page found', 'data' => $pageList]);
+            }
+            return response()->json(['status' => true,'message'=>'Page List', 'data' => $pageList]);
         }
         else {
             return response()->json(['status' => false,'message'=>'Something wrong']);   
@@ -6219,7 +6232,7 @@ class UserapiControllerV11 extends Controller
             return response()->json(['status'=>false,'message'=>'post you are looking for is not availabe']);
         }
 
-        $getPost = DB::table('schedule_post')->select('sp_media_path')->where('sp_user_id', $user_id)->where('sp_id','=',$input['id'])->first();
+        $getPost = DB::table('schedule_post')->select('sp_media_path', 'is_posted')->where('sp_user_id', $user_id)->where('sp_id','=',$input['id'])->first();
 
         if($getPost){
             if($getPost->is_posted == 1) {

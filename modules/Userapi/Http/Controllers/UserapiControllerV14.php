@@ -51,12 +51,16 @@ use App\UserReferral;
 use App\ReferralData;
 use App\WithdrawRequest;
 use App\PaymentDetail;
+use App\Frame;
+use App\FrameComponent;
+use App\FrameText;
+use App\BusinessField;
 use Carbon\Carbon;
 use App\Jobs\ShareSocialPostJob;
 use PDF;
 use App\Logic\Providers\FacebookRepository;
 
-class UserapiControllerV13 extends Controller
+class UserapiControllerV14 extends Controller
 {
     public $successStatus = 200;
 
@@ -1366,6 +1370,8 @@ class UserapiControllerV13 extends Controller
             return response()->json(['status'=>false,'message'=>'user not valid']);
         }
         $checkReferralCode = User::find($user_id);
+        $user_selected_language = explode(',',$checkReferralCode->user_language);
+        array_push($user_selected_language, "2","4");
         $referral_code = $checkReferralCode->ref_code;
         if(empty($checkReferralCode->ref_code)) {
             $referral_code = Helper::generateUniqueReferralCode();
@@ -1675,7 +1681,7 @@ class UserapiControllerV13 extends Controller
 
             if(!empty($currntbusiness_photo_id))
             {
-                $currntbusiness_photo = DB::table('business_category_post_data')->where('post_type','image')->where('buss_cat_post_id','=',$currntbusiness_photo_id->id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderBy('id','DESC')->limit(10)->get();
+                $currntbusiness_photo = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type','image')->where('buss_cat_post_id','=',$currntbusiness_photo_id->id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderBy('id','DESC')->limit(10)->get();
                 /* ->orderBy('id','DESC') ->inRandomOrder()*/
                 if(!empty($currntbusiness))
                 {
@@ -1728,6 +1734,7 @@ class UserapiControllerV13 extends Controller
                 if(!empty($category)) {
                     $post = DB::table('business_category_post_data')
                                 ->where('is_deleted', 0)
+                                ->whereIn('language_id', $user_selected_language)
                                 ->where('post_type', 'image')
                                 ->where('buss_cat_post_id', $category->id)
                                 ->where('festival_id', $new_category_data[$i]['fest_id'])
@@ -1789,7 +1796,7 @@ class UserapiControllerV13 extends Controller
         $new_category_data_greetingsArray = array();
         foreach ($new_category_data_greetings as $greeting) {
 
-            $photo = DB::table('custom_cateogry_data')->where('custom_cateogry_id','=',$greeting->custom_cateogry_id)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderBy('custom_cateogry_data_id','DESC')->limit(10)->get();
+            $photo = DB::table('custom_cateogry_data')->whereIn('language_id', $user_selected_language)->where('custom_cateogry_id','=',$greeting->custom_cateogry_id)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderBy('custom_cateogry_data_id','DESC')->limit(10)->get();
 
             $temp1['id'] = $greeting->custom_cateogry_id;
             $temp1['title'] = $greeting->name;
@@ -1862,6 +1869,8 @@ class UserapiControllerV13 extends Controller
         }
         $type = $input['type'];
         $user = User::find($user_id);
+        $user_selected_language = explode(",", $user->user_language);
+        array_push($user_selected_language, '2','4');
         $buss_images = array();
 
         $festival_data = Festival::where('fest_id', $input['postcategoryid'])->first();
@@ -1878,7 +1887,7 @@ class UserapiControllerV13 extends Controller
 
         if($type == "image") {
 
-            $categoriesIds = Post::where('post_category_id','=',$input['postcategoryid'])->where('post_is_deleted','=',0)->groupBy('sub_category_id')->pluck('sub_category_id')->toArray();
+            $categoriesIds = Post::where('post_category_id','=',$input['postcategoryid'])->whereIn('language_id', $user_selected_language)->where('post_is_deleted','=',0)->groupBy('sub_category_id')->pluck('sub_category_id')->toArray();
             $categories = FestivalSubCategory::whereIn('id', $categoriesIds)->where('festival_id', $input['postcategoryid'])->where('is_delete',0)->get();
 
             $offset = 0;
@@ -1899,28 +1908,28 @@ class UserapiControllerV13 extends Controller
                     if($checkFestival->fest_name == "Trending") {
                         if($sub_category_id == 0)
                         {
-                            $posts = Post::where('post_category_id','=',$input['postcategoryid'])->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset)->get();
+                            $posts = Post::where('post_category_id','=',$input['postcategoryid'])->whereIn('language_id', $user_selected_language)->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset)->get();
                         }
                         else {
-                            $posts = Post::where('post_category_id','=',$input['postcategoryid'])->where('sub_category_id', $sub_category_id)->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset)->get();
+                            $posts = Post::where('post_category_id','=',$input['postcategoryid'])->whereIn('language_id', $user_selected_language)->where('sub_category_id', $sub_category_id)->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset)->get();
                         }
                     }
                     else {
                         if($sub_category_id == 0) {
-                            $posts = Post::where('post_category_id','=',$input['postcategoryid'])->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset)->get();
+                            $posts = Post::where('post_category_id','=',$input['postcategoryid'])->whereIn('language_id', $user_selected_language)->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset)->get();
                         }
                         else {
-                            $posts = Post::where('post_category_id','=',$input['postcategoryid'])->where('sub_category_id', $sub_category_id)->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset)->get();
+                            $posts = Post::where('post_category_id','=',$input['postcategoryid'])->whereIn('language_id', $user_selected_language)->where('sub_category_id', $sub_category_id)->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset)->get();
                         }
                     }
                 }
                 else
                 {
                     if($sub_category_id == 0) {
-                        $posts = Post::where('post_category_id','=',$input['postcategoryid'])->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset)->get();
+                        $posts = Post::where('post_category_id','=',$input['postcategoryid'])->whereIn('language_id', $user_selected_language)->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset)->get();
                     }
                     else {
-                        $posts = Post::where('post_category_id','=',$input['postcategoryid'])->where('sub_category_id', $sub_category_id)->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset)->get();
+                        $posts = Post::where('post_category_id','=',$input['postcategoryid'])->whereIn('language_id', $user_selected_language)->where('sub_category_id', $sub_category_id)->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset)->get();
                     }
 
                 }
@@ -1928,15 +1937,15 @@ class UserapiControllerV13 extends Controller
             else
             {
                 if($sub_category_id == 0) {
-                    $posts = Post::where('post_category_id','=',$input['postcategoryid'])->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->whereIn('language_id',$languageid)->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset)->get();
+                    $posts = Post::where('post_category_id','=',$input['postcategoryid'])->whereIn('language_id', $user_selected_language)->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->whereIn('language_id',$languageid)->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset)->get();
                 }
                 else {
-                    $posts = Post::where('post_category_id','=',$input['postcategoryid'])->where('sub_category_id', $sub_category_id)->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->whereIn('language_id',$languageid)->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset)->get();
+                    $posts = Post::where('post_category_id','=',$input['postcategoryid'])->whereIn('language_id', $user_selected_language)->where('sub_category_id', $sub_category_id)->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->whereIn('language_id',$languageid)->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset)->get();
                 }
 
             }
 
-            $language_ids = Post::where('post_category_id','=',$input['postcategoryid'])->where('post_is_deleted','=',0)->select('language_id')->get()->toArray();
+            $language_ids = Post::where('post_category_id','=',$input['postcategoryid'])->whereIn('language_id', $user_selected_language)->where('post_is_deleted','=',0)->select('language_id')->get()->toArray();
             $language_id_array = array_unique($language_ids, SORT_REGULAR);
 
             $temp = array();
@@ -1948,6 +1957,7 @@ class UserapiControllerV13 extends Controller
                     if(!empty($category)) {
                         $post = DB::table('business_category_post_data')
                                     ->where('is_deleted', 0)
+                                    ->whereIn('language_id', $user_selected_language)
                                     ->where('post_type', $type)
                                     ->where('buss_cat_post_id', $category->id)
                                     ->where('festival_id', $input['postcategoryid'])
@@ -1995,28 +2005,28 @@ class UserapiControllerV13 extends Controller
                     if($checkFestival->fest_name == "Trending") {
                         if($sub_category_id == 0)
                         {
-                            $posts_next = Post::where('post_category_id','=',$input['postcategoryid'])->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset + count($posts))->get();
+                            $posts_next = Post::where('post_category_id','=',$input['postcategoryid'])->whereIn('language_id', $user_selected_language)->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset + count($posts))->get();
                         }
                         else {
-                            $posts_next = Post::where('post_category_id','=',$input['postcategoryid'])->where('sub_category_id', $sub_category_id)->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset + count($posts))->get();
+                            $posts_next = Post::where('post_category_id','=',$input['postcategoryid'])->whereIn('language_id', $user_selected_language)->where('sub_category_id', $sub_category_id)->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset + count($posts))->get();
                         }
                     }
                     else {
                         if($sub_category_id == 0) {
-                            $posts_next = Post::where('post_category_id','=',$input['postcategoryid'])->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset + count($posts))->get();
+                            $posts_next = Post::where('post_category_id','=',$input['postcategoryid'])->whereIn('language_id', $user_selected_language)->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset + count($posts))->get();
                         }
                         else {
-                            $posts_next = Post::where('post_category_id','=',$input['postcategoryid'])->where('sub_category_id', $sub_category_id)->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset + count($posts))->get();
+                            $posts_next = Post::where('post_category_id','=',$input['postcategoryid'])->whereIn('language_id', $user_selected_language)->where('sub_category_id', $sub_category_id)->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset + count($posts))->get();
                         }
                     }
                 }
                 else
                 {
                     if($sub_category_id == 0) {
-                        $posts_next = Post::where('post_category_id','=',$input['postcategoryid'])->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset + count($posts))->get();
+                        $posts_next = Post::where('post_category_id','=',$input['postcategoryid'])->whereIn('language_id', $user_selected_language)->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset + count($posts))->get();
                     }
                     else {
-                        $posts_next = Post::where('post_category_id','=',$input['postcategoryid'])->where('sub_category_id', $sub_category_id)->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset + count($posts))->get();
+                        $posts_next = Post::where('post_category_id','=',$input['postcategoryid'])->whereIn('language_id', $user_selected_language)->where('sub_category_id', $sub_category_id)->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset + count($posts))->get();
                     }
 
                 }
@@ -2024,10 +2034,10 @@ class UserapiControllerV13 extends Controller
             else
             {
                 if($sub_category_id == 0) {
-                    $posts_next = Post::where('post_category_id','=',$input['postcategoryid'])->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->whereIn('language_id',$languageid)->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset + count($posts))->get();
+                    $posts_next = Post::where('post_category_id','=',$input['postcategoryid'])->whereIn('language_id', $user_selected_language)->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->whereIn('language_id',$languageid)->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset + count($posts))->get();
                 }
                 else {
-                    $posts_next = Post::where('post_category_id','=',$input['postcategoryid'])->where('sub_category_id', $sub_category_id)->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->whereIn('language_id',$languageid)->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset + count($posts))->get();
+                    $posts_next = Post::where('post_category_id','=',$input['postcategoryid'])->whereIn('language_id', $user_selected_language)->where('sub_category_id', $sub_category_id)->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->whereIn('language_id',$languageid)->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset + count($posts))->get();
                 }
 
             }
@@ -2066,7 +2076,7 @@ class UserapiControllerV13 extends Controller
                 $videoid = 0;
             }
 
-            $categoriesIds = DB::table('video_post_data')->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->groupBy('sub_category_id')->pluck('sub_category_id')->toArray();
+            $categoriesIds = DB::table('video_post_data')->whereIn('language_id', $user_selected_language)->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->groupBy('sub_category_id')->pluck('sub_category_id')->toArray();
             $categories = VideoSubCategory::whereIn('id', $categoriesIds)->where('festival_id', $videoid)->where('is_delete',0)->get();
 
             $language_id = $input['languageid'];
@@ -2090,19 +2100,19 @@ class UserapiControllerV13 extends Controller
                 if($user_language != null )
                 {
                     if($sub_category_id == 0) {
-                        $video = DB::table('video_post_data')->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
+                        $video = DB::table('video_post_data')->whereIn('language_id', $user_selected_language)->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
                     }
                     else {
-                        $video = DB::table('video_post_data')->where('sub_category_id', $sub_category_id)->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
+                        $video = DB::table('video_post_data')->whereIn('language_id', $user_selected_language)->where('sub_category_id', $sub_category_id)->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
                     }
                 }
                 else
                 {
                     if($sub_category_id == 0) {
-                        $video = DB::table('video_post_data')->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
+                        $video = DB::table('video_post_data')->whereIn('language_id', $user_selected_language)->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
                     }
                     else {
-                        $video = DB::table('video_post_data')->where('sub_category_id', $sub_category_id)->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
+                        $video = DB::table('video_post_data')->whereIn('language_id', $user_selected_language)->where('sub_category_id', $sub_category_id)->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
                     }
 
                 }
@@ -2110,15 +2120,15 @@ class UserapiControllerV13 extends Controller
             else
             {
                 if($sub_category_id == 0) {
-                    $video = DB::table('video_post_data')->where('video_post_id','=',$videoid)->whereIn('language_id',$languageid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
+                    $video = DB::table('video_post_data')->whereIn('language_id', $user_selected_language)->where('video_post_id','=',$videoid)->whereIn('language_id',$languageid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
                 }
                 else {
-                    $video = DB::table('video_post_data')->where('sub_category_id', $sub_category_id)->where('video_post_id','=',$videoid)->whereIn('language_id',$languageid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
+                    $video = DB::table('video_post_data')->whereIn('language_id', $user_selected_language)->where('sub_category_id', $sub_category_id)->where('video_post_id','=',$videoid)->whereIn('language_id',$languageid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
                 }
 
             }
 
-            $language_ids = DB::table('video_post_data')->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->select('language_id')->get()->toArray();
+            $language_ids = DB::table('video_post_data')->whereIn('language_id', $user_selected_language)->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->select('language_id')->get()->toArray();
 
             $language_id_array = [];
             foreach ($language_ids as $id){
@@ -2137,6 +2147,7 @@ class UserapiControllerV13 extends Controller
                     if(!empty($category)) {
                         $post = DB::table('business_category_post_data')
                                     ->where('is_deleted', 0)
+                                    ->whereIn('language_id', $user_selected_language)
                                     ->where('post_type', $type)
                                     ->where('buss_cat_post_id', $category->id)
                                     ->where('festival_id', $input['postcategoryid'])
@@ -2190,19 +2201,19 @@ class UserapiControllerV13 extends Controller
                 if($user_language != null )
                 {
                     if($sub_category_id == 0) {
-                        $video_next = DB::table('video_post_data')->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($video))->get();
+                        $video_next = DB::table('video_post_data')->whereIn('language_id', $user_selected_language)->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($video))->get();
                     }
                     else {
-                        $video_next = DB::table('video_post_data')->where('sub_category_id', $sub_category_id)->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($video))->get();
+                        $video_next = DB::table('video_post_data')->whereIn('language_id', $user_selected_language)->where('sub_category_id', $sub_category_id)->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($video))->get();
                     }
                 }
                 else
                 {
                     if($sub_category_id == 0) {
-                        $video_next = DB::table('video_post_data')->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($video))->get();
+                        $video_next = DB::table('video_post_data')->whereIn('language_id', $user_selected_language)->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($video))->get();
                     }
                     else {
-                        $video_next = DB::table('video_post_data')->where('sub_category_id', $sub_category_id)->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($video))->get();
+                        $video_next = DB::table('video_post_data')->whereIn('language_id', $user_selected_language)->where('sub_category_id', $sub_category_id)->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($video))->get();
                     }
 
                 }
@@ -2210,10 +2221,10 @@ class UserapiControllerV13 extends Controller
             else
             {
                 if($sub_category_id == 0) {
-                    $video_next = DB::table('video_post_data')->where('video_post_id','=',$videoid)->whereIn('language_id',$languageid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($video))->get();
+                    $video_next = DB::table('video_post_data')->whereIn('language_id', $user_selected_language)->where('video_post_id','=',$videoid)->whereIn('language_id',$languageid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($video))->get();
                 }
                 else {
-                    $video_next = DB::table('video_post_data')->where('sub_category_id', $sub_category_id)->where('video_post_id','=',$videoid)->whereIn('language_id',$languageid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($video))->get();
+                    $video_next = DB::table('video_post_data')->whereIn('language_id', $user_selected_language)->where('sub_category_id', $sub_category_id)->where('video_post_id','=',$videoid)->whereIn('language_id',$languageid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($video))->get();
                 }
 
             }
@@ -3973,6 +3984,8 @@ class UserapiControllerV13 extends Controller
         $transactionLimit = Helper::GetLimit();
 
         $user_language = User::where('id',$user_id)->value('user_language');
+        $user_selected_language = explode(",", $user_language);
+        array_push($user_selected_language, '2','4');
         //$user_language = !empty($user_language) ? explode(',',$user_language) : array();
 
         $categories = VideoSubCategory::where('festival_id', $videoid)->where('is_delete',0)->get();
@@ -3984,10 +3997,10 @@ class UserapiControllerV13 extends Controller
             if($user_language != null )
             {
                 if($sub_category_id == 0) {
-                    $video = DB::table('video_post_data')->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
+                    $video = DB::table('video_post_data')->whereIn('language_id', $user_selected_language)->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
                 }
                 else {
-                    $video = DB::table('video_post_data')->where('sub_category_id', $sub_category_id)->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
+                    $video = DB::table('video_post_data')->whereIn('language_id', $user_selected_language)->where('sub_category_id', $sub_category_id)->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
                 }
             }
             else
@@ -4004,15 +4017,15 @@ class UserapiControllerV13 extends Controller
         else
         {
             if($sub_category_id == 0) {
-                $video = DB::table('video_post_data')->where('video_post_id','=',$videoid)->whereIn('language_id',$languageid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
+                $video = DB::table('video_post_data')->whereIn('language_id', $user_selected_language)->where('video_post_id','=',$videoid)->whereIn('language_id',$languageid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
             }
             else {
-                $video = DB::table('video_post_data')->where('sub_category_id', $sub_category_id)->where('video_post_id','=',$videoid)->whereIn('language_id',$languageid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
+                $video = DB::table('video_post_data')->whereIn('language_id', $user_selected_language)->where('sub_category_id', $sub_category_id)->where('video_post_id','=',$videoid)->whereIn('language_id',$languageid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
             }
 
         }
 
-        $language_ids = DB::table('video_post_data')->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->select('language_id')->get()->toArray();
+        $language_ids = DB::table('video_post_data')->whereIn('language_id', $user_selected_language)->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->select('language_id')->get()->toArray();
 
         $language_id_array = [];
         foreach ($language_ids as $id){
@@ -4043,19 +4056,19 @@ class UserapiControllerV13 extends Controller
             if($user_language != null )
             {
                 if($sub_category_id == 0) {
-                    $video_next = DB::table('video_post_data')->where('video_post_id','=',$videoid)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($video))->get();
+                    $video_next = DB::table('video_post_data')->whereIn('language_id', $user_selected_language)->where('video_post_id','=',$videoid)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($video))->get();
                 }
                 else {
-                    $video_next = DB::table('video_post_data')->where('sub_category_id', $sub_category_id)->where('video_post_id','=',$videoid)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($video))->get();
+                    $video_next = DB::table('video_post_data')->whereIn('language_id', $user_selected_language)->where('sub_category_id', $sub_category_id)->where('video_post_id','=',$videoid)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($video))->get();
                 }
             }
             else
             {
                 if($sub_category_id == 0) {
-                    $video_next = DB::table('video_post_data')->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($video))->get();
+                    $video_next = DB::table('video_post_data')->whereIn('language_id', $user_selected_language)->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($video))->get();
                 }
                 else {
-                    $video_next = DB::table('video_post_data')->where('sub_category_id', $sub_category_id)->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($video))->get();
+                    $video_next = DB::table('video_post_data')->whereIn('language_id', $user_selected_language)->where('sub_category_id', $sub_category_id)->where('video_post_id','=',$videoid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($video))->get();
                 }
 
             }
@@ -4063,10 +4076,10 @@ class UserapiControllerV13 extends Controller
         else
         {
             if($sub_category_id == 0) {
-                $video_next = DB::table('video_post_data')->where('video_post_id','=',$videoid)->whereIn('language_id',$languageid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($video))->get();
+                $video_next = DB::table('video_post_data')->whereIn('language_id', $user_selected_language)->where('video_post_id','=',$videoid)->whereIn('language_id',$languageid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($video))->get();
             }
             else {
-                $video_next = DB::table('video_post_data')->where('sub_category_id', $sub_category_id)->where('video_post_id','=',$videoid)->whereIn('language_id',$languageid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($video))->get();
+                $video_next = DB::table('video_post_data')->whereIn('language_id', $user_selected_language)->where('sub_category_id', $sub_category_id)->where('video_post_id','=',$videoid)->whereIn('language_id',$languageid)->where('is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($video))->get();
             }
 
         }
@@ -4212,11 +4225,15 @@ class UserapiControllerV13 extends Controller
             return response()->json(['status'=>false,'message'=>'user not valid']);
         }
 
+        $user = User::find($user_id);
+        $user_selected_language = explode(",", $user->user_language);
+        array_push($user_selected_language, '2','4');
+
         $new_category_data_greetings = DB::table('custom_cateogry')->whereIn('highlight',array(2,3))->orderBy('slider_img_position','ASC')->get();
         $new_category_data_greetingsArray = array();
         foreach ($new_category_data_greetings as $greeting) {
 
-            $photo = DB::table('custom_cateogry_data')->where('custom_cateogry_id','=',$greeting->custom_cateogry_id)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderBy('custom_cateogry_data_id','DESC')->limit(10)->get();
+            $photo = DB::table('custom_cateogry_data')->whereIn('language_id', $user_selected_language)->where('custom_cateogry_id','=',$greeting->custom_cateogry_id)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderBy('custom_cateogry_data_id','DESC')->limit(10)->get();
 
             $temp1['id'] = $greeting->custom_cateogry_id;
             $temp1['title'] = $greeting->name;
@@ -4304,10 +4321,12 @@ class UserapiControllerV13 extends Controller
         $transactionLimit = Helper::GetLimit();
 
         $user_language = User::where('id',$user_id)->value('user_language');
+        $user_selected_language = explode(",", $user_language);
+        array_push($user_selected_language, '2', '4');
         //$user_language = !empty($user_language) ? explode(',',$user_language) : array();
 
         $sub_category_id = $input['sub_category_id'];
-        $categoriesIds = DB::table('custom_cateogry_data')->where('custom_cateogry_id','=',$catid)->where('is_delete','=',0)->groupBy('custom_sub_category_id')->pluck('custom_sub_category_id')->toArray();
+        $categoriesIds = DB::table('custom_cateogry_data')->whereIn('language_id', $user_selected_language)->where('custom_cateogry_id','=',$catid)->where('is_delete','=',0)->groupBy('custom_sub_category_id')->pluck('custom_sub_category_id')->toArray();
         $categories = CustomSubCategory::whereIn('id', $categoriesIds)->where('custom_category_id', $catid)->where('is_delete', 0)->get();
 
         //dd($languageid);
@@ -4316,34 +4335,34 @@ class UserapiControllerV13 extends Controller
             if($user_language != null)
             {
                 if($sub_category_id == 0) {
-                    $cat = DB::table('custom_cateogry_data')->where('custom_cateogry_id','=',$catid)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('custom_cateogry_data_id','DESC')->take($transactionLimit)->skip($offset)->get();
+                    $cat = DB::table('custom_cateogry_data')->whereIn('language_id', $user_selected_language)->where('custom_cateogry_id','=',$catid)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('custom_cateogry_data_id','DESC')->take($transactionLimit)->skip($offset)->get();
                 }
                 else {
-                    $cat = DB::table('custom_cateogry_data')->where('custom_sub_category_id', $sub_category_id)->where('custom_cateogry_id','=',$catid)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('custom_cateogry_data_id','DESC')->take($transactionLimit)->skip($offset)->get();
+                    $cat = DB::table('custom_cateogry_data')->whereIn('language_id', $user_selected_language)->where('custom_sub_category_id', $sub_category_id)->where('custom_cateogry_id','=',$catid)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('custom_cateogry_data_id','DESC')->take($transactionLimit)->skip($offset)->get();
                 }
             }
             else
             {
                 if($sub_category_id == 0) {
-                    $cat = DB::table('custom_cateogry_data')->where('custom_cateogry_id','=',$catid)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderBy('custom_cateogry_data_id','DESC')->take($transactionLimit)->skip($offset)->get();
+                    $cat = DB::table('custom_cateogry_data')->whereIn('language_id', $user_selected_language)->where('custom_cateogry_id','=',$catid)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderBy('custom_cateogry_data_id','DESC')->take($transactionLimit)->skip($offset)->get();
                 }
                 else {
-                    $cat = DB::table('custom_cateogry_data')->where('custom_sub_category_id', $sub_category_id)->where('custom_cateogry_id','=',$catid)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderBy('custom_cateogry_data_id','DESC')->take($transactionLimit)->skip($offset)->get();
+                    $cat = DB::table('custom_cateogry_data')->whereIn('language_id', $user_selected_language)->where('custom_sub_category_id', $sub_category_id)->where('custom_cateogry_id','=',$catid)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderBy('custom_cateogry_data_id','DESC')->take($transactionLimit)->skip($offset)->get();
                 }
             }
         }
         else
         {
             if($sub_category_id == 0) {
-                $cat = DB::table('custom_cateogry_data')->where('custom_cateogry_id','=',$catid)->whereIn('language_id',$languageid)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderBy('custom_cateogry_data_id','DESC')->take($transactionLimit)->skip($offset)->get();
+                $cat = DB::table('custom_cateogry_data')->whereIn('language_id', $user_selected_language)->where('custom_cateogry_id','=',$catid)->whereIn('language_id',$languageid)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderBy('custom_cateogry_data_id','DESC')->take($transactionLimit)->skip($offset)->get();
             }
             else {
-                $cat = DB::table('custom_cateogry_data')->where('custom_sub_category_id', $sub_category_id)->where('custom_cateogry_id','=',$catid)->whereIn('language_id',$languageid)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderBy('custom_cateogry_data_id','DESC')->take($transactionLimit)->skip($offset)->get();
+                $cat = DB::table('custom_cateogry_data')->whereIn('language_id', $user_selected_language)->where('custom_sub_category_id', $sub_category_id)->where('custom_cateogry_id','=',$catid)->whereIn('language_id',$languageid)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderBy('custom_cateogry_data_id','DESC')->take($transactionLimit)->skip($offset)->get();
             }
 
         }
 
-        $language_ids = DB::table('custom_cateogry_data')->where('is_delete','=',0)->where('custom_cateogry_id','=',$catid)->select('language_id')->get()->toArray();
+        $language_ids = DB::table('custom_cateogry_data')->whereIn('language_id', $user_selected_language)->where('is_delete','=',0)->where('custom_cateogry_id','=',$catid)->select('language_id')->get()->toArray();
         // $language_id_array = array_unique($language_ids, SORT_REGULAR);
 
         $language_id_array = [];
@@ -4376,19 +4395,19 @@ class UserapiControllerV13 extends Controller
             if($user_language != null)
             {
                 if($sub_category_id == 0) {
-                    $cat_next = DB::table('custom_cateogry_data')->where('custom_cateogry_id','=',$catid)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('custom_cateogry_data_id','DESC')->take($transactionLimit)->skip($offset + count($cat))->get();
+                    $cat_next = DB::table('custom_cateogry_data')->whereIn('language_id', $user_selected_language)->where('custom_cateogry_id','=',$catid)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('custom_cateogry_data_id','DESC')->take($transactionLimit)->skip($offset + count($cat))->get();
                 }
                 else{
-                    $cat_next = DB::table('custom_cateogry_data')->where('custom_sub_category_id', $sub_category_id)->where('custom_cateogry_id','=',$catid)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('custom_cateogry_data_id','DESC')->take($transactionLimit)->skip($offset + count($cat))->get();
+                    $cat_next = DB::table('custom_cateogry_data')->whereIn('language_id', $user_selected_language)->where('custom_sub_category_id', $sub_category_id)->where('custom_cateogry_id','=',$catid)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('custom_cateogry_data_id','DESC')->take($transactionLimit)->skip($offset + count($cat))->get();
                 }
             }
             else
             {
                 if($sub_category_id == 0) {
-                    $cat_next = DB::table('custom_cateogry_data')->where('custom_cateogry_id','=',$catid)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderBy('custom_cateogry_data_id','DESC')->take($transactionLimit)->skip($offset + count($cat))->get();
+                    $cat_next = DB::table('custom_cateogry_data')->whereIn('language_id', $user_selected_language)->where('custom_cateogry_id','=',$catid)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderBy('custom_cateogry_data_id','DESC')->take($transactionLimit)->skip($offset + count($cat))->get();
                 }
                 else{
-                    $cat_next = DB::table('custom_cateogry_data')->where('custom_sub_category_id', $sub_category_id)->where('custom_cateogry_id','=',$catid)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderBy('custom_cateogry_data_id','DESC')->take($transactionLimit)->skip($offset + count($cat))->get();
+                    $cat_next = DB::table('custom_cateogry_data')->whereIn('language_id', $user_selected_language)->where('custom_sub_category_id', $sub_category_id)->where('custom_cateogry_id','=',$catid)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderBy('custom_cateogry_data_id','DESC')->take($transactionLimit)->skip($offset + count($cat))->get();
                 }
 
             }
@@ -4396,10 +4415,10 @@ class UserapiControllerV13 extends Controller
         else
         {
             if($sub_category_id == 0) {
-                $cat_next = DB::table('custom_cateogry_data')->where('custom_cateogry_id','=',$catid)->whereIn('language_id',$languageid)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderBy('custom_cateogry_data_id','DESC')->take($transactionLimit)->skip($offset + count($cat))->get();
+                $cat_next = DB::table('custom_cateogry_data')->whereIn('language_id', $user_selected_language)->where('custom_cateogry_id','=',$catid)->whereIn('language_id',$languageid)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderBy('custom_cateogry_data_id','DESC')->take($transactionLimit)->skip($offset + count($cat))->get();
             }
             else{
-                $cat_next = DB::table('custom_cateogry_data')->where('custom_sub_category_id', $sub_category_id)->where('custom_cateogry_id','=',$catid)->whereIn('language_id',$languageid)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderBy('custom_cateogry_data_id','DESC')->take($transactionLimit)->skip($offset + count($cat))->get();
+                $cat_next = DB::table('custom_cateogry_data')->whereIn('language_id', $user_selected_language)->where('custom_sub_category_id', $sub_category_id)->where('custom_cateogry_id','=',$catid)->whereIn('language_id',$languageid)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderBy('custom_cateogry_data_id','DESC')->take($transactionLimit)->skip($offset + count($cat))->get();
             }
 
         }
@@ -4450,6 +4469,11 @@ class UserapiControllerV13 extends Controller
         if($user_id == 0){
             return response()->json(['status'=>false,'message'=>'user not valid']);
         }
+
+        $user = User::find($user_id);
+        $user_selected_language = explode(",", $user->user_language);
+        array_push($user_selected_language, '2', '4');
+
         $currnt_date = date('Y-m-d');
         $festivals = array();
         if($input['date'] != ''){
@@ -4542,7 +4566,7 @@ class UserapiControllerV13 extends Controller
             $data['image'] = !empty($value->image)?Storage::url($value->image):"";
             array_push($plan, $data);
         }
-         return response()->json(['data'=> $plan, 'status'=>true,'message'=>'List of Plan']);
+        return response()->json(['data'=> $plan, 'status'=>true,'message'=>'List of Plan']);
     }
 
     public function getBusinessCategoryImages(Request $request)
@@ -4575,25 +4599,27 @@ class UserapiControllerV13 extends Controller
         $categories = BusinessSubCategory::whereIn('id', $categoriesIds)->where('business_category_id', $request->buss_cat_id)->where('is_delete', 0)->get();
 
         $user_language = User::where('id',$user_id)->value('user_language');
+        $user_selected_language = explode(',', $user_language);
+        array_push($user_selected_language, '2','4');
 
         if (in_array(0, $languageid))
         {
             if($user_language != null)
             {
                 if($sub_category_id == 0) {
-                    $images = DB::table('business_category_post_data')->where('post_type', $type)->where('buss_cat_post_id','=',$request->buss_cat_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')/*->orderByRaw("FIELD(language_id , ".$user_language.") DESC")*/->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
+                    $images = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type', $type)->where('buss_cat_post_id','=',$request->buss_cat_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')/*->orderByRaw("FIELD(language_id , ".$user_language.") DESC")*/->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
                 }
                 else {
-                    $images = DB::table('business_category_post_data')->where('post_type', $type)->where('business_sub_category_id', $sub_category_id)->where('buss_cat_post_id','=',$request->buss_cat_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')/*->orderByRaw("FIELD(language_id , ".$user_language.") DESC")*/->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
+                    $images = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type', $type)->where('business_sub_category_id', $sub_category_id)->where('buss_cat_post_id','=',$request->buss_cat_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')/*->orderByRaw("FIELD(language_id , ".$user_language.") DESC")*/->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
                 }
             }
             else
             {
                 if($sub_category_id == 0) {
-                    $images = DB::table('business_category_post_data')->where('post_type', $type)->where('buss_cat_post_id','=',$request->buss_cat_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
+                    $images = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type', $type)->where('buss_cat_post_id','=',$request->buss_cat_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
                 }
                 else {
-                    $images = DB::table('business_category_post_data')->where('post_type', $type)->where('business_sub_category_id', $sub_category_id)->where('buss_cat_post_id','=',$request->buss_cat_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
+                    $images = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type', $type)->where('business_sub_category_id', $sub_category_id)->where('buss_cat_post_id','=',$request->buss_cat_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
                 }
 
             }
@@ -4601,15 +4627,15 @@ class UserapiControllerV13 extends Controller
         else
         {
             if($sub_category_id == 0) {
-                $images = DB::table('business_category_post_data')->where('post_type', $type)->where('buss_cat_post_id','=',$request->buss_cat_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->whereIn('language_id',$languageid)->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
+                $images = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type', $type)->where('buss_cat_post_id','=',$request->buss_cat_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->whereIn('language_id',$languageid)->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
             }
             else {
-                $images = DB::table('business_category_post_data')->where('post_type', $type)->where('business_sub_category_id', $sub_category_id)->where('buss_cat_post_id','=',$request->buss_cat_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->whereIn('language_id',$languageid)->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
+                $images = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type', $type)->where('business_sub_category_id', $sub_category_id)->where('buss_cat_post_id','=',$request->buss_cat_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->whereIn('language_id',$languageid)->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
             }
 
         }
 
-        $language_ids = DB::table('business_category_post_data')->where('post_type', $type)->where('buss_cat_post_id','=',$request->buss_cat_id)->where('is_deleted','=',0)->where('festival_id', 0)->select('language_id')->get()->toArray();
+        $language_ids = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type', $type)->where('buss_cat_post_id','=',$request->buss_cat_id)->where('is_deleted','=',0)->where('festival_id', 0)->select('language_id')->get()->toArray();
         // $language_id_array = array_unique($language_ids, SORT_REGULAR);
         $language_id_array = [];
         foreach ($language_ids as $id){
@@ -4642,19 +4668,19 @@ class UserapiControllerV13 extends Controller
                 if($user_language != null)
                 {
                     if($sub_category_id == 0) {
-                        $Getimages_next = DB::table('business_category_post_data')->where('post_type', $type)->where('buss_cat_post_id','=',$request->buss_cat_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($images))->get();
+                        $Getimages_next = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type', $type)->where('buss_cat_post_id','=',$request->buss_cat_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($images))->get();
                     }
                     else {
-                        $Getimages_next = DB::table('business_category_post_data')->where('post_type', $type)->where('business_sub_category_id', $sub_category_id)->where('buss_cat_post_id','=',$request->buss_cat_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($images))->get();
+                        $Getimages_next = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type', $type)->where('business_sub_category_id', $sub_category_id)->where('buss_cat_post_id','=',$request->buss_cat_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($images))->get();
                     }
                 }
                 else
                 {
                     if($sub_category_id == 0) {
-                        $Getimages_next = DB::table('business_category_post_data')->where('post_type', $type)->where('buss_cat_post_id','=',$request->buss_cat_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($images))->get();
+                        $Getimages_next = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type', $type)->where('buss_cat_post_id','=',$request->buss_cat_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($images))->get();
                     }
                     else {
-                        $Getimages_next = DB::table('business_category_post_data')->where('post_type', $type)->where('business_sub_category_id', $sub_category_id)->where('buss_cat_post_id','=',$request->buss_cat_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($images))->get();
+                        $Getimages_next = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type', $type)->where('business_sub_category_id', $sub_category_id)->where('buss_cat_post_id','=',$request->buss_cat_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($images))->get();
                     }
 
                 }
@@ -4662,10 +4688,10 @@ class UserapiControllerV13 extends Controller
             else
             {
                 if($sub_category_id == 0) {
-                    $Getimages_next = DB::table('business_category_post_data')->where('post_type', $type)->where('buss_cat_post_id','=',$request->buss_cat_id)->where('is_deleted','=',0)->where('festival_id', 0)->whereIn('language_id',$languageid)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($images))->get();
+                    $Getimages_next = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type', $type)->where('buss_cat_post_id','=',$request->buss_cat_id)->where('is_deleted','=',0)->where('festival_id', 0)->whereIn('language_id',$languageid)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($images))->get();
                 }
                 else {
-                    $Getimages_next = DB::table('business_category_post_data')->where('post_type', $type)->where('business_sub_category_id', $sub_category_id)->where('buss_cat_post_id','=',$request->buss_cat_id)->where('is_deleted','=',0)->where('festival_id', 0)->whereIn('language_id',$languageid)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($images))->get();
+                    $Getimages_next = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type', $type)->where('business_sub_category_id', $sub_category_id)->where('buss_cat_post_id','=',$request->buss_cat_id)->where('is_deleted','=',0)->where('festival_id', 0)->whereIn('language_id',$languageid)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($images))->get();
                 }
 
             }
@@ -4727,18 +4753,20 @@ class UserapiControllerV13 extends Controller
         $languageid = explode(',', $language_id);
 
         $user_language = User::where('id',$user_id)->value('user_language');
+        $user_selected_language = explode(",", $user_language);
+        array_push($user_selected_language, '2', '4');
         //$user_language = !empty($user_language) ? explode(',',$user_language) : array();
 
         $type = $request->type;
 
         $isVideoAvailable = false;
-        $videoPost = DB::table('business_category_post_data')->where('post_type','video')->where('buss_cat_post_id','=',$request->busi_id)->where('festival_id', 0)->where('is_deleted','=',0)->first();
+        $videoPost = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type','video')->where('buss_cat_post_id','=',$request->busi_id)->where('festival_id', 0)->where('is_deleted','=',0)->first();
         if($videoPost) {
             $isVideoAvailable = true;
         }
 
         $sub_category_id = $input['sub_category_id'];
-        $categoriesIds = DB::table('business_category_post_data')->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->groupBy('business_sub_category_id')->pluck('business_sub_category_id')->toArray();
+        $categoriesIds = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->groupBy('business_sub_category_id')->pluck('business_sub_category_id')->toArray();
         $categories = BusinessSubCategory::whereIn('id', $categoriesIds)->where('business_category_id', $request->busi_id)->where('is_delete', 0)->get();
 
 
@@ -4748,19 +4776,19 @@ class UserapiControllerV13 extends Controller
             if($user_language != null)
             {
                 if($sub_category_id == 0) {
-                    $currntbusiness_photo = DB::table('business_category_post_data')->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')/*->orderByRaw("FIELD(language_id , ".$user_language.") DESC")*/->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
+                    $currntbusiness_photo = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')/*->orderByRaw("FIELD(language_id , ".$user_language.") DESC")*/->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
                 }
                 else {
-                    $currntbusiness_photo = DB::table('business_category_post_data')->where('business_sub_category_id', $sub_category_id)->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')/*->orderByRaw("FIELD(language_id , ".$user_language.") DESC")*/->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
+                    $currntbusiness_photo = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('business_sub_category_id', $sub_category_id)->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')/*->orderByRaw("FIELD(language_id , ".$user_language.") DESC")*/->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
                 }
             }
             else
             {
                 if($sub_category_id == 0) {
-                    $currntbusiness_photo = DB::table('business_category_post_data')->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
+                    $currntbusiness_photo = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
                 }
                 else {
-                    $currntbusiness_photo = DB::table('business_category_post_data')->where('business_sub_category_id', $sub_category_id)->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
+                    $currntbusiness_photo = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('business_sub_category_id', $sub_category_id)->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
                 }
             }
 
@@ -4769,18 +4797,18 @@ class UserapiControllerV13 extends Controller
         else
         {
             if($sub_category_id == 0) {
-                $currntbusiness_photo = DB::table('business_category_post_data')->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->whereIn('language_id',$languageid)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
+                $currntbusiness_photo = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->whereIn('language_id',$languageid)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
             }
             else {
-                $currntbusiness_photo = DB::table('business_category_post_data')->where('business_sub_category_id', $sub_category_id)->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->whereIn('language_id',$languageid)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
+                $currntbusiness_photo = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('business_sub_category_id', $sub_category_id)->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->whereIn('language_id',$languageid)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
             }
 
         }
         if($sub_category_id == 0) {
-            $language_ids = DB::table('business_category_post_data')->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->select('language_id')->get()->toArray();
+            $language_ids = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->select('language_id')->get()->toArray();
         }
         else {
-            $language_ids = DB::table('business_category_post_data')->where('business_sub_category_id', $sub_category_id)->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->select('language_id')->get()->toArray();
+            $language_ids = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('business_sub_category_id', $sub_category_id)->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->select('language_id')->get()->toArray();
         }
         $language_id_array = [];
         foreach ($language_ids as $id){
@@ -4815,29 +4843,29 @@ class UserapiControllerV13 extends Controller
                 if($user_language != null)
                 {
                     if($sub_category_id == 0) {
-                        $currntbusiness_photo_next = DB::table('business_category_post_data')->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($currntbusiness_photo))->get();
+                        $currntbusiness_photo_next = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($currntbusiness_photo))->get();
                     }
                     else {
-                        $currntbusiness_photo_next = DB::table('business_category_post_data')->where('business_sub_category_id', $sub_category_id)->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($currntbusiness_photo))->get();
+                        $currntbusiness_photo_next = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('business_sub_category_id', $sub_category_id)->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderByRaw("FIELD(language_id , ".$user_language.") DESC")->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($currntbusiness_photo))->get();
                     }
                 }
                 else
                 {
                     if($sub_category_id == 0) {
-                        $currntbusiness_photo_next = DB::table('business_category_post_data')->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($currntbusiness_photo))->get();
+                        $currntbusiness_photo_next = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($currntbusiness_photo))->get();
                     }
                     else {
-                        $currntbusiness_photo_next = DB::table('business_category_post_data')->where('business_sub_category_id', $sub_category_id)->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($currntbusiness_photo))->get();
+                        $currntbusiness_photo_next = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('business_sub_category_id', $sub_category_id)->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($currntbusiness_photo))->get();
                     }
                 }
             }
             else
             {
                 if($sub_category_id == 0) {
-                    $currntbusiness_photo_next = DB::table('business_category_post_data')->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->whereIn('language_id',$languageid)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($currntbusiness_photo))->get();
+                    $currntbusiness_photo_next = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->whereIn('language_id',$languageid)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($currntbusiness_photo))->get();
                 }
                 else {
-                    $currntbusiness_photo_next = DB::table('business_category_post_data')->where('business_sub_category_id', $sub_category_id)->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->whereIn('language_id',$languageid)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($currntbusiness_photo))->get();
+                    $currntbusiness_photo_next = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('business_sub_category_id', $sub_category_id)->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->whereIn('language_id',$languageid)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset + count($currntbusiness_photo))->get();
                 }
             }
 
@@ -5637,6 +5665,123 @@ class UserapiControllerV13 extends Controller
         return response()->json(['status' => true, 'data' => $data,'message'=>"Backgrounds fetched successfully"]);
     }
 
+    public function getFrames(Request $request) {
+        $input = $request->all();
+
+        $user_id = $this->get_userid($input['token']);
+        if($user_id == 0){
+            return response()->json(['status'=>false,'message'=>'user not valid']);
+        }
+        $user = User::find($user_id);
+        if($request->frame_type == "Business") {
+            $business = Business::where('busi_id',$user->default_business_id)->first();
+            if(empty($business)) {
+                return response()->json(['status'=>false,'message'=>'Business not found']);
+            }
+        }
+        else {
+            $business = PoliticalBusiness::where('pb_id','=',$user->default_political_business_id)->where('pb_is_deleted','=',0)->first();
+            if(empty($business)) {
+                return response()->json(['status'=>false,'message'=>'Business not found']);
+            }
+        }
+
+        $postLimit = Helper::GetLimit();
+
+        $offset = 0;
+        if($request->has('offset')) {
+            $offset = $request->offset;
+        }
+
+        $frame_type = 'Business';
+        if($request->has('frame_type')) {
+            $frame_type = $request->frame_type;
+        }
+
+
+        $frames = Frame::where('frame_type', $frame_type)->where('is_active', 1)->skip($offset)->limit($postLimit)->get();
+        $frame_data = array();
+        foreach($frames as $frame) {
+            $data = [
+                'frame_image' => Storage::url($frame->frame_image),
+                'civ_height' => "675.0",
+                'civ_width' => "1280.0",
+                'custom_he' => "675.0",
+                'custom_wi' => "675.977600097656",
+                'custom_x' => "262.011169433594",
+                'custom_y' => "0.0",
+                'frame_name' => "frame",
+                'overlay_blur' => "0.0",
+                'overlay_name' => "",
+                'overlay_opacity' => "80",
+                'profile_type' => "Nature",
+                'ration' => '1:1',
+                'saveImageHeight' => "0",
+                'saveImageWidth' => "0",
+                'seek_value' => "378",
+                'shap_name' => "",
+                'template_id' => strval($frame->id),
+                'tempcolor' => "",
+                'temp_path' => "",
+                'thumb_uri' => "",
+                'type' => "user",
+                'componentInfoJsonArrayList' => array(),
+                'textInfoJsonArrayList' => array(),
+            ];
+            $images = FrameComponent::where('frame_id', $frame->id)->get();
+
+            $image_data = array();
+            foreach($images as &$image) {
+                $business_field = BusinessField::where('id', $image->image_for)->first();
+                if(!empty($business[$business_field->field_key])) {
+                    $image->template_id = strval($frame->id);
+                    $image->stkr_path = Storage::url($business[$business_field->field_key]);
+                    $image->order = strval($image->order_);
+                    unset($image->order_);
+                    array_push($image_data, $image);
+                }
+            }
+
+            // foreach($images as &$image) {
+            //     $image->template_id = strval($frame->id);
+            //     $image->stkr_path = Storage::url($image->stkr_path);
+            //     $image->order = strval($image->order_);
+            //     unset($image->order_);
+            // }
+            $texts = FrameText::where('frame_id', $frame->id)->get();
+            $textData = array();
+            foreach($texts as &$text) {
+                $business_field = BusinessField::where('id', $text->text_for)->first();
+                if(!empty($business[$business_field->field_key])) {
+                    $text->template_id = strval($frame->id);
+                    $text->text = $business[$business_field->field_key];
+                    $text->order = strval($text->order_);
+                    unset($text->order_);
+                    array_push($textData, $text);
+                }
+            }
+            // $data['componentInfoJsonArrayList'] = $images;
+            $data['componentInfoJsonArrayList'] = $image_data;
+            $data['textInfoJsonArrayList'] = $textData;
+            array_push($frame_data, $data);
+        }
+
+        $next = true;
+        $next_frame = Frame::where('is_active', 1)->skip($offset + $postLimit)->limit(1)->get();
+        if($next_frame->count() == 0) {
+            $next = false;
+        }
+
+        $meta = array(
+            'offset' => $offset + count($frame_data),
+            'limit' => intval($postLimit),
+            'record' => count($frame_data),
+            'next' => $next
+        );
+
+        return response()->json(['status' => true, 'data' => $frame_data, 'meta' => $meta,'message'=>"Frames fetched successfully"]);
+    }
+
     public function getGraphic(Request $request) {
 
         $input = $request->all();
@@ -5735,7 +5880,7 @@ class UserapiControllerV13 extends Controller
             $profile_id = $profile['id'];
         }
         if ($request->type == "instagram") {
-            $ids = explode(',', $request->instagram_ids); 
+            $ids = explode(',', $request->instagram_ids);
             foreach ($ids as $key => $insta_id) {
                 $endpoint = $insta_id.'?fields=biography%2Cid%2Cusername%2Cwebsite%2Cprofile_picture_url';
                 $get_post_status = $this->facebook->InstaGetData($request->auth_token, $endpoint);

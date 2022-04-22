@@ -1240,6 +1240,8 @@ Route::prefix('userapi/v12')->group(function() {
 
     Route::post('removeSocialPageLinkedIn', 'UserapiControllerV12@removeSocialPageLinkedIn');
 
+    Route::post('removeSocialPageFacebook', 'UserapiControllerV12@removeSocialPageFacebook');
+
     Route::post('getLinkedAccounts', 'UserapiControllerV12@getLinkedAccounts');
 
     Route::post('getScheduledPost', 'UserapiControllerV12@getScheduledPost');
@@ -1295,3 +1297,7 @@ Route::prefix('userapi/v12')->group(function() {
 Route::prefix('userapi/v13')->group(base_path('modules/Userapi/Routes/api13.php'));
 Route::prefix('userapi/v13_ios')->group(base_path('modules/Userapi/Routes/api13_ios.php'));
 //version v13 end
+
+//version v14 start
+Route::prefix('userapi/v14')->group(base_path('modules/Userapi/Routes/api14.php'));
+//version v14 end

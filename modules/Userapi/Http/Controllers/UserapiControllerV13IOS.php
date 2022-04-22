@@ -86,11 +86,11 @@ class UserapiControllerV13IOS extends Controller
                 }
                 $referral_by = 0;
                 if($referral_code != "") {
-                    $checkReferralCode = UserReferral::where('referral_code',$referral_code)->first();
+                    $checkReferralCode = User::where('ref_code',$referral_code)->first();
                     if(empty($checkReferralCode)) {
                         return response()->json(['status'=>false,'message'=>'Invalid referral code']);
                     }
-                    $referral_by = $checkReferralCode->user_id;
+                    $referral_by = $checkReferralCode->id;
                 }
                 $checkUser->name = $name;
                 $checkUser->country_code = $country_code;
@@ -1391,8 +1391,9 @@ class UserapiControllerV13IOS extends Controller
         // $popupData = (object)[];
         if($currntbusiness != null || !empty($currntbusiness) || $currntbusiness != ''){
             $priminum = Purchase::where('purc_business_id','=',$userdata->default_business_id)->where('purc_business_type', 1)->select('purc_id','purc_plan_id','purc_start_date','purc_end_date')->first();
-
+            $purchase_plan_id = 0;
             if(!empty($priminum) || $priminum != null || $priminum != ''){
+                $purchase_plan_id = $priminum->purc_plan_id;
                 $start_dates = date('Y-m-d');
                 if($priminum->purc_plan_id == 1){
                     $plantrial = Plan::where('plan_id','=',$priminum->purc_plan_id)->select('plan_validity')->first();
@@ -1463,6 +1464,7 @@ class UserapiControllerV13IOS extends Controller
                 $updatedCurrentBusinessDetails['busi_instagram'] = strval($currntbusiness->busi_instagram);
                 $updatedCurrentBusinessDetails['busi_linkedin'] = strval($currntbusiness->busi_linkedin);
                 $updatedCurrentBusinessDetails['busi_youtube'] = strval($currntbusiness->busi_youtube);
+                $updatedCurrentBusinessDetails['purc_plan_id'] = $purchase_plan_id;
                 $updatedCurrentBusinessDetails['watermark_image'] = ($currntbusiness->watermark_image) ? Storage::url(strval($currntbusiness->watermark_image)) : '';
 
                 $p_plan = Purchase::where('purc_user_id',$user_id)->where('purc_business_id',$userdata->default_business_id)->get();
@@ -1952,8 +1954,8 @@ class UserapiControllerV13IOS extends Controller
                     if($type == "image") {
                         $img_data['post_id'] = strval($img_value->id);
                         $img_data['post_content'] = !empty($img_value->thumbnail) ? Storage::url($img_value->thumbnail) :"";
-                        $img_data['image_thumbnail_url'] = !empty($img_value->post_thumb) ? Storage::url($img_value->post_thumb) : Storage::url($img_value->thumbnail);
-                        $img_data['image_type'] = strval($img_value->image_type);
+                        $img_data['image'] = !empty($img_value->post_thumb) ? Storage::url($img_value->post_thumb) : Storage::url($img_value->thumbnail);
+                        $img_data['type'] = strval($img_value->image_type);
                         $img_data['post_language_id'] = !empty($img_value->language_id) ? strval($img_value->language_id) :0;
                         $img_data['post_category_id'] = 0;
                     }
@@ -1971,9 +1973,9 @@ class UserapiControllerV13IOS extends Controller
             foreach($posts as $ph_value)
             {
                 $data_ph['post_content'] = !empty($ph_value->post_content) ? Storage::url($ph_value->post_content) :"";
-                $data_ph['image_thumbnail_url'] = !empty($ph_value->post_thumb) ? Storage::url($ph_value->post_thumb) : Storage::url($ph_value->post_content);
+                $data_ph['image'] = !empty($ph_value->post_thumb) ? Storage::url($ph_value->post_thumb) : Storage::url($ph_value->post_content);
                 $data_ph['post_id'] = !empty($ph_value->post_id) ? strval($ph_value->post_id) :0;
-                $data_ph['image_type'] = !empty($ph_value->image_type) ? strval($ph_value->image_type) :0;
+                $data_ph['type'] = !empty($ph_value->image_type) ? strval($ph_value->image_type) :0;
                 $data_ph['post_category_id'] = !empty($ph_value->post_category_id) ? strval($ph_value->post_category_id) :0;
                 $data_ph['post_language_id'] = !empty($ph_value->language_id) ? strval($ph_value->language_id) :0;
                 array_push($temp,$data_ph);
@@ -4245,7 +4247,7 @@ class UserapiControllerV13IOS extends Controller
             // $banner_img = '';
             $temp['custom_cateogry_id'] = strval($value->custom_cateogry_id);
             $temp['name'] = !empty($value->name)?$value->name:"";
-            $temp['custom_image'] = !empty($value->slider_img)?Storage::url($value->slider_img):"";
+            $temp['banner_image'] = !empty($value->slider_img)?Storage::url($value->slider_img):"";
 
             array_push($finalarry,$temp);
             $slide = array();
@@ -4264,7 +4266,7 @@ class UserapiControllerV13IOS extends Controller
             // $banner_img = '';
             $temp['custom_cateogry_id'] = strval($value->custom_cateogry_id);
             $temp['name'] = !empty($value->name)?$value->name:"";
-            $temp['custom_image'] = !empty($value->slider_img)?Storage::url($value->slider_img):"";
+            $temp['banner_image'] = !empty($value->slider_img)?Storage::url($value->slider_img):"";
 
             array_push($finalarry,$temp);
             $slide = array();
@@ -5707,6 +5709,9 @@ class UserapiControllerV13IOS extends Controller
         $socialLogin = SocialLogin::where('user_id', $user_id)->where('type', $request->type)->where('profile_id', $profile_id)->first();
         if(empty($socialLogin)) {
             $socialLogin = new SocialLogin;
+            if($request->login_for == "profile") {
+                $socialLogin->profile_added = 1;
+            }
         }
         else {
             if($socialLogin->profile_added == 0) {
@@ -5762,11 +5767,16 @@ class UserapiControllerV13IOS extends Controller
             if($request->type == "facebook") {
                 $pages = Helper::getUserFacebookPages($auth_token);
                 $pageData = $pages->data;
+                $pageList = array();
+                foreach($pageData as $page) {
+                    $page->image = "https://graph.facebook.com/" . $page->id . "/picture?type=large";
+                    array_push($pageList, $page);
+                }
                 if(count($pageData) == 0) {
-                    return response()->json(['status' => false,'message'=>'No page found', 'data' => $pageData]);
+                    return response()->json(['status' => false,'message'=>'No page found', 'data' => $pageList]);
                 }
                 $facebookPages = FacebookPage::where('user_id', $user_id)->where('profile_id', $profile_id)->pluck('page_id')->toArray();
-                $data = ['pageList' => $pageData, "facebookPages" => $facebookPages, 'profile_id' => $profile_id];
+                $data = ['pageList' => $pageList, "facebookPages" => $facebookPages, 'profile_id' => $profile_id];
                 return response()->json(['status' => true,'message'=>'Page List', 'data' => $data]);
             }
         }
@@ -5901,7 +5911,8 @@ class UserapiControllerV13IOS extends Controller
                 $page_id = $page->id;
                 $auth_token = $page->access_token;
                 $page_name = $page->name;
-                $page_photo = $default_profile_photo;
+                $page_photo = "https://graph.facebook.com/" . $page_id . "/picture?type=large";
+                // $page_photo = $default_profile_photo;
                 $checkPage = FacebookPage::where('user_id', $user_id)->where('profile_id', $profile_id)->where('page_id',$page_id)->first();
                 if(empty($checkPage)) {
                     $checkPage = new FacebookPage;
@@ -5927,13 +5938,18 @@ class UserapiControllerV13IOS extends Controller
         $profile_id = $request->profile_id;
         $checkProfile = SocialLogin::where('type', $profile_type)->where('profile_id', $profile_id)->where('user_id', $user_id)->first();
         if(!empty($checkProfile)) {
-            $checkPages = LinkedInPage::where('user_id', $user_id)->where('profile_id', $profile_id)->first();
-            if(empty($checkPages)) {
-                $checkProfile->delete();
+            if($profile_type == "linkedin") {
+                $checkPages = LinkedInPage::where('user_id', $user_id)->where('profile_id', $profile_id)->first();
+                if(empty($checkPages)) {
+                    $checkProfile->delete();
+                }
+                else {
+                    $checkProfile->profile_added = 0;
+                    $checkProfile->save();
+                }
             }
             else {
-                $checkProfile->profile_added = 0;
-                $checkProfile->save();
+                $checkProfile->delete();
             }
             return response()->json(['status' => true,'message'=>'Profile removed']);
         }
@@ -5947,6 +5963,20 @@ class UserapiControllerV13IOS extends Controller
         }
         $page_id = $request->page_id;
         $checkPage = LinkedInPage::where('user_id', $user_id)->where('page_id', $page_id)->first();
+        if(!empty($checkPage)) {
+            $checkPage->delete();
+            return response()->json(['status' => true,'message'=>'Page removed']);
+        }
+        return response()->json(['status' => false,'message'=>'Page not found']);
+    }
+
+    public function removeSocialPageFacebook(Request $request) {
+        $user_id = $this->get_userid($request->token);
+        if($user_id == 0){
+            return response()->json(['status'=>false,'message'=>'user not valid']);
+        }
+        $page_id = $request->page_id;
+        $checkPage = FacebookPage::where('user_id', $user_id)->where('page_id', $page_id)->first();
         if(!empty($checkPage)) {
             $checkPage->delete();
             return response()->json(['status' => true,'message'=>'Page removed']);
@@ -6364,7 +6394,7 @@ class UserapiControllerV13IOS extends Controller
             return response()->json(['status'=>false,'message'=>'post you are looking for is not availabe']);
         }
 
-        $getPost = DB::table('schedule_post')->select('sp_media_path')->where('sp_user_id', $user_id)->where('sp_id','=',$input['id'])->first();
+        $getPost = DB::table('schedule_post')->select('sp_media_path', 'is_posted')->where('sp_user_id', $user_id)->where('sp_id','=',$input['id'])->first();
 
         if($getPost){
             if($getPost->is_posted == 1) {

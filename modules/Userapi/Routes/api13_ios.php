@@ -103,6 +103,8 @@ Route::post('RemoveSocialProfile', 'UserapiControllerV13IOS@removeSocialProfile'
 
 Route::post('removeSocialPageLinkedIn', 'UserapiControllerV13IOS@removeSocialPageLinkedIn');
 
+Route::post('removeSocialPageFacebook', 'UserapiControllerV13IOS@removeSocialPageFacebook');
+
 Route::post('getLinkedAccounts', 'UserapiControllerV13IOS@getLinkedAccounts');
 
 Route::post('getScheduledPost', 'UserapiControllerV13IOS@getScheduledPost');

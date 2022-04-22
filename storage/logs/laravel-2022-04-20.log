@@ -1,0 +1,28 @@
+[2022-04-20 09:03:01] local.ERROR: Cannot declare class App\CustomFrame, because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot declare class App\\CustomFrame, because the name is already in use at /opt/lampp/htdocs/digital-post/app/CustomFrame.php:7)
+[stacktrace]
+#0 {main}
+"} 
+[2022-04-20 09:03:08] local.ERROR: Cannot declare class App\CustomFrame, because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot declare class App\\CustomFrame, because the name is already in use at /opt/lampp/htdocs/digital-post/app/Frame.php:7)
+[stacktrace]
+#0 {main}
+"} 
+[2022-04-20 09:03:34] local.ERROR: Cannot declare class App\Frame, because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot declare class App\\Frame, because the name is already in use at /opt/lampp/htdocs/digital-post/app/Frame.php:7)
+[stacktrace]
+#0 {main}
+"} 
+[2022-04-20 09:03:48] local.ERROR: Cannot declare class App\Frame, because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot declare class App\\Frame, because the name is already in use at /opt/lampp/htdocs/digital-post/app/FrameComponent.php:7)
+[stacktrace]
+#0 {main}
+"} 
+[2022-04-20 09:04:03] local.ERROR: Cannot declare class App\FrameComponent, because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot declare class App\\FrameComponent, because the name is already in use at /opt/lampp/htdocs/digital-post/app/FrameComponent.php:7)
+[stacktrace]
+#0 {main}
+"} 
+[2022-04-20 09:04:12] local.ERROR: Cannot declare class App\FrameComponent, because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot declare class App\\FrameComponent, because the name is already in use at /opt/lampp/htdocs/digital-post/app/FrameText.php:7)
+[stacktrace]
+#0 {main}
+"} 
+[2022-04-20 09:44:19] local.ERROR: Cannot declare class App\Business, because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot declare class App\\Business, because the name is already in use at /opt/lampp/htdocs/digital-post/app/Business.php:7)
+[stacktrace]
+#0 {main}
+"} 
