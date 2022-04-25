@@ -5732,22 +5732,27 @@ class UserapiControllerV14 extends Controller
 
             $image_data = array();
             foreach($images as &$image) {
-                $business_field = BusinessField::where('id', $image->image_for)->first();
-                if(!empty($business[$business_field->field_key])) {
-                    $image->template_id = strval($frame->id);
-                    $image->stkr_path = Storage::url($business[$business_field->field_key]);
-                    $image->order = strval($image->order_);
-                    unset($image->order_);
-                    array_push($image_data, $image);
+                if($image->image_for == 0) {
+                    if(!empty($image->stkr_path)) {
+                        $image->template_id = strval($frame->id);
+                        $image->stkr_path = Storage::url($image->stkr_path);
+                        $image->order = strval($image->order_);
+                        unset($image->order_);
+                        array_push($image_data, $image);
+                    }
+                }
+                else {
+                    $business_field = BusinessField::where('id', $image->image_for)->first();
+                    if(!empty($business[$business_field->field_key])) {
+                        $image->template_id = strval($frame->id);
+                        $image->stkr_path = Storage::url($business[$business_field->field_key]);
+                        $image->order = strval($image->order_);
+                        unset($image->order_);
+                        array_push($image_data, $image);
+                    }
                 }
             }
 
-            // foreach($images as &$image) {
-            //     $image->template_id = strval($frame->id);
-            //     $image->stkr_path = Storage::url($image->stkr_path);
-            //     $image->order = strval($image->order_);
-            //     unset($image->order_);
-            // }
             $texts = FrameText::where('frame_id', $frame->id)->get();
             $textData = array();
             foreach($texts as &$text) {
@@ -5760,7 +5765,6 @@ class UserapiControllerV14 extends Controller
                     array_push($textData, $text);
                 }
             }
-            // $data['componentInfoJsonArrayList'] = $images;
             $data['componentInfoJsonArrayList'] = $image_data;
             $data['textInfoJsonArrayList'] = $textData;
             array_push($frame_data, $data);

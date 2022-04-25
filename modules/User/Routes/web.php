@@ -81,6 +81,25 @@ Route::prefix('popup')->middleware('auth','adminauth')->group(function() {
   	Route::post('/deletePopup', 'PopupDataController@deletePopup');
 });
 
+Route::prefix('frame')->middleware('auth','adminauth')->group(function() {
+    Route::get('/', 'FrameController@index')->name('frame');
+    Route::get('/getFrame', 'FrameController@getFrame');
+    Route::post('/addFrame', 'FrameController@addFrame');
+    Route::post('/editFrame', 'FrameController@editFrame');
+    Route::post('/updateFrame', 'FrameController@updateFrame');
+    Route::get('/addlayers/{id}', 'FrameController@addlayers')->name('addlayers');
+    Route::get('/getComponents/{id}', 'FrameController@getComponents');
+    Route::post('/addComponent', 'FrameController@addComponent');
+    Route::post('/editComponent', 'FrameController@editComponent');
+    Route::post('/updateComponent', 'FrameController@updateComponent');
+    Route::post('/deleteComponent', 'FrameController@deleteComponent');
+    Route::get('/getTexts/{id}', 'FrameController@getTexts');
+    Route::post('/addText', 'FrameController@addText');
+    Route::post('/editText', 'FrameController@editText');
+    Route::post('/updateText', 'FrameController@updateText');
+    Route::post('/deleteText', 'FrameController@deleteText');
+});
+
 Route::prefix('user')->middleware('auth','adminauth')->group(function() {
 
     Route::get('/', 'UserController@index')->name('userlist');
