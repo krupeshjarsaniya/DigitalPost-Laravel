@@ -6,7 +6,7 @@
     }
 </style>
 <div class="page-header">
-    <h4 class="page-title">Graphic</h4>
+    <h4 class="page-title">Frame</h4>
     <ul class="breadcrumbs">
         <li class="nav-home">
             <a href="<?php echo e(route('dashboard')); ?>">

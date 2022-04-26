@@ -420,13 +420,13 @@ class FrameController extends Controller
         $frameText->frame_id = $request->frame_id;
         $frameText->type = 'text';
         $frameText->font_name = 'en_roboto_regular.ttf';
-        $frameText->text_color = $request->text_color;
+        $frameText->text_color = !empty($request->text_color) ? $request->text_color : '-16777216';
         $frameText->text = "";
         $frameText->text_alpha = "100";
         $frameText->shadow_color = "-16777216";
         $frameText->shadow_prog = "0";
         $frameText->bg_drawable = "0";
-        $frameText->bg_color = "";
+        $frameText->bg_color = "0";
         $frameText->bg_alpha = "0";
         $frameText->pos_x = $request->pos_x;
         $frameText->pos_y = $request->pos_y;
@@ -495,7 +495,7 @@ class FrameController extends Controller
         if(!$text) {
             return response()->json(['status' => false,'data' => "", 'message' => 'text not found' ]);
         }
-        $text->text_color = $request->edit_text_color;
+        $text->text_color = !empty($request->edit_text_color) ? $request->edit_text_color : '-16777216';
         $text->pos_x = $request->edit_pos_x;
         $text->pos_y = $request->edit_pos_y;
         $text->width = $request->edit_width;

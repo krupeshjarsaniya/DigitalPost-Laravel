@@ -310,7 +310,7 @@
                         <div class="col-md-6">
                             <div class="form-group err_text_color">
                                 <label>Text Color</label>
-                                <input type="text" class="form-control" name="text_color" id="text_color">
+                                <input type="color" style="height: 50px !important" class="form-control" name="text_color" id="text_color">
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -393,7 +393,7 @@
                         <div class="col-md-6">
                             <div class="form-group err_edit_text_color">
                                 <label>Text Color</label>
-                                <input type="text" class="form-control" name="edit_text_color" id="edit_text_color">
+                                <input type="color" style="height: 50px !important" class="form-control" name="edit_text_color" id="edit_text_color">
                             </div>
                         </div>
                         <div class="col-md-6">
