@@ -5699,46 +5699,46 @@ class UserapiControllerV14 extends Controller
         }
         $frame_data = array();
 
-        // $business_type = 1;
-        // $business_id = $user->default_business_id;
-        // if($request->has('frame_type')) {
-        //     if($request->frame_type == "Photo") {
-        //         $business_type = 2;
-        //         $business_id = $user->default_political_business_id;
-        //     }
-        // }
+        $business_type = 1;
+        $business_id = $user->default_business_id;
+        if($request->has('frame_type')) {
+            if($request->frame_type == "Photo") {
+                $business_type = 2;
+                $business_id = $user->default_political_business_id;
+            }
+        }
 
-        // $frameLists = DB::table('user_frames')->where('user_id', $user_id)->where('business_id', $business_id)->where('business_type', $business_type)->where('is_deleted', 0)->orderBy('user_frames_id','DESC')->get();
+        $frameLists = DB::table('user_frames')->where('user_id', $user_id)->where('business_id', $business_id)->where('business_type', $business_type)->where('is_deleted', 0)->orderBy('user_frames_id','DESC')->get();
 
-        // foreach($frameLists as &$frameList) {
-        //     $data = [
-        //         'frame_image' => Storage::url($frameList->frame_url),
-        //         'civ_height' => "",
-        //         'civ_width' => "",
-        //         'custom_he' => "",
-        //         'custom_wi' => "",
-        //         'custom_x' => "",
-        //         'custom_y' => "",
-        //         'frame_name' => "",
-        //         'overlay_blur' => "",
-        //         'overlay_name' => "",
-        //         'overlay_opacity' => "",
-        //         'profile_type' => "",
-        //         'ration' => '',
-        //         'saveImageHeight' => "",
-        //         'saveImageWidth' => "",
-        //         'seek_value' => "",
-        //         'shap_name' => "",
-        //         'template_id' => "",
-        //         'tempcolor' => "",
-        //         'temp_path' => "",
-        //         'thumb_uri' => "",
-        //         'type' => "",
-        //         'componentInfoJsonArrayList' => array(),
-        //         'textInfoJsonArrayList' => array(),
-        //     ];
-        //     array_push($frame_data, $data);
-        // }
+        foreach($frameLists as &$frameList) {
+            $data = [
+                'frame_image' => Storage::url($frameList->frame_url),
+                'civ_height' => "",
+                'civ_width' => "",
+                'custom_he' => "",
+                'custom_wi' => "",
+                'custom_x' => "",
+                'custom_y' => "",
+                'frame_name' => "",
+                'overlay_blur' => "",
+                'overlay_name' => "",
+                'overlay_opacity' => "",
+                'profile_type' => "",
+                'ration' => '',
+                'saveImageHeight' => "",
+                'saveImageWidth' => "",
+                'seek_value' => "",
+                'shap_name' => "",
+                'template_id' => "",
+                'tempcolor' => "",
+                'temp_path' => "",
+                'thumb_uri' => "",
+                'type' => "",
+                'componentInfoJsonArrayList' => array(),
+                'textInfoJsonArrayList' => array(),
+            ];
+            array_push($frame_data, $data);
+        }
 
         $frames = Frame::where('frame_type', $frame_type)->where('is_active', 1)->skip($offset)->limit($postLimit)->get();
         foreach($frames as $frame) {

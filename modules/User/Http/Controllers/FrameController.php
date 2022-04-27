@@ -338,8 +338,10 @@ class FrameController extends Controller
                 }
             }
 
-            $stkr_path = $this->uploadFile($request, null, 'edit_stkr_path', 'frame');
-            $component->stkr_path = $stkr_path;
+            if($request->has('edit_stkr_path')) {
+                $stkr_path = $this->uploadFile($request, null, 'edit_stkr_path', 'frame');
+                $component->stkr_path = $stkr_path;
+            }
         }
 
 
