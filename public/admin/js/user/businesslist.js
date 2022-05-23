@@ -31,7 +31,7 @@ function DataTable()
 			{data: 'PurchasePlan', name: 'PurchasePlan'},
 			{data: 'action', name: 'action', orderable: false, searchable: false},
 		],
-		
+
 	});
 }
 
@@ -85,9 +85,9 @@ function approvebusiness(id){
 				{
 					if (data.status)
 					{
-					    
+
 					    location.reload();
-					  
+
 					}
 					$('.loader-custom').css('display','none');
 				}
@@ -133,7 +133,7 @@ function declinebusiness(id){
 					if (data.status)
 					{
 					    location.reload();
-					  
+
 					}
 					$('.loader-custom').css('display','none');
 				}
@@ -149,7 +149,7 @@ function declinebusiness(id){
 
 function viewDetail(){
 
-// 	$('#business-table').DataTable({ 
+// 	$('#business-table').DataTable({
 //       "destroy": true, //use for reinitialize datatable
 //     });
 $('#business-table tbody').html('');
@@ -159,16 +159,16 @@ $('#business-table tbody').html('');
 	}});
 
     $('.loader-custom').css('display','block');
-    
+
 	$.ajax({
 		type:'GET',
 		url:APP_URL+"/user/view-business-list",
 		success: function (respose)
 		{
 		    $('.loader-custom').css('display','none');
-		    
+
 			var business_detail = respose.business_detail;
-			
+
 			if(business_detail.length != 0){
 				row = '';
 			    for (var i = 0; i <= business_detail.length - 1 ; i++) {
@@ -184,7 +184,7 @@ $('#business-table tbody').html('');
                     if(business_detail[i].busi_logo != ''){
                         imge = '<img src="'+SPACE_STORE_URL+''+business_detail[i].busi_logo+'" height="100" width="100">';
 					}
-					
+
 					let source = '';
 
 					if(business_detail[i].purc_order_id != '' && business_detail[i].purc_order_id != 'FromAdmin' && business_detail[i].purc_plan_id == '2'){
@@ -197,7 +197,7 @@ $('#business-table tbody').html('');
 
 					if(business_detail[i].purc_plan_id == '3'){
 						source = 'Not Purchase';
-					} 
+					}
 
 					let second_mobile = '';
 					if(business_detail[i].busi_mobile_second){
@@ -219,14 +219,14 @@ $('#business-table tbody').html('');
 						'<td>'+purchaseornotstring+'</td>'+
 						'<td><button class="btn btn-primary" onclick="EditBusiness('+business_detail[i].busi_id+')"><i class="flaticon-pencil"></i></button></td>'+
     					'</tr>';
-                    
+
     				// $('#business-table tbody').html(row);
 			//$('#business-table').DataTable().draw();
 				}
 				$('#business-table tbody').html(row);
 
 				oTable = $('#business-table').DataTable();
-			    
+
 			} else {
 			    $('#business-table tbody').html('<tr><td colspan="8">No data available in table</td></tr>');
 			    $('#business-table').DataTable();
@@ -234,7 +234,7 @@ $('#business-table tbody').html('');
 
 			$('.loader-custom').css('display','none');
 		//	$('#business-table').DataTable();
-		
+
 		}
 	});
 }
@@ -274,8 +274,11 @@ function purchaseplan(id){
 					if (data.status)
 					{
 					    location.reload();
-					  
+
 					}
+                    else {
+                        alert(data.message);
+                    }
 					$('.loader-custom').css('display','none');
 				}
 			});
@@ -320,7 +323,7 @@ function cancelplan(id){
 					if (data.status)
 					{
 					    location.reload();
-					  
+
 					}
 					$('.loader-custom').css('display','none');
 				}
@@ -334,14 +337,14 @@ function cancelplan(id){
 }
 
 function EditBusiness(id){
-	
+
 	$.ajaxSetup({
 		headers: {
 			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 		}});
-	
+
 		$('.loader-custom').css('display','block');
-		
+
 		$.ajax({
 			type:'POST',
 			url:APP_URL+"/user/getBusinessforEdit",
@@ -368,7 +371,7 @@ function EditBusiness(id){
 				$('#editBusiness').css('display','block');
 				$('#logoimg').css('display','block');
 				$('#watermarkimg').css('display','block');
-	
+
 			}
 		});
 }
@@ -441,7 +444,7 @@ function UpdateBusiness(){
     	headers: {
     	    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     	}});
-    
+
     	$.ajax({
     		type:'POST',
     		url:APP_URL+"/user/updateBusiness",

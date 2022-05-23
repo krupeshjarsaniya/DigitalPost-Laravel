@@ -43,7 +43,7 @@ function getAllpost() {
 
 var current_userid = 0;
 
-function PalnListsID() 
+function PalnListsID()
 {
 	$("#planlist").html('');
     $.ajaxSetup({
@@ -52,7 +52,7 @@ function PalnListsID()
     }});
 
     $('.loader-custom').css('display','block');
-    
+
     $.ajax({
         type:'POST',
         url:APP_URL+"/user/plan-list",
@@ -111,7 +111,7 @@ function blockUser(id)
 					if (data.status==1)
 					{
 					    $('#user-table').DataTable().draw();
-					  
+
 					}
 					$('.loader-custom').css('display','none');
 				}
@@ -202,9 +202,9 @@ function approvebusiness(id){
 				{
 					if (data.status)
 					{
-					    
+
 					    location.reload();
-					  
+
 					}
 					$('.loader-custom').css('display','none');
 				}
@@ -250,7 +250,7 @@ function declinebusiness(id){
 					if (data.status)
 					{
 					    location.reload();
-					  
+
 					}
 					$('.loader-custom').css('display','none');
 				}
@@ -297,7 +297,7 @@ function removeUser(id){
 					if (data.status)
 					{
 					    location.reload();
-					  
+
 					}
 					$('.loader-custom').css('display','none');
 				}
@@ -319,7 +319,7 @@ function viewDetail(id){
 	$('#viewUserlist').hide();
 	$('#editBusiness').hide();
 	$("#myModal").modal('hide');
-// 	$('#business-table').DataTable({ 
+// 	$('#business-table').DataTable({
 //       "destroy": true, //use for reinitialize datatable
 //     });
 	$('#business-table tbody').html('');
@@ -333,7 +333,7 @@ function viewDetail(id){
 	}});
 
     $('.loader-custom').css('display','block');
-    
+
 	$.ajax({
 		type:'POST',
 		url:APP_URL+"/user/view-user-detail",
@@ -349,7 +349,7 @@ function viewDetail(id){
 			$('#umobile').html(user_detail['mobile']);
 
 			$('#ref_userlistbtn').html('<button class="btn btn-info" onclick="viewRefUser('+user_detail['id']+')">View</button>');
-				
+
 			if(user_detail['status'] == '0'){
 				$('#ustatus').text('Unblock');
 			} else {
@@ -365,7 +365,7 @@ function viewDetail(id){
                 });
 
 			var business_detail = respose.business_detail;
-			
+
 			if(business_detail.length != 0){
 				var row = '';
 			    for (var i = 0; i <= business_detail.length - 1 ; i++) {
@@ -386,7 +386,7 @@ function viewDetail(id){
 						purchaseornotstring = "Purchased";
 						purchaseornotstring += '<br><button class="btn btn-danger" onclick="cancelplan(this,'+business_detail[i].busi_id+')">Cencal</button>';
 					}
-					
+
 					if(business_detail[i].purc_order_id != '' && business_detail[i].purc_order_id != 'FromAdmin' && business_detail[i].purc_plan_id != '3'){
 						source = 'By User';
 					}
@@ -397,7 +397,7 @@ function viewDetail(id){
 
 					if(business_detail[i].purc_plan_id == '3'){
 						source = 'Not Purchase';
-						
+
 					}
 					let second_mobile = '';
 					if(business_detail[i].busi_mobile_second){
@@ -407,7 +407,7 @@ function viewDetail(id){
 					}
 
 					var plan_name_end_date;
-					if (business_detail[i].purc_end_date != null && business_detail[i].purc_end_date != "") 
+					if (business_detail[i].purc_end_date != null && business_detail[i].purc_end_date != "")
                     {
                     	var date = business_detail[i].purc_end_date;
                         var datearray = date.split("-");
@@ -421,8 +421,8 @@ function viewDetail(id){
 
                     }
 
-    				
-    				if (user_detail['default_business_id'] == business_detail[i].busi_id) 
+
+    				if (user_detail['default_business_id'] == business_detail[i].busi_id)
                     {
                         row += '<tr class="bg-success text-white">'+
                              '<td>'+cur_id+'</td>'+
@@ -460,13 +460,13 @@ function viewDetail(id){
 							'<td><button class="btn btn-danger btn-sm" id="removeBusiness" onclick="removeBusiness('+business_detail[i].busi_id+','+id+')"><i class="fa fa-trash" aria-hidden="true"></i></button></td>'+
 	    					'</tr>';
                     }
-                       $('#businessid').append(`<option value="${business_detail[i].busi_id}">${business_detail[i].busi_name}</option>`); 
+                       $('#businessid').append(`<option value="${business_detail[i].busi_id}">${business_detail[i].busi_name}</option>`);
     				// $('#business-table tbody').html(row);
 			//$('#business-table').DataTable().draw();
 				}
 				$('#business-table tbody').html(row);
 			    $('#business-table').DataTable();
-			    
+
 			} else {
 				$('#business-table').DataTable();
 			    $('#business-table tbody').html('<tr><td colspan="8">No data available in table</td></tr>');
@@ -484,13 +484,13 @@ function viewDetail(id){
 						 '<td> <img src="'+SPACE_STORE_URL+''+frameList[i].frame_url+'" height="100" width="100"></td>'+
 						 '<td> <button class="btn btn-danger" onclick="removeFrame('+frameList[i].user_frames_id+')"><i class="fa fa-times" aria-hidden="true"></i></button></td>'+
     					'</tr>';
-                    
+
     				// $('#business-table tbody').html(row);
 			//$('#business-table').DataTable().draw();
 				}
 				$('#frame-list tbody').html(row);
 			    $('#frame-list').DataTable();
-			    
+
 			} else {
 				// $('#frame-list').DataTable();
 				// $('#frame-list tbody').html('<tr><td colspan="4">No data available in table</td></tr>');
@@ -503,7 +503,7 @@ function viewDetail(id){
 
 			$('.loader-custom').css('display','none');
 		//	$('#business-table').DataTable();
-		
+
 		}
 	});
 }
@@ -636,7 +636,7 @@ function assignDesignerPoliticalBusiness(business_id) {
 function addDesigner() {
 	var form = document.addDesignerForm;
 	var formData = new FormData(form);
-	
+
 	$.ajax({
         type: 'POST',
         url: APP_URL + '/user/addDesigner',
@@ -686,7 +686,7 @@ function addDesigner() {
     })
 }
 
-function purchaseplans(id) 
+function purchaseplans(id)
 {
     $("#pur_id").val(id);
     $('#myPlan').modal('show');
@@ -735,7 +735,7 @@ var plan_id = $("#planlist").val();
          //                $("#pr_"+id).removeClass('btn-primary');
          //                $("#pr_"+id).addClass('btn-danger');
          					viewDetail(current_userid)
-					  
+
 					}
 					$('.loader-custom').css('display','none');
 				}
@@ -787,7 +787,7 @@ function cancelplan(ele,id){
           //             $(ele).removeClass('btn-danger');
           //             $(ele).addClass('btn-primary');
           					viewDetail(current_userid)
-					  
+
 					}
 					$('.loader-custom').css('display','none');
 				}
@@ -812,7 +812,7 @@ function AddFrame(){
     	headers: {
     	    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     	}});
-    
+
     	$.ajax({
     		type:'POST',
     		url:APP_URL+"/user/addframe",
@@ -874,7 +874,7 @@ function removeFrame(id){
 			   		'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 				}
 			});
-    
+
     		$.ajax({
 				type:'POST',
 				url:APP_URL+"/user/removeframe",
@@ -894,14 +894,14 @@ function removeFrame(id){
 
 
 function EditBusiness(id){
-	
+
 	$.ajaxSetup({
 		headers: {
 			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 		}});
-	
+
 		$('.loader-custom').css('display','block');
-		
+
 		$.ajax({
 			type:'POST',
 			url:APP_URL+"/user/getBusinessforEdit",
@@ -928,12 +928,12 @@ function EditBusiness(id){
 				$('#logoimg').css('display','block');
 				$('#watermarkimg').css('display','block');
 				$('#viewUserlist').hide();
-	
+
 			}
 		});
 }
 
-function showBusiness() 
+function showBusiness()
 {
     $('#viewDetail').css('display','none');
 	$('#editBusiness').css('display','block');
@@ -1044,9 +1044,9 @@ function viewRefUser(id){
 		headers: {
 			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 	}});
-	
+
 	$('.loader-custom').css('display','block');
-	
+
 	$.ajax({
 		type:'POST',
 		url:APP_URL+"/user/get-reffer-user-list",
@@ -1109,7 +1109,7 @@ function DeletePhotos(){
 			   		'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 				}
 			});
-    
+
     		$.ajax({
 				type:'POST',
 				url:APP_URL+"/user/deletePhotos",
@@ -1129,7 +1129,7 @@ function DeletePhotos(){
 	});
 }
 
-function restBusinessForm() 
+function restBusinessForm()
 {
     $('#business_id').val('');
     $('#business_name').val('');
@@ -1142,7 +1142,7 @@ function restBusinessForm()
     $("#logoimg").attr('src', '#');
 }
 
-function removeBusiness(id, userId) 
+function removeBusiness(id, userId)
 {
     swal({
         title: 'Are you sure?',
@@ -1178,7 +1178,7 @@ function removeBusiness(id, userId)
                         //location.reload();
                         alert(data.message);
                         viewDetail(userId);
-                      
+
                     }
                     $('.loader-custom').css('display','none');
                 }

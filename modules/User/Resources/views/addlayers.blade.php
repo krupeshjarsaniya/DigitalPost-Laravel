@@ -30,7 +30,14 @@
 
 <div class="card">
     <div class="card-header">
-        <h4 class="card-title">Frame</h4>
+        <div class="row">
+            <div class="col-6">
+                <div class="card-title">Frame</div>
+            </div>
+            <div class="col-6">
+                <a href="{{ route('frame') }}" class="btn btn-danger float-right">Back</a>
+            </div>
+        </div>
     </div>
     <div class="card-body">
         <div class="row">
@@ -240,6 +247,7 @@
                             <img src="" id="edit_stkr_path_img" width="100" height="100">
                         </div>
                     </div>
+                    <p className="success-message" id="image-edit-message"></p>
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
@@ -265,6 +273,8 @@
                         <tr>
                             <th>Text For</th>
                             <th>Text Color</th>
+                            <th>Font Name</th>
+                            <th>Text Alignment</th>
                             <th>Pos X</th>
                             <th>Pos Y</th>
                             <th>Height</th>
@@ -352,6 +362,26 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="form-group err_font_name">
+                                <label>Select Font</label>
+                                <select class="form-control" name="font_name" id="text_font_name">
+                                    @foreach (App\FrameText::$fontList as $font)
+                                        <option value="{{ $font }}">{{ $font }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group err_field_three">
+                                <label>Text Alignment</label>
+                                <select class="form-control" name="field_three" id="text_field_three">
+                                    @foreach (App\FrameText::$textAligns as $text)
+                                        <option value="{{ $text }}">{{ $text }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -435,7 +465,28 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="form-group err_edit_font_name">
+                                <label>Select Font</label>
+                                <select class="form-control" name="edit_font_name" id="edit_text_font_name">
+                                    @foreach (App\FrameText::$fontList as $font)
+                                        <option value="{{ $font }}">{{ $font }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group err_edit_field_three">
+                                <label>Text Alignment</label>
+                                <select class="form-control" name="edit_field_three" id="edit_text_field_three">
+                                    @foreach (App\FrameText::$textAligns as $text)
+                                        <option value="{{ $text }}">{{ $text }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                     </div>
+                    <p className="success-message" id="text-edit-message"></p>
                 </div>
 
                 <!-- Modal footer -->

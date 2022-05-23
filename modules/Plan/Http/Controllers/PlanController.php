@@ -20,8 +20,8 @@ class PlanController extends Controller
      */
     public function index()
     {
-        $plan = Plan::where('plan_id','!=',3)->get();
-         
+        $plan = Plan::where('plan_id', '!=', 3)->get();
+
         /*foreach ($plan as $key => $value) {
             $value->plan_information = unserialize($value->plan_information);
             // echo gettype($value->information), "\n";
@@ -29,42 +29,29 @@ class PlanController extends Controller
         // echo "<pre>";
         // print_r($plan);
         // die();
-        return view('plan::index',[ 'plans' => $plan]);
+        return view('plan::index', ['plans' => $plan]);
     }
 
-    public function getdetailforedit(Request $req){
+    public function getdetailforedit(Request $req)
+    {
         $id = $req->id;
-        $plan = Plan::where('plan_id','=',$id)->first();
+        $plan = Plan::where('plan_id', '=', $id)->first();
         $plan['plan_information'] = unserialize($plan['plan_information']);
         return $plan;
     }
 
-    public function updateplan(Request $request){
+    public function updateplan(Request $request)
+    {
 
-        /*$id = $req->id;
-        $serializedArr = serialize($req->information);
-        Plan::where('plan_id', $id)->update(array(
-            'plan_name' => $req->name,
-            'plan_actual_price' => $req->actualprice,
-            'plan_discount_price' => $req->currentprice,
-            'plan_descount' => $req->discount,
-            'plan_validity' => $req->validity,
-            'plan_validity_type' => $req->validitytime,
-            'plan_information' => $serializedArr
-        ));*/
-
-
-        if($request->planid == "")
-        {
-
-            $validator = Validator::make($request->all(), [
-                    'planname' => 'required',      
-                    'validity' => 'required',      
-                    'price' => 'required',      
-                    'orderno' => 'required',      
-                    'image' => 'required',      
-                    
-                          
+        if ($request->planid == "") {
+            $validator = Validator::make(
+                $request->all(),
+                [
+                    'planname' => 'required',
+                    'validity' => 'required',
+                    'price' => 'required',
+                    'orderno' => 'required',
+                    'image' => 'required',
                 ],
                 [
                     'planname.required' => 'Name Required',
@@ -75,20 +62,14 @@ class PlanController extends Controller
                 ]
             );
 
-            if ($validator->fails()) 
-            {  
-                $error=json_decode($validator->errors());          
+            if ($validator->fails()) {
+                $error = json_decode($validator->errors());
 
-                return response()->json(['status' => 401,'error1' => $error]);
+                return response()->json(['status' => 401, 'error1' => $error]);
                 exit();
-
             }
 
-
             $image = $request->image;
-            /*$filename = Str::random(7).time().'.'.$image->getClientOriginalExtension();
-            $image->move(public_path('admin/images/plan'), $filename);
-            $path = '/public/admin/images/plan/'.$filename;*/
 
             $path = $this->uploadFile($request, null, 'image', 'plan-image');
 
@@ -100,19 +81,18 @@ class PlanController extends Controller
             $insert->plan_validity_type = $request->validitytime;
             $insert->order_no = $request->orderno;
             $insert->plan_type = $request->plantype;
+            $insert->bg_credit = $request->bg_credit;
             $insert->new_or_renewal = $request->new_or_renewal;
             $insert->image = $path;
             $insert->save();
-        }
-        else
-        {   
-            $validator = Validator::make($request->all(), [
-                    'planname' => 'required',      
-                    'validity' => 'required',      
-                    'price' => 'required',      
-                    'orderno' => 'required',      
-                    
-                          
+        } else {
+            $validator = Validator::make(
+                $request->all(),
+                [
+                    'planname' => 'required',
+                    'validity' => 'required',
+                    'price' => 'required',
+                    'orderno' => 'required',
                 ],
                 [
                     'planname.required' => 'Name Required',
@@ -122,30 +102,21 @@ class PlanController extends Controller
                 ]
             );
 
-            if ($validator->fails()) 
-            {  
-                $error=json_decode($validator->errors());          
+            if ($validator->fails()) {
+                $error = json_decode($validator->errors());
 
-                return response()->json(['status' => 401,'error1' => $error]);
+                return response()->json(['status' => 401, 'error1' => $error]);
                 exit();
-
             }
 
             $image = (isset($request->image)) ? $request->image : 'undefined';
-            if($image != 'undefined')
-            {
-                /*$filename = Str::random(7).time().'.'.$image->getClientOriginalExtension();
-                $image->move(public_path('admin/images/plan'), $filename);
-                $path = '/public/admin/images/plan/'.$filename;*/
+            if ($image != 'undefined') {
                 $path = $this->uploadFile($request, null, 'image', 'plan-image');
-            }
-            else
-            {
+            } else {
                 $path = "";
             }
 
-            if ($image != 'undefined') 
-            {
+            if ($image != 'undefined') {
                 Plan::where('plan_id', $request->planid)->update(array(
                     'plan_or_name' => $request->planname,
                     'plan_actual_price' => $request->price,
@@ -154,11 +125,10 @@ class PlanController extends Controller
                     'order_no' => $request->orderno,
                     'plan_type' => $request->plantype,
                     'new_or_renewal' => $request->new_or_renewal,
+                    'bg_credit' => $request->bg_credit,
                     'image' => $path,
                 ));
-            }
-            else
-            {
+            } else {
                 Plan::where('plan_id', $request->planid)->update(array(
                     'plan_or_name' => $request->planname,
                     'plan_actual_price' => $request->price,
@@ -167,27 +137,26 @@ class PlanController extends Controller
                     'order_no' => $request->orderno,
                     'plan_type' => $request->plantype,
                     'new_or_renewal' => $request->new_or_renewal,
+                    'bg_credit' => $request->bg_credit,
                 ));
             }
         }
-        return response()->json(['status' => 1,'data' => 'Data Successfully upadate']);
-
-
+        return response()->json(['status' => 1, 'data' => 'Data Successfully upadate']);
     }
 
     public function BlockPlan(Request $request)
     {
         $Plan_id = $request->id;
-        Plan::where('plan_id',$Plan_id)->update(['status'=> 1]);
+        Plan::where('plan_id', $Plan_id)->update(['status' => 1]);
 
-        return response()->json(['status'=>1,'data'=>""]);
+        return response()->json(['status' => 1, 'data' => ""]);
     }
 
     public function UnBlockPlan(Request $request)
     {
         $Plan_id = $request->id;
-        Plan::where('plan_id',$Plan_id)->update(['status'=> 0]);
+        Plan::where('plan_id', $Plan_id)->update(['status' => 0]);
 
-        return response()->json(['status'=>1,'data'=>""]);
+        return response()->json(['status' => 1, 'data' => ""]);
     }
 }

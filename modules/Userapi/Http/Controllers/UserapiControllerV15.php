@@ -3,12 +3,9 @@
 namespace Modules\Userapi\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Arr;
 use App\User;
 use App\Business;
 use App\Post;
@@ -19,9 +16,7 @@ use App\Plan;
 use App\Language;
 use App\VideoData;
 use App\StickerCategory;
-use App\Sticker;
 use App\BackgroundCategory;
-use App\Background;
 use App\LinkedInPage;
 use App\FacebookPage;
 use DB;
@@ -30,13 +25,8 @@ use GDText\Color;
 use App\UserDevice;
 use App\Helper;
 use Illuminate\Support\Facades\Storage;
-use GuzzleHttp\Client as GuzzleHttp;
 use App\LinkedIn;
 use App\Twitter;
-// use Twitter;
-use Illuminate\Support\Facades\File;
-// use Atymic\Twitter\Facade\Twitter;
-use Facebook\Facebook;
 use App\PoliticalCategory;
 use App\PoliticalBusiness;
 use App\PoliticalBusinessApprovalList;
@@ -57,10 +47,11 @@ use App\FrameText;
 use App\BusinessField;
 use Carbon\Carbon;
 use App\Jobs\ShareSocialPostJob;
-use PDF;
 use App\Logic\Providers\FacebookRepository;
+use App\MusicCategory;
+use App\Music;
 
-class UserapiControllerV14 extends Controller
+class UserapiControllerV15 extends Controller
 {
     public $successStatus = 200;
 
@@ -2622,9 +2613,6 @@ class UserapiControllerV14 extends Controller
 
     }
 
-
-
-
     // ------------------------------------ Plan Apis -------------------------------------------------
 
     public function purchasePlan(Request $request)
@@ -2646,7 +2634,6 @@ class UserapiControllerV14 extends Controller
             return response()->json(['status'=>false,'message'=>'Something goes wrong']);
         }
 
-        // $results = DB::select('select * from  refferal_data where ref_user_id = ?', [$user_id]); = 2
         $is_purchasebeforee = DB::table('purchase_plan')->where('purc_user_id','=',$user_id)->where('purc_plan_id','!=',3)->select('purc_user_id')->first();
 
         if(is_null($is_purchasebeforee)){
@@ -2666,7 +2653,6 @@ class UserapiControllerV14 extends Controller
 
         }
 
-        //$remainingcredit = $input['remainingcredit'];
         $remainingcredit = '';
 
         if($remainingcredit != 0){
@@ -2699,7 +2685,8 @@ class UserapiControllerV14 extends Controller
             $userData->referral_premium = 1;
             $userData->save();
         }
-        $plantrial = Plan::where('plan_id','=',$plan_id)->select('plan_validity')->first();
+
+        $plantrial = Plan::where('plan_id','=',$plan_id)->select('plan_validity', 'bg_credit')->first();
         $end_date = date('Y-m-d', strtotime($start_date. ' + '.$plantrial->plan_validity.' days'));
         $end_date = Carbon::parse($end_date);
         $checkAlreadyPremium = Purchase::where('purc_business_id',$business_id)->where('purc_business_type', $input['business_type'])->first();
@@ -2711,71 +2698,37 @@ class UserapiControllerV14 extends Controller
             $new_start_date = $tmp_start_date->addDays($diff);
             $end_date = $end_date->addDays($diff);
         }
-        // if(empty($checkAlreadyPremium)) {
-            Purchase::where('purc_business_id',$business_id)->where('purc_business_type', $input['business_type'])->update([
-            'purc_plan_id'=>$plan_id,
-            'purc_start_date' => $start_date,
-            'purc_end_date' => $end_date,
-            'purc_order_id' => $input['order_id'],
-            'purchase_id' => $input['purchase_id'],
-            'device' => $input['device'],
-            'purc_is_cencal' => 0,
-            'purc_tel_status' => 7,
-            'purc_follow_up_date' => null,
-            'purc_is_expire' => 0,
-            ]);
-            DB::table('user_business_comment')->where('business_id', $business_id)->where('business_type', $input['business_type'])->delete();
-            $this->addPurchasePlanHistory($business_id, $input['business_type'], $new_start_date);
-        // }
-        // else {
-        //     if($input['business_type'] == 1) {
-        //         $this->addSimpleBusinessWhilePlanIsThree($user_id,$plan_id, $business_id);
-        //     }
-        //     else {
-        //         $this->addPoliticalBusinessWhilePlanIsThree($user_id,$plan_id, $business_id);
-        //     }
-        // }
+
+        Purchase::where('purc_business_id',$business_id)->where('purc_business_type', $input['business_type'])->update([
+        'purc_plan_id'=>$plan_id,
+        'purc_start_date' => $start_date,
+        'purc_end_date' => $end_date,
+        'purc_order_id' => $input['order_id'],
+        'purchase_id' => $input['purchase_id'],
+        'device' => $input['device'],
+        'purc_is_cencal' => 0,
+        'purc_tel_status' => 7,
+        'purc_follow_up_date' => null,
+        'purc_is_expire' => 0,
+        ]);
+        DB::table('user_business_comment')->where('business_id', $business_id)->where('business_type', $input['business_type'])->delete();
+        $this->addPurchasePlanHistory($business_id, $input['business_type'], $new_start_date);
 
         if($input['plan_type'] == 3){
             $userdata = User::where('id','=',$user_id)->select(['default_business_id','default_political_business_id'])->first();
             $getPurchaseData = Purchase::where('purc_business_id', $business_id)->where('purc_business_type', $input['business_type'])->first();
             if($getPurchaseData->purc_business_type == 1) {
                 $this->addPoliticalBusinessWhilePlanIsThree($user_id,$plan_id, $userdata->default_political_business_id);
-                // if($userdata->default_political_business_id == '' || empty($userdata->default_political_business_id) || $userdata->default_political_business_id == 0){
-                //     $this->addPoliticalBusinessWhilePlanIsThree($user_id,$plan_id);
-                // }
-                // else {
-                //     $checkPurchase = Purchase::where('purchase_plan.purc_user_id', $user_id)->where('purchase_plan.purc_business_type',2)->where('purc_business_id', $userdata->default_political_business_id)->join('political_business', 'political_business.pb_id', '=', 'purchase_plan.purc_business_id')->where('political_business.pb_is_deleted', 0)->where(function ($query) {
-                //             $query->where('purchase_plan.purc_plan_id',3)
-                //             ->orWhere('purchase_plan.purc_is_expire', 1);
-                //     })->first();
-                //     if(empty($checkPurchase)) {
-                //         $this->addPoliticalBusinessWhilePlanIsThree($user_id,$plan_id);
-                //     }
-                //     else {
-                //         $this->addPoliticalBusinessWhilePlanIsThree($user_id,$plan_id, $userdata->default_political_business_id);
-                //     }
-                // }
             }
             else {
                 $this->addSimpleBusinessWhilePlanIsThree($user_id,$plan_id, $userdata->default_business_id);
-                // if($userdata->default_business_id == '' || empty($userdata->default_business_id) || $userdata->default_business_id == 0){
-                //     $this->addSimpleBusinessWhilePlanIsThree($user_id,$plan_id);
-                // }
-                // else {
-                //     $checkPurchase = Purchase::where('purchase_plan.purc_user_id', $user_id)->where('purchase_plan.purc_business_type',1)->where('purc_business_id', $userdata->default_business_id)->join('business', 'business.busi_id', '=', 'purchase_plan.purc_business_id')->where('business.busi_delete', 0)->where(function ($query) {
-                //             $query->where('purchase_plan.purc_plan_id',3)
-                //             ->orWhere('purchase_plan.purc_is_expire', 1);
-                //     })->first();
-                //     if(empty($checkPurchase)) {
-                //         $this->addSimpleBusinessWhilePlanIsThree($user_id,$plan_id);
-                //     }
-                //     else {
-                //         $this->addSimpleBusinessWhilePlanIsThree($user_id,$plan_id, $userdata->default_business_id);
-                //     }
-                // }
             }
         }
+
+        $bg_credit = !empty($userData->bg_credit) ? $userData->bg_credit : 0;
+        $plan_bg_credit = !empty($plantrial->bg_credit) ? $plantrial->bg_credit : 0;
+        $userData->bg_credit = $bg_credit + $plan_bg_credit;
+        $userData->save();
 
         $usercredit = DB::table('users')->where('id', '=', $user_id)->select('user_credit','id')->first();
 
@@ -4563,6 +4516,7 @@ class UserapiControllerV14 extends Controller
             $data['plan_validity'] = !empty($value->plan_validity)?$value->plan_validity:"";
             $data['plan_validity_type'] = !empty($value->plan_validity_type)?$value->plan_validity_type:"";
             $data['order_no'] = !empty($value->order_no)?$value->order_no:0;
+            $data['bg_credit'] = !empty($value->bg_credit)?$value->bg_credit:0;
             $data['image'] = !empty($value->image)?Storage::url($value->image):"";
             array_push($plan, $data);
         }
@@ -7084,5 +7038,45 @@ class UserapiControllerV14 extends Controller
     }
 
     // -------------------- User Referral API End
+
+    public function getMusicList(Request $request) {
+        $token = $request->token;
+        $user_id = $this->get_userid($token);
+        if($user_id == 0){
+            return response()->json(['status'=>false,'message'=>'user not valid']);
+        }
+        $music_list_array = array();
+        $music_categories = MusicCategory::whereNotNull('order_number')->where('is_delete', 0)->where('is_active', 1)->orderBy('order_number', 'ASC')->get();
+
+        foreach($music_categories as $category) {
+            $musics = Music::where('category_id', $category->id)->where('is_delete', 0)->orderBy('id', 'DESC')->get();
+            if(count($musics)) {
+                foreach($musics as &$music) {
+                    $music->audio = Storage::url($music->audio);
+                    $music->image = Storage::url($music->image);
+                }
+                $data = $category;
+                $data['musics'] = $musics;
+                array_push($music_list_array, $data);
+            }
+        }
+
+        $music_categories = MusicCategory::whereNull('order_number')->where('is_delete', 0)->where('is_active', 1)->orderBy('id', 'DESC')->get();
+
+        foreach($music_categories as $category) {
+            $musics = Music::where('category_id', $category->id)->where('is_delete', 0)->orderBy('id', 'DESC')->get();
+            if(count($musics)) {
+                foreach($musics as &$music) {
+                    $music->audio = Storage::url($music->audio);
+                    $music->image = Storage::url($music->image);
+                }
+                $data = $category;
+                $data['musics'] = $musics;
+                array_push($music_list_array, $data);
+            }
+        }
+
+        return response()->json(['status' => true, 'data' => $music_list_array, 'message' => 'Music List Fetched Successfully']);
+    }
 
 }

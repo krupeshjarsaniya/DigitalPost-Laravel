@@ -1,11 +1,10 @@
-@extends('admin.layouts.app')
-@section('title', 'Users')
-@section('content')
+<?php $__env->startSection('title', 'Users'); ?>
+<?php $__env->startSection('content'); ?>
 <div class="page-header">
     <h4 class="page-title">Plan</h4>
     <ul class="breadcrumbs">
         <li class="nav-home">
-            <a href="{{ route('dashboard') }}">
+            <a href="<?php echo e(route('dashboard')); ?>">
                 <i class="flaticon-home"></i>
             </a>
         </li>
@@ -15,18 +14,13 @@
         <li class="nav-item">
             <a href="#">Plan</a>
         </li>
-        {{-- <li class="separator">
-            <i class="flaticon-right-arrow"></i>
-        </li>
-        <li class="nav-item">
-            <a href="#">Basic Form</a>
-        </li> --}}
+        
     </ul>
 </div>
 
-@php
+<?php
     use Illuminate\Support\Facades\Storage;
-@endphp
+?>
 
 <div class="row">
     <div class="col-md-12" id="updateplan" style="display: none;">
@@ -37,8 +31,8 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12 col-lg-12">
-                        <form id="plandata" name="plandata" {{-- action={{route('addadminuser')}} --}} onsubmit="return false;" method="post" enctype='multipart/form-data'>
-                            @csrf
+                        <form id="plandata" name="plandata"  onsubmit="return false;" method="post" enctype='multipart/form-data'>
+                            <?php echo csrf_field(); ?>
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group err_planname">
@@ -117,41 +111,9 @@
                                 </div>
                             </div>
 
-                            {{-- <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="actualprice">Actual Price</label>
-                                        <input type="text" class="form-control" id="actualprice" placeholder="Enter Actual Price" name="actualprice">
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="currentprice">Current Price</label>
-                                        <input type="text" class="form-control" id="currentprice" placeholder="Enter Current Price" name="currentprice">
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="discount">Discount</label>
-                                        <input type="text" class="form-control" id="discount" placeholder="Enter Discount(%)" name="discount">
-                                    </div>
-                                </div>
-                            </div> --}}
+                            
 
-                            {{-- <div class="form-group">
-                            <label for="addinformation">Add Information</label></div>
-                            <div id="addinformation">
-                                <div class="row">
-                                    <div class="col-md-8">
-                                        <div class="form-group">
-                                            <input type="text" class="form-control information" placeholder="Add Information">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2 form-group">
-                                        <button type="button" onclick="addbox()" class="btn btn-primary"><i class="fa fa-plus"></i></button>
-                                    </div>
-                                </div>
-                            </div> --}}
+                            
                             <div class="card-action text-right">
                                 <button class="btn btn-success" type="submit" onclick="updateplan()" id="country-btn">Submit</button>&nbsp;&nbsp;
                                 <button class="btn btn-danger"  type="button" onclick="cencelediting()">Cancel</button>
@@ -189,41 +151,43 @@
                         </thead>
                         <tbody>
 
-                            @foreach($plans as $plan)
+                            <?php $__currentLoopData = $plans; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $plan): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <tr>
-                                    <td>{{ $plan->plan_id }}</td>
-                                    <td>{{ $plan->plan_or_name }}</td>
-                                    <td>{{ $plan->plan_actual_price }}</td>
-                                    <td>{{ $plan->plan_validity }}</td>
-                                    <td>{{ $plan->plan_validity_type }}</td>
+                                    <td><?php echo e($plan->plan_id); ?></td>
+                                    <td><?php echo e($plan->plan_or_name); ?></td>
+                                    <td><?php echo e($plan->plan_actual_price); ?></td>
+                                    <td><?php echo e($plan->plan_validity); ?></td>
+                                    <td><?php echo e($plan->plan_validity_type); ?></td>
                                     <td>
-                                        @if($plan->plan_type == 1)
+                                        <?php if($plan->plan_type == 1): ?>
                                             <p>Normal</p>
-                                        @endif
-                                        @if($plan->plan_type == 2)
+                                        <?php endif; ?>
+                                        <?php if($plan->plan_type == 2): ?>
                                             <p>Political</p>
-                                        @endif
-                                        @if($plan->plan_type == 3)
+                                        <?php endif; ?>
+                                        <?php if($plan->plan_type == 3): ?>
                                             <p>All</p>
-                                        @endif
+                                        <?php endif; ?>
                                     </td>
                                     <td>
-                                        {{$plan->new_or_renewal}}
+                                        <?php echo e($plan->new_or_renewal); ?>
+
                                     </td>
                                     <td>
-                                        {{$plan->bg_credit}}
+                                        <?php echo e($plan->bg_credit); ?>
+
                                     </td>
-                                    <td><img src="{{ Storage::url($plan->image) }}" height="100" width="100"></td>
+                                    <td><img src="<?php echo e(Storage::url($plan->image)); ?>" height="100" width="100"></td>
                                     <td>
-                                        <button onclick="getdataforupdateplan('{{ $plan->plan_id }}')" class="btn btn-primary">update</button>
-                                        @if($plan->status == 0)
-                                            &nbsp;&nbsp;<button class="btn btn-danger" id="user-block" onclick="blockUser({{ $plan->plan_id }})">Block</button>
-                                        @else
-                                             &nbsp;&nbsp;<button class="btn btn-success" id="user-unblock" onclick="unblockUser({{ $plan->plan_id }})">Unblock</button>
-                                        @endif
+                                        <button onclick="getdataforupdateplan('<?php echo e($plan->plan_id); ?>')" class="btn btn-primary">update</button>
+                                        <?php if($plan->status == 0): ?>
+                                            &nbsp;&nbsp;<button class="btn btn-danger" id="user-block" onclick="blockUser(<?php echo e($plan->plan_id); ?>)">Block</button>
+                                        <?php else: ?>
+                                             &nbsp;&nbsp;<button class="btn btn-success" id="user-unblock" onclick="unblockUser(<?php echo e($plan->plan_id); ?>)">Unblock</button>
+                                        <?php endif; ?>
                                     </td>
                                 </tr>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </tbody>
                     </table>
                 </div>
@@ -232,9 +196,11 @@
     </div>
 </div>
 
-@endsection
-@section('js')
-    <script type="text/javascript" src="{{ url('/public/admin/js/user/plan.js?v='.rand()) }}"></script>
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('js'); ?>
+    <script type="text/javascript" src="<?php echo e(url('/public/admin/js/user/plan.js?v='.rand())); ?>"></script>
 
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('admin.layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /opt/lampp/htdocs/digital-post/modules/Plan/Resources/views/index.blade.php ENDPATH**/ ?>

@@ -4617,7 +4617,7 @@ class UserapiControllerV13IOS extends Controller
                 if($type == "image") {
                     $img_data['image_id'] = strval($img_value->id);
                     $img_data['image_url'] = !empty($img_value->thumbnail) ? Storage::url($img_value->thumbnail) :"";
-                    $img_data['image_thumbnail_url'] = !empty($img_value->post_thumb) ? Storage::url($img_value->post_thumb) : Storage::url($img_value->thumbnail);
+                    $img_data['image'] = !empty($img_value->post_thumb) ? Storage::url($img_value->post_thumb) : Storage::url($img_value->thumbnail);
                     $img_data['image_type'] = strval($img_value->image_type);
                     $img_data['image_language_id'] = !empty($img_value->language_id) ? strval($img_value->language_id) :"";
                 }
@@ -5073,6 +5073,15 @@ class UserapiControllerV13IOS extends Controller
             User::where('id', $user_id)->update(array(
                 'default_political_business_id' => $business_id,
             ));
+        }
+        else {
+            $checkOldBusines = PoliticalBusiness::where('user_id', $user_id)->where('pb_id', $userdata->default_political_business_id)->where('pb_is_deleted', 1)->first();
+            if(!empty($checkOldBusines)) {
+                User::where('id', $user_id)->update(array(
+                    'default_political_business_id' => $business_id,
+                ));
+            }
+
         }
         return response()->json(['status'=>true,'message'=>'Data successfully Added']);
     }

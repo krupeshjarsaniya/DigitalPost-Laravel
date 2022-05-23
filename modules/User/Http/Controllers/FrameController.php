@@ -31,7 +31,7 @@ class FrameController extends Controller
 
     public function getFrame(Request $request)
     {
-        $frames = Frame::orderBy('id','DESC');
+        $frames = Frame::all();
 
         if ($request->ajax())
         {
@@ -63,10 +63,12 @@ class FrameController extends Controller
     public function addFrame(Request $request) {
         $validator = Validator::make($request->all(), [
                 'frame_image' => 'required',
+                'thumbnail_image' => 'required',
                 'frame_type' => 'required',
             ],
             [
                 'frame_image.required' => 'Image Is Required',
+                'thumbnail_image.required' => 'Thumbnail Image Is Required',
                 'frame_type.required' => 'Frame Type Is Required',
             ]
         );
@@ -81,8 +83,11 @@ class FrameController extends Controller
         $image_name = $this->uploadFile($request, null, 'frame_image', 'frame');
         $frame = new Frame();
         $frame->frame_image = $image_name;
+        $thumb_image_name = $this->uploadFile($request, null, 'thumbnail_image', 'frame');
+        $frame->thumbnail_image = $thumb_image_name;
         $frame->frame_type = $request->frame_type;
         $frame->is_active = 0;
+        $frame->display_order = isset($request->display_order) ? $request->display_order : 999;
         $frame->save();
 
         return response()->json(['status' => 1,'data' => "", 'message' => 'Popup created' ]);
@@ -96,6 +101,9 @@ class FrameController extends Controller
         }
         if($frame->frame_image) {
             $frame->frame_image = Storage::url($frame->frame_image);
+        }
+        if($frame->thumbnail_image) {
+            $frame->thumbnail_image = Storage::url($frame->thumbnail_image);
         }
         return response()->json(['status' => true,'data' => $frame, 'message' => 'Frame fetched successfully' ]);
     }
@@ -126,8 +134,13 @@ class FrameController extends Controller
             $image_name = $this->uploadFile($request, null, 'edit_frame_image', 'frame');
             $frame->frame_image = $image_name;
         }
+        if($request->hasFile('edit_thumbnail_image')) {
+            $thumb_image_name = $this->uploadFile($request, null, 'edit_thumbnail_image', 'frame');
+            $frame->thumbnail_image = $thumb_image_name;
+        }
         $frame->frame_type = $request->edit_frame_type;
         $frame->is_active = $request->edit_is_active;
+        $frame->display_order = isset($request->edit_display_order) ? $request->edit_display_order : 999;
         $frame->save();
         return response()->json(['status' => 1,'message' => "Frame updated!"]);
     }
@@ -396,6 +409,8 @@ class FrameController extends Controller
                 'height' => 'required',
                 'order_' => 'required',
                 'field_four' => 'required',
+                'field_three' => 'required',
+                'font_name' => 'required',
             ],
             [
                 'frame_id.required' => 'Frame Id Is Required',
@@ -407,6 +422,8 @@ class FrameController extends Controller
                 'height.required' => 'Height Is Required',
                 'order_.required' => 'Order Is Required',
                 'field_four.required' => 'Field Three Is Required',
+                'field_three.required' => 'Text Alignment Is Required',
+                'font_name.required' => 'Font Name Is Required',
             ]
         );
 
@@ -421,7 +438,7 @@ class FrameController extends Controller
         $frameText = new FrameText();
         $frameText->frame_id = $request->frame_id;
         $frameText->type = 'text';
-        $frameText->font_name = 'en_roboto_regular.ttf';
+        $frameText->font_name = $request->font_name;
         $frameText->text_color = !empty($request->text_color) ? $request->text_color : '-16777216';
         $frameText->text = "";
         $frameText->text_alpha = "100";
@@ -442,7 +459,7 @@ class FrameController extends Controller
         $frameText->curveprog = "0";
         $frameText->field_one = "15";
         $frameText->field_two = "";
-        $frameText->field_three = "c";
+        $frameText->field_three = $request->field_three;
         $frameText->field_four = $request->field_four;
         $frameText->text_for = $request->text_for;
         $frameText->save();
@@ -470,6 +487,8 @@ class FrameController extends Controller
                 'edit_height' => 'required',
                 'edit_order_' => 'required',
                 'edit_field_four' => 'required',
+                'edit_field_three' => 'required',
+                'edit_font_name' => 'required',
             ],
             [
                 'edit_text_id.required' => 'Edit Id Is Required',
@@ -481,6 +500,8 @@ class FrameController extends Controller
                 'edit_height.required' => 'Height Is Required',
                 'edit_order_.required' => 'Order Is Required',
                 'edit_field_four.required' => 'Field Three Is Required',
+                'edit_field_three.required' => 'Text Alignment Is Required',
+                'edit_font_name.required' => 'Font Name Is Required',
             ]
         );
 
@@ -504,6 +525,9 @@ class FrameController extends Controller
         $text->height = $request->edit_height;
         $text->order_ = $request->edit_order_;
         $text->field_four = $request->edit_field_four;
+        $text->field_three = $request->edit_field_three;
+        $text->text_for = $request->edit_text_for;
+        $text->font_name = $request->edit_font_name;
         $text->text_for = $request->edit_text_for;
         $text->save();
         return response()->json(['status' => true,'data' => "", 'message' => 'Text updated successfully' ]);

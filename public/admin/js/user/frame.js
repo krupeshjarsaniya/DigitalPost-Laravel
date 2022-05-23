@@ -41,6 +41,7 @@ function getFrame() {
             {data: 'frame_image', name: 'frame_image'},
             {data: 'frame_type', name: 'frame_type'},
             {data: 'is_active', name: 'is_active'},
+            {data: 'display_order', name: 'display_order'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ]
     });
@@ -73,6 +74,8 @@ function getTexts() {
         columns: [
             {data: 'field.field_value', name: 'field.field_value'},
             {data: 'text_color', name: 'text_color'},
+            {data: 'font_name', name: 'font_name'},
+            {data: 'field_three', name: 'field_three'},
             {data: 'pos_x', name: 'pos_x'},
             {data: 'pos_y', name: 'pos_y'},
             {data: 'height', name: 'height'},
@@ -87,7 +90,10 @@ function getTexts() {
 $('#add-frame').click(function() {
     $('#addFrameModal').modal('show');
     $('#name').val('');
-    $('#order_number').val(null);
+    $('#display_order').val('');
+    $('#frame_image').val('');
+    $('#thumbnail_image').val('');
+
 })
 
 function addFrame() {
@@ -137,6 +143,7 @@ function addFrame() {
                 $('#addFrameModal').modal('hide');
                 $('#name').val('');
                 $('#order_number').val(null);
+                $('#thumbnail_image').val('');
                 table.ajax.reload();
             }
         }
@@ -145,6 +152,9 @@ function addFrame() {
 
 function editFrame(ele) {
     $('span.alerts').remove();
+    $('#edit_display_order').val('');
+    $('#edit_frame_image').val('');
+    $('#edit_thumbnail_image').val('');
     var id = $(ele).data('id');
     $.ajaxSetup({
         headers: {
@@ -161,8 +171,10 @@ function editFrame(ele) {
             if(data.status) {
                 $('#edit_id').val(data.data.id);
                 $('#image_view').attr('src',data.data.frame_image);
+                $('#thumb_image_view').attr('src',data.data.thumbnail_image);
                 $('#edit_frame_type').val(data.data.frame_type);
                 $('#edit_is_active').val(data.data.is_active);
+                $('#edit_display_order').val(data.data.display_order);
                 $('#editFrameModal').modal('show');
             }
             else {
@@ -219,6 +231,7 @@ function updateFrame() {
                 $('#editFrameModal').modal('hide');
                 $('#edit_id').val('');
                 $('#image_view').attr('src','');
+                $('#edit_image_view').attr('src','');
                 table.ajax.reload();
             }
         }
@@ -284,6 +297,7 @@ function addComponent() {
 function editComponent(ele) {
     clearEditComponentForm();
     $('span.alerts').remove();
+    $('#image-edit-message').html('');
     var id = $(ele).data('id');
     $.ajaxSetup({
         headers: {
@@ -324,6 +338,7 @@ function editComponent(ele) {
 
 function updateComponent() {
     $('span.alerts').remove();
+    $('#image-edit-message').html('');
 
     var form = document.editComponentForm;
 
@@ -363,9 +378,10 @@ function updateComponent() {
                 return false;
             }
             if(data.status) {
-                $('#editComponentModal').modal('hide');
-                clearEditComponentForm();
+                // $('#editComponentModal').modal('hide');
+                // clearEditComponentForm();
                 table2.ajax.reload();
+                $('#image-edit-message').html('<span class="text-success">' + data.message + '</span>');
             }
             else {
                 alert(data.message);
@@ -429,6 +445,7 @@ function clearAddComponentForm() {
     $('span.alerts').remove();
     $('#image_for').val('0');
     $('#stkr_path_wrapper').show();
+    $('#stkr_path').val('');
     $('#order_').val('');
     $('#pos_x').val('');
     $('#pos_y').val('');
@@ -449,10 +466,11 @@ function clearEditComponentForm() {
     $('#edit_width').val('');
     $('#edit_height').val('');
     $('#edit_field_three').val('unlocked');
+    $('#edit_stkr_path').val('');
 }
 
 $('#add-text').click(function() {
-    clearAddTextForm()
+    clearAddTextForm();
     $('#addTextModal').modal('show');
 })
 
@@ -512,6 +530,7 @@ function addText() {
 function editText(ele) {
     clearEditTextForm();
     var id = $(ele).data('id');
+    $('#text-edit-message').html('');
 
     $.ajaxSetup({
     headers: {
@@ -536,6 +555,8 @@ function editText(ele) {
                 $('#edit_text_width').val(data.data.width);
                 $('#edit_text_height').val(data.data.height);
                 $('#edit_text_field_four').val(data.data.field_four);
+                $('#edit_text_field_three').val(data.data.field_three);
+                $('#edit_text_font_name').val(data.data.font_name);
 
             }
             else {
@@ -547,6 +568,7 @@ function editText(ele) {
 
 function updateText() {
     $('span.alerts').remove();
+    $('#text-edit-message').html('');
     var form = document.editTextForm;
 
     var formData = new FormData(form);
@@ -587,9 +609,10 @@ function updateText() {
 
             }
             if(data.status) {
-                $('#editTextModal').modal('hide');
-                clearEditTextForm();
+                // $('#editTextModal').modal('hide');
+                // clearEditTextForm();
                 table3.ajax.reload();
+                $('#text-edit-message').html('<span class="text-success">' + data.message + '</span>');
             }
             else {
                 alert(data.message);
@@ -657,6 +680,8 @@ function clearAddTextForm() {
     $('#text_width').val('');
     $('#text_height').val('');
     $('#text_field_four').val('unlocked');
+    $('#text_field_three').val('C');
+    $('#text_font_name').val('en_roboto_regular.ttf');
 }
 
 function clearEditTextForm() {
@@ -670,4 +695,6 @@ function clearEditTextForm() {
     $('#edit_text_width').val('');
     $('#edit_text_height').val('');
     $('#edit_text_field_four').val('unlocked');
+    $('#edit_text_field_three').val('C');
+    $('#edit_text_font_name').val('en_roboto_regular.ttf');
 }

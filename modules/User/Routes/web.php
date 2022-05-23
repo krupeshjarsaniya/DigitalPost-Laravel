@@ -60,6 +60,25 @@ Route::prefix('background')->middleware('auth','adminauth')->group(function() {
   	Route::post('/updateBackgroundCategory', 'BackgroundController@updateBackgroundCategory');
 });
 
+Route::prefix('musicCategory')->middleware('auth','adminauth')->group(function() {
+    Route::get('/', 'MusicCategoryController@index')->name('musicCategory');
+    Route::get('/getMusicCategory', 'MusicCategoryController@getMusicCategory');
+    Route::post('/addMusicCategory', 'MusicCategoryController@addMusicCategory');
+    Route::post('/getMusicCategoryById', 'MusicCategoryController@getMusicCategoryById');
+    Route::post('/updateMusicCategory', 'MusicCategoryController@updateMusicCategory');
+    Route::post('/deleteMusicCategory', 'MusicCategoryController@deleteMusicCategory');
+    Route::get('/{id}', 'MusicController@index')->name('musicList');
+});
+
+Route::prefix('music')->middleware('auth','adminauth')->group(function() {
+    Route::get('/list/{id}', 'MusicController@index')->name('musicList');
+    Route::get('/getMusicByCategory/{id}', 'MusicController@getMusicByCategory');
+    Route::post('/addMusic', 'MusicController@addMusic');
+    Route::post('/getMusicById', 'MusicController@getMusicById');
+    Route::post('/updateMusic', 'MusicController@updateMusic');
+    Route::post('/deleteMusic', 'MusicController@deleteMusic');
+});
+
 Route::prefix('graphic')->middleware('auth','adminauth')->group(function() {
     Route::get('/', 'GraphicController@index')->name('graphic');
     Route::post('/getGraphics', 'GraphicController@getGraphics');

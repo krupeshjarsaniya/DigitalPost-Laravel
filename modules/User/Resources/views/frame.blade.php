@@ -47,6 +47,7 @@
                             <th>Frame</th>
                             <th>Type</th>
                             <th>Is Active</th>
+                            <th>Order</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -78,12 +79,24 @@
                             </div>
                         </div>
                         <div class="col-md-6">
+                            <div class="form-group err_thumbnail_image">
+                                <label for="thumbnail_image">Thumbnail Frame Image</label>
+                                <input type="file" class="form-control" id="thumbnail_image" name="thumbnail_image" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
                             <div class="form-group err_frame_type">
                                 <label for="frame_type">Frame Type</label>
                                 <select class="form-control" id="frame_type" name="frame_type" required>
                                     <option value="Business">Business</option>
                                     <option value="Photo">Photo</option>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group err_display_order">
+                                <label for="display_order">Order</label>
+                                <input type="number" class="form-control" id="display_order" name="display_order">
                             </div>
                         </div>
                     </div>
@@ -123,6 +136,15 @@
                             <img id="image_view" src="#" alt="your image" height="100" width="100" >
                         </div>
                         <div class="col-md-6">
+                            <div class="form-group err_edit_thumbnail_image">
+                                <label for="edit_thumbnail_image">Thumbnail Frame Image</label>
+                                <input type="file" class="form-control" id="edit_thumbnail_image" name="edit_thumbnail_image">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <img id="thumb_image_view" src="#" alt="your image" height="100" width="100" >
+                        </div>
+                        <div class="col-md-6">
                             <div class="form-group err_edit_frame_type">
                                 <label for="edit_frame_type">Frame Type</label>
                                 <select class="form-control" id="edit_frame_type" name="edit_frame_type" required>
@@ -138,6 +160,12 @@
                                     <option value="1">Active</option>
                                     <option value="0">Inactive</option>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group err_edit_display_order">
+                                <label for="edit_display_order">Order</label>
+                                <input type="number" class="form-control" id="edit_display_order" name="edit_display_order">
                             </div>
                         </div>
                     </div>

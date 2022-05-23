@@ -5076,6 +5076,15 @@ class UserapiControllerV12 extends Controller
                 'default_political_business_id' => $business_id,
             ));
         }
+        else {
+            $checkOldBusines = PoliticalBusiness::where('user_id', $user_id)->where('pb_id', $userdata->default_political_business_id)->where('pb_is_deleted', 1)->first();
+            if(!empty($checkOldBusines)) {
+                User::where('id', $user_id)->update(array(
+                    'default_political_business_id' => $business_id,
+                ));
+            }
+
+        }
         return response()->json(['status'=>true,'message'=>'Data successfully Added']);
     }
 
