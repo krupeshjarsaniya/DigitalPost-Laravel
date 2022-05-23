@@ -36,3 +36,21 @@ Stack trace:
 [stacktrace]
 #0 {main}
 "} 
+[2022-05-23 12:47:48] local.ERROR: Uncaught PDOException: SQLSTATE[HY000] [1698] Access denied for user 'root'@'localhost' in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php:70
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(70): PDO->__construct()
+#1 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(46): Illuminate\Database\Connectors\Connector->createPdoConnection()
+#2 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Database/Connectors/MySqlConnector.php(24): Illuminate\Database\Connectors\Connector->createConnection()
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Database/Connectors/ConnectionFactory.php(184): Illuminate\Database\Connectors\MySqlConnector->connect()
+#4 [internal function]: Illuminate\Database\Connectors\ConnectionFactory->Illuminate\Database\Connectors\{closure}()
+#5 /opt/lampp/htdocs/digital {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Uncaught PDOException: SQLSTATE[HY000] [1698] Access denied for user 'root'@'localhost' in /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php:70
+Stack trace:
+#0 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(70): PDO->__construct()
+#1 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(46): Illuminate\\Database\\Connectors\\Connector->createPdoConnection()
+#2 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Database/Connectors/MySqlConnector.php(24): Illuminate\\Database\\Connectors\\Connector->createConnection()
+#3 /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Database/Connectors/ConnectionFactory.php(184): Illuminate\\Database\\Connectors\\MySqlConnector->connect()
+#4 [internal function]: Illuminate\\Database\\Connectors\\ConnectionFactory->Illuminate\\Database\\Connectors\\{closure}()
+#5 /opt/lampp/htdocs/digital at /opt/lampp/htdocs/digital-post/vendor/laravel/framework/src/Illuminate/Database/Connection.php:671)
+[stacktrace]
+#0 {main}
+"} 

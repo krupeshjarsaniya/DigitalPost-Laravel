@@ -2078,7 +2078,6 @@ class UserDataController extends Controller
                 'purc_follow_up_date' => null,
                 'purc_is_expire' => 0
             ]);
-
         }
 
         DB::table('user_business_comment')->where('business_id', $business_id)->where('business_type', 2)->delete();

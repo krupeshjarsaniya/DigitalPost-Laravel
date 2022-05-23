@@ -33,7 +33,7 @@ function DataTable()
 			{data: 'PurchasePlan', name: 'PurchasePlan'},
 			{data: 'action', name: 'action', orderable: false, searchable: false},
 		],
-		
+
 	});
 }
 
@@ -57,7 +57,7 @@ $('#carrier-drpdwn').on('change', function() {
 var row = '';
 
 PalnListsID();
-function PalnListsID() 
+function PalnListsID()
 {
 	$("#planlist").html('');
     $.ajaxSetup({
@@ -66,7 +66,7 @@ function PalnListsID()
     }});
 
     $('.loader-custom').css('display','block');
-    
+
     $.ajax({
         type:'POST',
         url:APP_URL+"/user/political-plan-list",
@@ -84,7 +84,7 @@ function PalnListsID()
     });
 }
 
-function purchaseplanspolitical(id) 
+function purchaseplanspolitical(id)
 {
     $("#pur_id").val(id);
     $('#myPlan').modal('show');
@@ -126,13 +126,7 @@ var plan_id = $("#planlist").val();
 				{
 					if (data.status)
 					{
-					    //location.reload();
-					    $('#myPlan').modal('hide');
-                        $("#pr_"+id).attr('onclick', 'cancelplan(this,'+id+')');
-                        $("#pr_"+id).text('cancel');
-                        $("#pr_"+id).removeClass('btn-primary');
-                        $("#pr_"+id).addClass('btn-danger');
-					  
+					    location.reload();
 					}
 					$('.loader-custom').css('display','none');
 				}
@@ -179,7 +173,7 @@ function cancelplanpolitical(id){
 					if (data.status)
 					{
 					    location.reload();
-					  
+
 					}
 					$('.loader-custom').css('display','none');
 				}
@@ -193,14 +187,14 @@ function cancelplanpolitical(id){
 }
 
 function EditBusinesspolitical(id){
-	
+
 	$.ajaxSetup({
 		headers: {
 			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 		}});
-	
+
 		$('.loader-custom').css('display','block');
-		
+
 		$.ajax({
 			type:'POST',
 			url:APP_URL+"/user/getPoliticalBusinessforEdit",
@@ -214,7 +208,7 @@ function EditBusinesspolitical(id){
 				$('#business_name').val(business_detail.pb_name);
 				$('#business_mobile').val(business_detail.pb_mobile);
 				$('#business_designation').val(business_detail.pb_designation);
-				
+
 				$('#bcategory_list').val(business_detail.pb_pc_id);
                 $('#business_id').val(id);
 
@@ -223,12 +217,12 @@ function EditBusinesspolitical(id){
                 $('#linkedin_url').val(business_detail.pb_linkedin);
                 $('#youtube_url').val(business_detail.pb_youtube);
                 $('#fb_url').val(business_detail.pb_facebook);
-                
+
                 $('#logoimg').attr('src', SPACE_STORE_URL + '' + business_detail.pb_party_logo);
                 $('#watermarkimg').attr('src', SPACE_STORE_URL + '' + business_detail.pb_watermark);
                 $('#leftimg').attr('src', SPACE_STORE_URL + '' + business_detail.pb_left_image);
                 $('#rightimg').attr('src', SPACE_STORE_URL + '' + business_detail.pb_right_image);
-                
+
 
 				$('.loader-custom').css('display','none');
 				$('#viewDetail').css('display','none');
@@ -237,7 +231,7 @@ function EditBusinesspolitical(id){
 				$('#watermarkimg').css('display','block');
 				$('#leftimg').css('display','block');
 				$('#rightimg').css('display','block');
-	
+
 			}
 		});
 }
@@ -291,18 +285,18 @@ function UpdateBusiness(){
 		data.append('designation', $('#business_designation').val());
 		data.append('mobile', $('#business_mobile').val());
         data.append('category', $('#bcategory_list').val());
-    
+
 		data.append('facebook', $('#fb_url').val());
 		data.append('twitter', $('#twitter_url').val());
 		data.append('instagram', $('#instagram_url').val());
 		data.append('linkedin', $('#linkedin_url').val());
         data.append('youtube', $('#youtube_url').val());
-    
+
     	$.ajaxSetup({
     	headers: {
     	    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     	}});
-    
+
     	$.ajax({
     		type:'POST',
     		url:APP_URL+"/user/updatePoliticalBusiness",

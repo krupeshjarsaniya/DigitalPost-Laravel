@@ -20,15 +20,8 @@ class PlanController extends Controller
      */
     public function index()
     {
-        $plan = Plan::where('plan_id', '!=', 3)->get();
+        $plan = Plan::where('plan_id', '!=', 3)->where('plan_type', '!=', 4)->get();
 
-        /*foreach ($plan as $key => $value) {
-            $value->plan_information = unserialize($value->plan_information);
-            // echo gettype($value->information), "\n";
-        }*/
-        // echo "<pre>";
-        // print_r($plan);
-        // die();
         return view('plan::index', ['plans' => $plan]);
     }
 
@@ -81,7 +74,7 @@ class PlanController extends Controller
             $insert->plan_validity_type = $request->validitytime;
             $insert->order_no = $request->orderno;
             $insert->plan_type = $request->plantype;
-            $insert->bg_credit = $request->bg_credit;
+            $insert->bg_credit = !empty($request->bg_credit) ? $request->bg_credit : 0;
             $insert->new_or_renewal = $request->new_or_renewal;
             $insert->image = $path;
             $insert->save();
@@ -125,7 +118,7 @@ class PlanController extends Controller
                     'order_no' => $request->orderno,
                     'plan_type' => $request->plantype,
                     'new_or_renewal' => $request->new_or_renewal,
-                    'bg_credit' => $request->bg_credit,
+                    'bg_credit' => !empty($request->bg_credit) ? $request->bg_credit : 0,
                     'image' => $path,
                 ));
             } else {
@@ -137,7 +130,7 @@ class PlanController extends Controller
                     'order_no' => $request->orderno,
                     'plan_type' => $request->plantype,
                     'new_or_renewal' => $request->new_or_renewal,
-                    'bg_credit' => $request->bg_credit,
+                    'bg_credit' => !empty($request->bg_credit) ? $request->bg_credit : 0,
                 ));
             }
         }

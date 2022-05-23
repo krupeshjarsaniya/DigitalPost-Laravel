@@ -48,12 +48,12 @@
                           <select class="form-control" id="bcategory_list" name="political_category">
                             <option value="" selected="selected" disabled>Select Category</option>
                             @foreach($political_category as $value)
-                            
+
                                 <option value="{{$value->pc_id}}">{{$value->pc_name}}</option>
 
                             @endforeach
                           </select>
-                        </div>   
+                        </div>
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 form-group">
                         <lable for="fb_url">Facebook</lable>
@@ -95,7 +95,7 @@
                         <input type="file" name="logo" id="right" class="form-control"><br>
                         <img id="rightimg" src="#" alt="your image" style="display: none;width: 100px;height:100px;"/>
                     </div>
-		            
+
                 </div>
             </div>
             <div class="card-action">
@@ -168,7 +168,7 @@
               <div class="form-group ">
                 <label for="sel1">Select Plan:</label>
                 <select class="form-control" id="planlist">
-                  
+
                 </select>
               </div>
           </div>
@@ -176,7 +176,7 @@
 
           <!-- Modal footer -->
           <div class="modal-footer">
-              <button type="button" class="btn btn-success" onclick="purchaseplan()">purchase</button>
+              <button type="button" class="btn btn-success" onclick="purchaseplanpolitical()">purchase</button>
               <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
           </div>
 

@@ -1,4 +1,3 @@
-
 <?php $__env->startSection('title', 'Users'); ?>
 <?php $__env->startSection('content'); ?>
 <div class="page-header">
@@ -48,12 +47,12 @@
                           <select class="form-control" id="bcategory_list" name="political_category">
                             <option value="" selected="selected" disabled>Select Category</option>
                             <?php $__currentLoopData = $political_category; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            
+
                                 <option value="<?php echo e($value->pc_id); ?>"><?php echo e($value->pc_name); ?></option>
 
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                           </select>
-                        </div>   
+                        </div>
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 form-group">
                         <lable for="fb_url">Facebook</lable>
@@ -95,7 +94,7 @@
                         <input type="file" name="logo" id="right" class="form-control"><br>
                         <img id="rightimg" src="#" alt="your image" style="display: none;width: 100px;height:100px;"/>
                     </div>
-		            
+
                 </div>
             </div>
             <div class="card-action">
@@ -167,7 +166,7 @@
               <div class="form-group ">
                 <label for="sel1">Select Plan:</label>
                 <select class="form-control" id="planlist">
-                  
+
                 </select>
               </div>
           </div>
@@ -175,7 +174,7 @@
 
           <!-- Modal footer -->
           <div class="modal-footer">
-              <button type="button" class="btn btn-success" onclick="purchaseplan()">purchase</button>
+              <button type="button" class="btn btn-success" onclick="purchaseplanpolitical()">purchase</button>
               <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
           </div>
 
@@ -187,4 +186,5 @@
 <?php $__env->startSection('js'); ?>
     <script type="text/javascript" src="<?php echo e(url('/public/admin/js/user/politicalbusinesslist.js?v='.rand())); ?>"></script>
 <?php $__env->stopSection(); ?>
+
 <?php echo $__env->make('admin.layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /opt/lampp/htdocs/digital-post/modules/User/Resources/views/politicalbusinesslist.blade.php ENDPATH**/ ?>

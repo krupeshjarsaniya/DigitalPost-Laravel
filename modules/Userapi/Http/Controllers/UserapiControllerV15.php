@@ -2700,16 +2700,16 @@ class UserapiControllerV15 extends Controller
         }
 
         Purchase::where('purc_business_id',$business_id)->where('purc_business_type', $input['business_type'])->update([
-        'purc_plan_id'=>$plan_id,
-        'purc_start_date' => $start_date,
-        'purc_end_date' => $end_date,
-        'purc_order_id' => $input['order_id'],
-        'purchase_id' => $input['purchase_id'],
-        'device' => $input['device'],
-        'purc_is_cencal' => 0,
-        'purc_tel_status' => 7,
-        'purc_follow_up_date' => null,
-        'purc_is_expire' => 0,
+            'purc_plan_id'=>$plan_id,
+            'purc_start_date' => $start_date,
+            'purc_end_date' => $end_date,
+            'purc_order_id' => $input['order_id'],
+            'purchase_id' => $input['purchase_id'],
+            'device' => $input['device'],
+            'purc_is_cencal' => 0,
+            'purc_tel_status' => 7,
+            'purc_follow_up_date' => null,
+            'purc_is_expire' => 0,
         ]);
         DB::table('user_business_comment')->where('business_id', $business_id)->where('business_type', $input['business_type'])->delete();
         $this->addPurchasePlanHistory($business_id, $input['business_type'], $new_start_date);
