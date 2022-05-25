@@ -50,6 +50,8 @@ use App\Jobs\ShareSocialPostJob;
 use App\Logic\Providers\FacebookRepository;
 use App\MusicCategory;
 use App\Music;
+use App\BGCreditPlan;
+use App\BGCreditPlanHistory;
 
 class UserapiControllerV15 extends Controller
 {
@@ -7049,7 +7051,17 @@ class UserapiControllerV15 extends Controller
         $music_categories = MusicCategory::whereNotNull('order_number')->where('is_delete', 0)->where('is_active', 1)->orderBy('order_number', 'ASC')->get();
 
         foreach($music_categories as $category) {
-            $musics = Music::where('category_id', $category->id)->where('is_delete', 0)->orderBy('id', 'DESC')->get();
+            $musics = Music::where('category_id', $category->id)->where('is_delete', 0)->whereNotNull('order_number')->orderBy('order_number', 'ASC')->get();
+            if(count($musics)) {
+                foreach($musics as &$music) {
+                    $music->audio = Storage::url($music->audio);
+                    $music->image = Storage::url($music->image);
+                }
+                $data = $category;
+                $data['musics'] = $musics;
+                array_push($music_list_array, $data);
+            }
+            $musics = Music::where('category_id', $category->id)->where('is_delete', 0)->whereNull('order_number')->orderBy('id', 'DESC')->get();
             if(count($musics)) {
                 foreach($musics as &$music) {
                     $music->audio = Storage::url($music->audio);
@@ -7064,7 +7076,17 @@ class UserapiControllerV15 extends Controller
         $music_categories = MusicCategory::whereNull('order_number')->where('is_delete', 0)->where('is_active', 1)->orderBy('id', 'DESC')->get();
 
         foreach($music_categories as $category) {
-            $musics = Music::where('category_id', $category->id)->where('is_delete', 0)->orderBy('id', 'DESC')->get();
+            $musics = Music::where('category_id', $category->id)->where('is_delete', 0)->whereNotNull('order_number')->orderBy('order_number', 'ASC')->get();
+            if(count($musics)) {
+                foreach($musics as &$music) {
+                    $music->audio = Storage::url($music->audio);
+                    $music->image = Storage::url($music->image);
+                }
+                $data = $category;
+                $data['musics'] = $musics;
+                array_push($music_list_array, $data);
+            }
+            $musics = Music::where('category_id', $category->id)->where('is_delete', 0)->whereNull('order_number')->orderBy('id', 'v')->get();
             if(count($musics)) {
                 foreach($musics as &$music) {
                     $music->audio = Storage::url($music->audio);
@@ -7077,6 +7099,78 @@ class UserapiControllerV15 extends Controller
         }
 
         return response()->json(['status' => true, 'data' => $music_list_array, 'message' => 'Music List Fetched Successfully']);
+    }
+
+    public function getBGRemoveCreditPlan(Request $request) {
+        $token = $request->token;
+        $user_id = $this->get_userid($token);
+        if($user_id == 0){
+            return response()->json(['status'=>false,'message'=>'user not valid']);
+        }
+        $plan_data = array();
+
+        $plans = BGCreditPlan::where('status', 'UNBLOCK')->whereNotNull('order_number')->orderBy('order_number', 'ASC')->get();
+        foreach($plans as $plan) {
+            $data['id'] = !empty($plan->id) ? $plan->id : 0 ;
+            $data['name'] = !empty($plan->name) ? $plan->name : '' ;
+            $data['price'] = !empty($plan->price) ? $plan->price : 0 ;
+            $data['bg_credit'] = !empty($plan->bg_credit) ? $plan->bg_credit : 0 ;
+            $data['status'] = !empty($plan->status) ? $plan->status : '' ;
+            $data['order_number'] = !empty($plan->order_number) ? $plan->order_number : 0 ;
+            array_push($plan_data, $data);
+        }
+
+        $plans = BGCreditPlan::where('status', 'UNBLOCK')->whereNull('order_number')->get();
+        foreach($plans as $plan) {
+            $data['id'] = !empty($plan->id) ? $plan->id : 0 ;
+            $data['name'] = !empty($plan->name) ? $plan->name : '' ;
+            $data['price'] = !empty($plan->price) ? $plan->price : 0 ;
+            $data['bg_credit'] = !empty($plan->bg_credit) ? $plan->bg_credit : 0 ;
+            $data['status'] = !empty($plan->status) ? $plan->status : '' ;
+            $data['order_number'] = !empty($plan->order_number) ? $plan->order_number : 0 ;
+            array_push($plan_data, $data);
+        }
+        return response()->json(['status' => 'true', 'data' => $plan_data, 'message' => "Plan list fetched successfully"]);
+    }
+
+    public function purchaseBGRemovePlan(Request $request) {
+        $token = $request->token;
+        $user_id = $this->get_userid($token);
+        if($user_id == 0){
+            return response()->json(['status'=>false,'message'=>'user not valid']);
+        }
+
+        $plan_id = $request->plan_id;
+        if(empty($plan_id)) {
+            return response()->json(['status' => false, 'message' => 'Plan Id Required']);
+        }
+
+        $plan = BGCreditPlan::find($plan_id);
+        if(empty($plan)) {
+            return response()->json(['status' => false, 'message' => 'Plan not found']);
+        }
+        if($plan->status === 'BLOCK') {
+            return response()->json(['status' => false, 'message' => 'Plan not available at the moment']);
+        }
+
+        $credit = !empty($plan->bg_credit) ? $plan->bg_credit: 0;
+        $userData = User::find($user_id);
+        $user_credit = $userData->bg_credit;
+        $new_credit= $credit + $user_credit;
+        $userData->bg_credit = $new_credit;
+        $userData->save();
+
+        $history = new BGCreditPlanHistory;
+        $history->user_id = $user_id;
+        $history->plan_id = $plan_id;
+        $history->plan_price = !empty($plan->price) ? $plan->price : 0;
+        $history->plan_bg_credit = !empty($plan->bg_credit) ? $plan->bg_credit : 0;
+        $history->save();
+
+        $data = [
+            'new_credit' => $new_credit,
+        ];
+        return response()->json(['status' => true, 'data' => $data, 'message' => "BG Remover plan purchased successfully"]);
     }
 
 }

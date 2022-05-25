@@ -48,6 +48,7 @@
                             <th>Image</th>
                             <th>Audio</th>
                             <th>Language</th>
+                            <th>Order</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -93,6 +94,10 @@
                             <label for="audio">Audio</label>
                             <input type="file" id="audio" name="audio" class="form-control" accept="audio/*" />
                         </div>
+                        <div class="col-6 form-group err_order_number">
+                            <label for="order_number">Order</label>
+                            <input type="text" id="order_number" name="order_number" placeholder="Enter Order" class="form-control" />
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -137,6 +142,10 @@
                         <div class="col-6 form-group err_audio">
                             <label for="edit_audio">Audio</label>
                             <input type="file" name="audio" id="edit_audio" class="form-control" accept="audio/*" />
+                        </div>
+                        <div class="col-6 form-group err_order_number">
+                            <label for="edit_order_number">Order</label>
+                            <input type="text" id="edit_order_number" name="order_number" placeholder="Enter Order" class="form-control" />
                         </div>
                     </div>
                 </div>

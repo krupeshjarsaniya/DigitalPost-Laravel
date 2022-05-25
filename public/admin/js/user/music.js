@@ -15,6 +15,7 @@ function getMusic() {
             {data: 'image', name: 'image'},
             {data: 'audio', name: 'audio'},
             {data: 'language_id', name: 'language_id'},
+            {data: 'order_number', name: 'order_number'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ]
     });
@@ -31,6 +32,7 @@ function clearAddMusicForm() {
     $('#language_id').val("");
     $('#image').val("");
     $('#audio').val("");
+    $('#order_number').val("");
 }
 
 function clearEditMusicForm() {
@@ -40,6 +42,7 @@ function clearEditMusicForm() {
     $('#edit_language_id').val("");
     $('#edit_image').val("");
     $('#edit_audio').val("");
+    $('#edit_order_number').val("");
 }
 
 function addMusic() {
@@ -152,6 +155,7 @@ function editMusic(ele) {
                 $('#edit_id').val(data.id);
                 $('#edit_name').val(data.name);
                 $('#edit_language_id').val(data.language_id);
+                $('#edit_order_number').val(data.order_number);
                 $('#edit-music-modal').modal('show');
             }
             else {

@@ -19,5 +19,14 @@ Route::prefix('plan')->middleware('auth','adminauth')->group(function() {
 
     Route::post('/unblock-plan', 'PlanController@UnBlockPlan');
     Route::post('/block-plan', 'PlanController@BlockPlan');
-    
+
+});
+
+Route::prefix('bg-remove-plan')->middleware('auth','adminauth')->group(function() {
+    Route::get('/', 'BGPlanController@index')->name('bg_remove_plan');
+    Route::get('/getBGRemovePlanList', 'BGPlanController@getBGRemovePlanList');
+    Route::post('/addBGRemovePlan', 'BGPlanController@addBGRemovePlan');
+    Route::post('/getBGRemovePlanById', 'BGPlanController@getBGRemovePlanById');
+    Route::post('/updateBGRemovePlan', 'BGPlanController@updateBGRemovePlan');
+    Route::post('/updateStatusBGRemovePlan', 'BGPlanController@updateStatusBGRemovePlan');
 });

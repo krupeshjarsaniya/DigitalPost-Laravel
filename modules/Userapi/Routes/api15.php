@@ -159,3 +159,7 @@ Route::post('withdrawHistory', 'UserapiControllerV15@withdrawHistory');
 Route::post('updatePaymentDetail', 'UserapiControllerV15@updatePaymentDetail');
 
 Route::post('getMusicList', 'UserapiControllerV15@getMusicList');
+
+Route::post('getBGRemoveCreditPlan', 'UserapiControllerV15@getBGRemoveCreditPlan');
+
+Route::post('purchaseBGRemovePlan', 'UserapiControllerV15@purchaseBGRemovePlan');

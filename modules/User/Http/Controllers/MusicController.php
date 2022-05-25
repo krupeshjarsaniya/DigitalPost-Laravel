@@ -27,8 +27,8 @@ class MusicController extends Controller
         return DataTables::of($musics)
                 ->editColumn('language_id', function($row) {
                     $language = Language::where('id', $row->language_id)->where('is_delete', 0)->first();
-                    if(empty($language)) {
-                        return $language;
+                    if(!empty($language)) {
+                        return $language->name;
                     }
                     return "";
                 })
@@ -93,6 +93,9 @@ class MusicController extends Controller
         $newMusic->language_id = $request->language_id;
         $newMusic->image = $image;
         $newMusic->audio = $audio;
+        if(isset($request->order_number) && $request->order_number != '' && $request->order_number > 0) {
+            $newMusic->order_number = $request->order_number;
+        }
         $newMusic->save();
         return response()->json(['status' => true,'message' => 'Music Added']);
         exit();
@@ -148,6 +151,12 @@ class MusicController extends Controller
         if($request->hasFile('audio')) {
             $audio = $this->uploadFile($request, null, 'audio', 'music');
             $music->audio = $audio;
+        }
+        if(isset($request->order_number) && $request->order_number != '' && $request->order_number > 0) {
+            $music->order_number = $request->order_number;
+        }
+        else {
+            $music->order_number = null;
         }
         $music->save();
 
