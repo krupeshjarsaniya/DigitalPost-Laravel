@@ -163,3 +163,9 @@ Route::post('getMusicList', 'UserapiControllerV15@getMusicList');
 Route::post('getBGRemoveCreditPlan', 'UserapiControllerV15@getBGRemoveCreditPlan');
 
 Route::post('purchaseBGRemovePlan', 'UserapiControllerV15@purchaseBGRemovePlan');
+
+Route::post('removeBackground', 'UserapiControllerV15@removeBackground');
+
+Route::post('userDownloadPhoto', 'UserapiControllerV15@userDownloadPhoto');
+
+Route::post('checkUserRemainingLimit', 'UserapiControllerV15@checkUserRemainingLimit');

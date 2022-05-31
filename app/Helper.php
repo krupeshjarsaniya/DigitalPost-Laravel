@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use App\Logic\Providers\FacebookRepository;
+use GuzzleHttp\Client;
 use App\Permission;
 use App\Menu;
 use DB;
@@ -587,6 +588,76 @@ class Helper extends Model
         else {
             return ['status'=> false, 'error' => $response->error->description];
         }
+    }
+
+    public static function removeBackgroundImage($file) {
+        $http_client = new \GuzzleHttp\Client();
+        $response = $http_client->post("https://api.slazzer.com/v2.0/remove_image_background", [
+            'preview' => true,
+            'multipart' => [
+                [
+                    'name' => 'source_image_file',
+                    'contents' => fopen('https://digitalpost365.sgp1.cdn.digitaloceanspaces.com/storage/music/image/2022/05/hJFY8fGwChCKV2ANoqKfTtMSLlA5gxU8YmkVA6zd.jpg', 'r')
+                ]
+            ],
+            'headers' => [
+                'API-KEY' => getenv('SLAZZER_API_KEY')
+            ]
+        ]);
+        dd($response);
+        // dd($response->getBody());
+
+        return $response->getBody();
+    }
+
+    public static function getUserRemainingLimit($user_id, $type, $category_id) {
+        $userData = User::find($user_id);
+
+        $totalLimit = 0;
+        $downloadLimit = DownloadLimit::first();
+        if(empty($downloadLimit)) {
+            return [];
+        }
+        if($type == 1) {
+            $totalLimit = $downloadLimit->business_photo_limit;
+        }
+        if($type == 2) {
+            $totalLimit = $downloadLimit->business_video_limit;
+        }
+        if($type == 3) {
+            $totalLimit = $downloadLimit->festival_photo_limit;
+        }
+        if($type == 4) {
+            $totalLimit = $downloadLimit->festival_video_limit;
+        }
+        if($type == 5) {
+            $totalLimit = $downloadLimit->incident_photo_limit;
+        }
+        if($type == 6) {
+            $totalLimit = $downloadLimit->incident_video_limit;
+        }
+        if($type == 7) {
+            $totalLimit = $downloadLimit->greeting_photo_limit;
+        }
+
+        $normalBusinessLimit = UserDownloadHistory::where('user_id', $user_id)
+                                                    ->where('type', $type)
+                                                    ->where('category_id', $category_id)
+                                                    ->where('business_type', 1)
+                                                    ->where('business_id', $userData->default_business_id)
+                                                    ->count();
+        $politicalBusinessLimit = UserDownloadHistory::where('user_id', $user_id)
+                                                    ->where('type', $type)
+                                                    ->where('category_id', $category_id)
+                                                    ->where('business_type', 2)
+                                                    ->where('business_id', $userData->default_political_business_id)
+                                                    ->count();
+
+        return [
+            'normalBusinessLimit' => $totalLimit - $normalBusinessLimit,
+            'politicalBusinessLimit' => $totalLimit - $politicalBusinessLimit,
+        ];
+
     }
 
 }

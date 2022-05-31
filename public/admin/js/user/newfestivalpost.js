@@ -67,7 +67,7 @@ function search_festival(){
 			$('#incident-table tbody').html(response.incidents);
 
 			$('#incident-table').DataTable();
-			
+
 			$('.loader-custom').css('display','none');
 
 		}
@@ -75,7 +75,7 @@ function search_festival(){
 }
 
 function editFestival(id) {
-    
+
     $('.pip').remove();
 
  $('.loader-custom').css('display','block');
@@ -91,7 +91,7 @@ function editFestival(id) {
 			"id":id,
 		},
 		success: function (response)
-		{	
+		{
 
 			$('#festivalname').val(response.data['fest_name']);
 			$('#festivaldate').val(response.data['fest_date']);
@@ -118,15 +118,15 @@ function editFestival(id) {
 			}*/
 			/*$('#flanguage').val(response.data['language_id']);
 			var btype = response.data['btype'];
-			if (btype == 1) 
+			if (btype == 1)
 			{
 				$("#btypepremium").attr('checked', 'checked');
-				
+
 			}
-			else if (btype == 0) 
+			else if (btype == 0)
 			{
 				$("#btypefree").attr('checked', 'checked');
-				
+
 
 			}*/
 			var s_url = response.s_url;
@@ -174,6 +174,15 @@ function editFestival(id) {
                       '</select>'+
                     '</div>'+
                     '</div>'+
+                    '<div class="col-md-12">'+
+                    '<div class="form-group">'+
+                      '<label for="fimagemode">Select Sub Category:</label>'+
+                      '<select class="form-control" required="required name="fimagemode'+i+'" id="editfimagemode_'+i+'" onchange="editimagemode('+response.images[i]['post_id']+',this)">'+
+                      '<option value="light">Light</option>'+
+                      '<option value="dark">Dark</option>'+
+                      '</select>'+
+                    '</div>'+
+                    '</div>'+
                     '</div>'+
                     '<div class="col-md-12">'+
 		            '</div>'+
@@ -185,32 +194,33 @@ function editFestival(id) {
 		          var opn = $("#flanguage").html();
 					$("#editflanguage_"+i).html(opn);
 					$("#editflanguage_"+i).val(response.images[i]['language_id'])
+					$("#editfimagemode_"+i).val(response.images[i]['post_mode'])
 
 				var opn1 = $("#fsubcategory").html();
 					$("#editfsubcategory_"+i).html(opn1);
 					$("#editfsubcategory_"+i).val(response.images[i]['sub_category_id'])
 		          var btype = response.images[i]['image_type'];
-					if (btype == 1) 
+					if (btype == 1)
 					{
 						$("#btypepremium"+i).attr('checked', 'checked');
-						
+
 					}
-					else if (btype == 0) 
+					else if (btype == 0)
 					{
 						$("#btypefree"+i).attr('checked', 'checked');
-						
+
 
 					}
 			}
-			
-			
+
+
 			 $('.loader-custom').css('display','none');
 		}
 	});
 
 }
 
-function edittype(typeid, ele) 
+function edittype(typeid, ele)
 {
 	var val_data = $('input[name="'+ele.name+'"]:checked').val()
 	$.ajaxSetup({
@@ -232,7 +242,7 @@ function edittype(typeid, ele)
 	});
 
 }
-function editlanguage(lid, ele) 
+function editlanguage(lid, ele)
 {
 	var val_data = $("#"+ele.id).val();
 	$.ajaxSetup({
@@ -255,7 +265,7 @@ function editlanguage(lid, ele)
 
 }
 
-function editsubcategory(lid, ele) 
+function editsubcategory(lid, ele)
 {
 	var val_data = $("#"+ele.id).val();
 	$.ajaxSetup({
@@ -269,6 +279,29 @@ function editsubcategory(lid, ele)
 		data: {
 			"id":lid,
 			"sub_category_id":val_data
+		},
+		success: function (data)
+		{
+			search_festival();
+		}
+	});
+
+}
+
+function editimagemode(lid, ele)
+{
+	var val_data = $("#"+ele.id).val();
+	$.ajaxSetup({
+	headers: {
+	    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+	}});
+
+	$.ajax({
+		type:'POST',
+		url:APP_URL+"/FestivalPost/changepostmodefestivalpost",
+		data: {
+			"id":lid,
+			"post_mode":val_data
 		},
 		success: function (data)
 		{
@@ -341,7 +374,7 @@ function resetForm() {
 	$("span.pip").remove();
 	$('#festival-btn').attr('onclick', 'addFestival()');
 	$('#flanguage').attr('required', 'required');
-	
+
 }
 
 function addFestivalCategory(id) {
@@ -430,7 +463,7 @@ function deleteSubCategory(ele) {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-    
+
             $.ajax({
                 type:'POST',
                 url:APP_URL+"/FestivalPost/deleteSubCategory",

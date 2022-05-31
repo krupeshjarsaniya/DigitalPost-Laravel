@@ -38,8 +38,6 @@ function resetForm() {
     $('#fimage').val("");
     $('#blah').attr('src', '#');
 
-
-
 }
 
 function search_category() {
@@ -60,31 +58,6 @@ function search_category() {
             { data: 'action', name: 'action', orderable: false, searchable: false },
         ]
     });
-
-    /* $('.loader-custom').css('display','block');
-	var date = "";
-
-	$.ajaxSetup({
-	headers: {
-	    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-	}});
-
-	$.ajax({
-		type:'POST',
-		url:APP_URL+"/businesscategory/categorylist",
-		data: {
-			"date":date,
-		},
-		success: function (response)
-		{
-			$('#category-table tbody').html(response.data);
-
-			$('#category-table').DataTable();
-
-			$('.loader-custom').css('display','none');
-
-		}
-	}); */
 }
 
 function addcategory() {
@@ -93,11 +66,12 @@ function addcategory() {
     var file = "";
     if($('#fimage')[0].files.length > 0) {
         file = $('#fimage')[0].files[0];
-    }           
+    }
     var name = $('#categoryname').val();
     var categoryid = $('#categoryid').val();
     var img = $('#fimage').val();
     var set = "";
+
     if (categoryid == "") {
         if (img == '') {
             (img == '') ? alert('Select Image'): '';
@@ -112,11 +86,11 @@ function addcategory() {
             $('.loader-custom').css('display', 'block');
             var form = document.getElementById('buss_cat_form');
             data = new FormData(form);
-             data.append('categoryname', name);
-             data.append('categoryid', categoryid);
-             if(file != "") {
+            data.append('categoryname', name);
+            data.append('categoryid', categoryid);
+            if(file != "") {
                 data.append('thumnail', file);
-             }
+            }
 
 
             $.ajaxSetup({
@@ -132,7 +106,6 @@ function addcategory() {
                 contentType: false,
                 processData: false,
                 success: function(data) {
-                    //alert(data.message)
                     if (data.status == 401) {
                         $('.loader-custom').css('display', 'none');
                         $.each(data.error1, function(index, value) {
@@ -150,9 +123,6 @@ function addcategory() {
                     }
 
                     if (data.status == 1) {
-                        // resetForm();
-                        // search_category();
-                        // showcategorylist();
                         $('.loader-custom').css('display', 'none');
                         location.reload(true);
                     }
@@ -237,6 +207,16 @@ function editcategory(id) {
                     '</div>' +
                     '</div>' +
 
+                    '<div class="col-md-12">' +
+                    '<div class="form-group">' +
+                    '<label for="fimagemode">Select Image Mode:</label>' +
+                    '<select class="form-control" name="fimagemode' + i + '" id="editfimagemode_' + i + '" onchange="editfimagemode(' + response.images[i]['id'] + ',this)">' +
+                    '<option value="light">Light</option>' +
+                    '<option value="dark">Dark</option>' +
+                    '</select>' +
+                    '</div>' +
+                    '</div>' +
+
                     '</div>' +
                     '<div class="col-md-12">' +
                     '</div>' +
@@ -255,20 +235,18 @@ function editcategory(id) {
                 $("#editffestivalId_" + i).html(opn2);
                 $("#editffestivalId_" + i).val(response.images[i]['festival_id'])
                 $("#editffestivalId_" + i).select2();
+                $("#editfimagemode_" + i).val(response.images[i]['post_mode'])
                 var btype = response.images[i]['image_type'];
                 if (btype == 1) {
                     $("#btypepremium" + i).attr('checked', 'checked');
 
                 } else if (btype == 0) {
                     $("#btypefree" + i).attr('checked', 'checked');
-
-
                 }
 
             }
             $('#addcategory').show();
             $('#viewcategory').hide();
-            // showinsertform();
             $('.loader-custom').css('display', 'none');
         }
     });
@@ -351,6 +329,15 @@ function addbox() {
 	                          </select>\
 	                        </div>\
 	                    </div>\
+                        <div class="col-md-6">\
+	                        <div class="form-group err_fimagemode' + p_id + '">\
+	                          <label for="fimagemode">Select Image Mode:</label>\
+	                          <select class="form-control" name="fimagemode[]" id="fimagemode_' + p_id + '" required>\
+                              <option value="light">Light</option>\
+                              <option value="dark">Dark</option>\
+	                          </select>\
+	                        </div>\
+	                    </div>\
 	                </div>\
 				</div>\
 				<div class="col-md-2 form-group">\
@@ -386,12 +373,10 @@ function addbox() {
     $("#fsubcategory_" + p_id).html(op1);
     $("#fffestivalId_" + p_id).html(festival_id_dropdown);
     $("#fffestivalId_" + p_id).select2();
-    //console.log($("#flanguage_"+p_id).html(op));
     p_id++;
 }
 
 function removebox(curr) {
-    //$(curr).closest('.row').remove();
     var remove = $(curr).attr("data-id");
     $('.pip_' + remove).remove();
     $('.row_' + remove).remove();
@@ -478,6 +463,27 @@ function editffestivalId(lid, ele) {
         data: {
             "id": lid,
             "festival_id": val_data
+        },
+        success: function(data) {
+            search_category();
+        }
+    });
+}
+
+function editfimagemode(lid, ele) {
+    var val_data = $("#" + ele.id).val();
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    $.ajax({
+        type: 'POST',
+        url: APP_URL + "/businesscategory/changeimagemode",
+        data: {
+            "id": lid,
+            "imagemode": val_data
         },
         success: function(data) {
             search_category();

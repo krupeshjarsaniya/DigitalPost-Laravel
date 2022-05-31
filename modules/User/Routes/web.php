@@ -290,3 +290,8 @@ Route::prefix('withdraw-request')->middleware('adminauth')->group(function() {
 	Route::get('/getCompletedRequest', 'ReferralController@getCompletedRequest');
 	Route::post('/completePayment', 'ReferralController@completePayment');
 });
+
+Route::prefix('download-limit')->middleware('adminauth')->group(function() {
+	Route::get('/', 'DownloadLimitController@index')->name('downloadLimit');
+	Route::post('/update', 'DownloadLimitController@update');
+});

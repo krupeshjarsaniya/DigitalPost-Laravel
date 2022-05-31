@@ -2,13 +2,11 @@ var p_id = 1;
 var options = "";
 $(document).ready(function() {
 
-	// $('#custom_cat_id').on("change",function(){
-	// 	alert($(this).val());
-	// });
 	getallcat();
     getallcatPost();
 
 });
+
 var table;
 function getallcatPost(){
     table = $('#category-table').DataTable({
@@ -34,21 +32,18 @@ function getallcat(){
 		type:'post',
 		url:APP_URL+"/CustomCategorypost/getcatlist",
 		success: function (response)
-		{	
-            // $('#categoryname').val(response.data['name']);
-			// $('#categoryid').val(response.data['custom_cateogry_id']);
-            
+		{
             let data = response.data;
             var list = $("#custom_cat_id");
             $.each(data, function(index, item) {
-            list.append(new Option(item.name, item.custom_cateogry_id));
+                list.append(new Option(item.name, item.custom_cateogry_id));
             });
 
             options = response.category;
             var list1 = $("#fsubcategory");
             list1.append(new Option('Select Sub Category', 0));
             $.each(options, function(index, item) {
-            list1.append(new Option(item.name, item.id));
+                list1.append(new Option(item.name, item.id));
             });
 
             $('.loader-custom').css('display','none');
@@ -89,7 +84,7 @@ function showfestivallist(){
 
 function removeCatPost(id){
 
-     $('.loader-custom').css('display','block');
+    $('.loader-custom').css('display','block');
 	$.ajaxSetup({
 	headers: {
 	    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -105,14 +100,14 @@ function removeCatPost(id){
 		{
             table.destroy()
 			alert('Category Removed successfully')
-             $('.loader-custom').css('display','none');
-             getallcat();
+            $('.loader-custom').css('display','none');
+            getallcat();
 		}
 	});
 }
 
 function editCat(id) {
-    
+
     $('.loader-custom').css('display','block');
 	$.ajaxSetup({
 	headers: {
@@ -126,9 +121,8 @@ function editCat(id) {
 			"id":id,
 		},
 		success: function (response)
-		{	
-			//$('#categoryname').val(response.data['name']);
-			
+		{
+
 			var categories = '<option value="0">Select Sub Category</option>';
             for (var i = 0; i < response.subCategories.length; i++) {
             	categories += '<option value="' + response.subCategories[i]['id'] + '">' + response.subCategories[i]['name'] + '</option>';
@@ -138,132 +132,138 @@ function editCat(id) {
 			for (var i = 0; i < response.images.length; i++) {
 				var bannerimg = "bannerimg"+i;
 				var imageone = "imageone"+i;
-							$('<div class="rv rv'+i+'"><hr />\
-								<form id="categotyformdata'+i+'" name="categotyformdata'+i+'"  enctype="multipart/form-data" >\
-								<div class="row  row_'+i+'">\
-								<div class="col-md-10">\
-									<div class="form-group">\
-										<label for="customcatid'+i+'">Category Name</label>\
-	                                    <select name="customcatid" id="custom_cat_id'+i+'" class="form-control">\
-	                                    </select>\
+                $('<div class="rv rv'+i+'"><hr />\
+                    <form id="categotyformdata'+i+'" name="categotyformdata'+i+'"  enctype="multipart/form-data" >\
+                    <div class="row  row_'+i+'">\
+                    <div class="col-md-10">\
+                        <div class="form-group">\
+                            <label for="customcatid'+i+'">Category Name</label>\
+                            <select name="customcatid" id="custom_cat_id'+i+'" class="form-control">\
+                            </select>\
+                        </div>\
+                            <div class="row">\
+                                <div class="col-md-3">\
+                                    <div class="form-group">\
+                                        <label for="position_x">Text Position X</label>\
+                                        <input type="text" name="position_x" id="position_x'+i+'" class="form-control" value="'+response.images[i]['position_x']+'" >\
                                     </div>\
-				                        <div class="row">\
-				                            <div class="col-md-3">\
-				                                <div class="form-group">\
-				                                    <label for="position_x">Text Position X</label>\
-				                                    <input type="text" name="position_x" id="position_x'+i+'" class="form-control" value="'+response.images[i]['position_x']+'" >\
-				                                </div>\
-				                            </div> \
-				                            <div class="col-md-3">\
-				                                <div class="form-group">\
-				                                    <label for="position_y">Text Position Y</label>\
-				                                    <input type="text" name="position_y" id="position_y'+i+'" class="form-control" value="'+response.images[i]['position_y']+'" >\
-				                                </div>\
-				                            </div>\
-				                            <div class="col-md-3">\
-				                                <div class="form-group">\
-				                                    <label for="img_position_x">Image Position X</label>\
-				                                    <input type="text" name="img_position_x" id="img_position_x'+i+'" class="form-control" value="'+response.images[i]['img_position_x']+'" >\
-				                                </div>\
-				                            </div> \
-				                            <div class="col-md-3">\
-				                                <div class="form-group">\
-				                                    <label for="img_position_y">Image Position Y</label>\
-				                                    <input type="text" name="img_position_y" id="img_position_y'+i+'" class="form-control" value="'+response.images[i]['img_position_y']+'" >\
-				                                </div>\
-				                            </div>\
-				                            <div class="col-md-3">\
-				                                <div class="form-group">\
-				                                    <label for="img_height">Image Height</label>\
-				                                    <input type="text" name="img_height" id="img_height'+i+'" class="form-control" value="'+response.images[i]['img_height']+'" >\
-				                                </div>\
-				                            </div> \
-				                            <div class="col-md-3">\
-				                                <div class="form-group">\
-				                                    <label for="img_width">Image Width</label>\
-				                                    <input type="text" name="img_width" id="img_width'+i+'" class="form-control" value="'+response.images[i]['img_width']+'" >\
-				                                </div>\
-				                            </div>                  \
-				                            <div class="col-md-3">\
-				                                <div class="form-group">\
-				                                    <label for="fimage">Banner Image</label>\
-				                                    <input type="file" class="form-control" onchange="readURL(this,'+"'"+bannerimg+"'"+');" id="fimage'+i+'" name="bannerimg">\
-				                                    <img id="bannerimg'+i+'" src="'+SPACE_STORE_URL+''+response.images[i]['banner_image']+'" alt="your image" height="100" width="100" />\
-				                                </div>\
-				                            </div>\
-				                            <div class="col-md-3">\
-				                                <div class="form-group">\
-				                                    <label for="imgone">Image One</label>\
-				                                    <input type="file" class="form-control" onchange="readURL(this,'+"'"+imageone+"'"+');" id="imgone'+i+'" name="imageone">\
-				                                    <img id="imageone'+i+'" src="'+SPACE_STORE_URL+''+response.images[i]['image_one']+'" alt="your image" height="100" width="100" />\
-				                                </div>\
-				                            </div>\
-					                    <div class="col-md-6">\
-					                        <div class="form-group">\
-					                            <label for="information">Type</label>\
-					                        </div>\
-					                        <div class="form-check-inline">\
-					                          <label class="form-check-label">\
-					                            <input type="radio" class="form-check-input" name="btype" id="btypefree'+i+'" value="0" checked="checked">Free\
-					                          </label>\
-					                        </div>\
-					                        <div class="form-check-inline">\
-					                          <label class="form-check-label">\
-					                            <input type="radio" class="form-check-input" name="btype" id="btypepremium'+i+'" value="1">Premium\
-					                          </label>\
-					                        </div>\
-					                    </div>\
-					                    <div class="col-md-6">\
-					                        <div class="form-group">\
-					                          <label for="flanguage">Select Language:</label>\
-					                          <select class="form-control" name="flanguage" id="editflanguage_'+i+'">\
-					                          </select>\
-					                        </div>\
-					                    </div>\
-					                    <div class="col-md-6">\
-					                        <div class="form-group">\
-					                          <label for="flanguage">Select Sub Category:</label>\
-					                          <select class="form-control" name="fsubcategory" id="editfsubcategory_'+i+'">\
-					                          </select>\
-					                        </div>\
-					                    </div>\
-					                </div>\
-								</div>\
-								<div class="col-md-2 form-group pp">\
-									<button type="button" data-id="'+response.images[i]['custom_cateogry_data_id']+'"  data-p-id="'+i+'" onclick="update(this)" class="btn btn-primary">Update</i></button>\
-									<button type="button" data-id="'+response.images[i]['custom_cateogry_data_id']+'" data-p-id="'+i+'" onclick="remove(this)" class="btn btn-danger">Remove</i></button>\
-								</div>\
-							</div></form></div>').insertBefore("#showphotos");
-					          $(".remove").click(function(){
-					            $(this).parent(".pip").remove();
-					          });
-					          var opn = $("#flanguage").html();
-								$("#editflanguage_"+i).html(opn);
-								$("#editflanguage_"+i).val(response.images[i]['language_id'])
-							var opn1 = $("#fsubcategory").html();
-								$("#editfsubcategory_"+i).html(opn1);
-								$("#editfsubcategory_"+i).val(response.images[i]['custom_sub_category_id'])
-					          var btype = response.images[i]['image_type'];
-								if (btype == 1) 
-								{
-									$("#btypepremium"+i).attr('checked', 'checked');
-									
-								}
-								else if (btype == 0) 
-								{
-									$("#btypefree"+i).attr('checked', 'checked');
-									
+                                </div> \
+                                <div class="col-md-3">\
+                                    <div class="form-group">\
+                                        <label for="position_y">Text Position Y</label>\
+                                        <input type="text" name="position_y" id="position_y'+i+'" class="form-control" value="'+response.images[i]['position_y']+'" >\
+                                    </div>\
+                                </div>\
+                                <div class="col-md-3">\
+                                    <div class="form-group">\
+                                        <label for="img_position_x">Image Position X</label>\
+                                        <input type="text" name="img_position_x" id="img_position_x'+i+'" class="form-control" value="'+response.images[i]['img_position_x']+'" >\
+                                    </div>\
+                                </div> \
+                                <div class="col-md-3">\
+                                    <div class="form-group">\
+                                        <label for="img_position_y">Image Position Y</label>\
+                                        <input type="text" name="img_position_y" id="img_position_y'+i+'" class="form-control" value="'+response.images[i]['img_position_y']+'" >\
+                                    </div>\
+                                </div>\
+                                <div class="col-md-3">\
+                                    <div class="form-group">\
+                                        <label for="img_height">Image Height</label>\
+                                        <input type="text" name="img_height" id="img_height'+i+'" class="form-control" value="'+response.images[i]['img_height']+'" >\
+                                    </div>\
+                                </div> \
+                                <div class="col-md-3">\
+                                    <div class="form-group">\
+                                        <label for="img_width">Image Width</label>\
+                                        <input type="text" name="img_width" id="img_width'+i+'" class="form-control" value="'+response.images[i]['img_width']+'" >\
+                                    </div>\
+                                </div>                  \
+                                <div class="col-md-3">\
+                                    <div class="form-group">\
+                                        <label for="fimage">Banner Image</label>\
+                                        <input type="file" class="form-control" onchange="readURL(this,'+"'"+bannerimg+"'"+');" id="fimage'+i+'" name="bannerimg">\
+                                        <img id="bannerimg'+i+'" src="'+SPACE_STORE_URL+''+response.images[i]['banner_image']+'" alt="your image" height="100" width="100" />\
+                                    </div>\
+                                </div>\
+                                <div class="col-md-3">\
+                                    <div class="form-group">\
+                                        <label for="imgone">Image One</label>\
+                                        <input type="file" class="form-control" onchange="readURL(this,'+"'"+imageone+"'"+');" id="imgone'+i+'" name="imageone">\
+                                        <img id="imageone'+i+'" src="'+SPACE_STORE_URL+''+response.images[i]['image_one']+'" alt="your image" height="100" width="100" />\
+                                    </div>\
+                                </div>\
+                            <div class="col-md-6">\
+                                <div class="form-group">\
+                                    <label for="information">Type</label>\
+                                </div>\
+                                <div class="form-check-inline">\
+                                    <label class="form-check-label">\
+                                    <input type="radio" class="form-check-input" name="btype" id="btypefree'+i+'" value="0" checked="checked">Free\
+                                    </label>\
+                                </div>\
+                                <div class="form-check-inline">\
+                                    <label class="form-check-label">\
+                                    <input type="radio" class="form-check-input" name="btype" id="btypepremium'+i+'" value="1">Premium\
+                                    </label>\
+                                </div>\
+                            </div>\
+                            <div class="col-md-6">\
+                                <div class="form-group">\
+                                    <label for="flanguage">Select Language:</label>\
+                                    <select class="form-control" name="flanguage" id="editflanguage_'+i+'">\
+                                    </select>\
+                                </div>\
+                            </div>\
+                            <div class="col-md-6">\
+                                <div class="form-group">\
+                                    <label for="flanguage">Select Sub Category:</label>\
+                                    <select class="form-control" name="fsubcategory" id="editfsubcategory_'+i+'">\
+                                    </select>\
+                                </div>\
+                            </div>\
+                            <div class="col-md-6">\
+                                <div class="form-group">\
+                                    <label for="fimagemode">Select Mode:</label>\
+                                    <select class="form-control" name="fimagemode" id="editfimagemode_'+i+'">\
+                                    <option value="light">Light</option>\
+                                    <option value="dark">Dark</option>\
+                                    </select>\
+                                </div>\
+                            </div>\
+                        </div>\
+                    </div>\
+                    <div class="col-md-2 form-group pp">\
+                        <button type="button" data-id="'+response.images[i]['custom_cateogry_data_id']+'"  data-p-id="'+i+'" onclick="update(this)" class="btn btn-primary">Update</i></button>\
+                        <button type="button" data-id="'+response.images[i]['custom_cateogry_data_id']+'" data-p-id="'+i+'" onclick="remove(this)" class="btn btn-danger">Remove</i></button>\
+                    </div>\
+                </div></form></div>').insertBefore("#showphotos");
 
-								}
-								var list = $("#custom_cat_id"+i);
-					            $.each(options, function(index, item) {
-					            list.append(new Option(item.name, item.custom_cateogry_id));
-					            });
-					            //alert(response.images['custom_cateogry_id']);
-					            $('#custom_cat_id'+i).val(response.images[i]['custom_cateogry_id']);
-								/*var vp_url = APP_URL+''+response.images[i]['video_url'];
-								vp_data.push(vp_url);*/
-						}
+                $(".remove").click(function(){
+                    $(this).parent(".pip").remove();
+                });
+
+                var opn = $("#flanguage").html();
+                $("#editflanguage_"+i).html(opn);
+                $("#editflanguage_"+i).val(response.images[i]['language_id'])
+                var opn1 = $("#fsubcategory").html();
+                $("#editfsubcategory_"+i).html(opn1);
+                $("#editfsubcategory_"+i).val(response.images[i]['custom_sub_category_id']);
+                $("#editfimagemode_"+i).val(response.images[i]['post_mode']);
+                var btype = response.images[i]['image_type'];
+                if (btype == 1)
+                {
+                    $("#btypepremium"+i).attr('checked', 'checked');
+                }
+                else if (btype == 0)
+                {
+                    $("#btypefree"+i).attr('checked', 'checked');
+                }
+                var list = $("#custom_cat_id"+i);
+                $.each(options, function(index, item) {
+                    list.append(new Option(item.name, item.custom_cateogry_id));
+                });
+                $('#custom_cat_id'+i).val(response.images[i]['custom_cateogry_id']);
+			}
 			$(".r_h").hide();
             showinsertform();
 			$('.loader-custom').css('display','none');
@@ -285,40 +285,26 @@ function validateForm() {
 	  alert("all Field is require");
 	  return false;
 	}
-
-	// var fileInput =  document.getElementById('fimage'); 
-		
-	// if(!fileValidation(fileInput)){
-	// 	return false;
-	// }
-
-	// var fileInput =  document.getElementById('imgone'); 
-		
-	// if(!fileValidation(fileInput)){
-	// 	return false;
-	// }
-
 	return true;
-  }
+}
 
-  function fileValidation(fileInput) { 
+function fileValidation(fileInput) {
 
-	var filePath = fileInput.value; 
-	
-	// Allowing file type 
-	var allowedExtensions = /(\.jpg|\.png|\.jpeg)$/i; 
-		
-	if (!allowedExtensions.exec(filePath)) { 
-		alert('Invalid file type'); 
-		fileInput.value = ''; 
-		return false; 
+	var filePath = fileInput.value;
+
+	// Allowing file type
+	var allowedExtensions = /(\.jpg|\.png|\.jpeg)$/i;
+
+	if (!allowedExtensions.exec(filePath)) {
+		alert('Invalid file type');
+		fileInput.value = '';
+		return false;
 	}
-	
+
 	return true;
-  }
+}
 
-
-  function resetForm(){
+function resetForm(){
 	$('#position_x').val('');
 	$('#position_y').val('');
 	$('#img_position_x').val('');
@@ -328,11 +314,10 @@ function validateForm() {
 	$(".rv").remove();
 	$('#imageone').attr('src','');
 	$('#bannerimg').attr('src','');
-	//$("#flanguage").removeAttr('required');
 
-  }
+}
 
- function addbox(){
+function addbox(){
 	var op = $("#flanguage").html();
 	var op1 = $("#fsubcategory").html();
 	var bannerimg = "bannerimg"+p_id;
@@ -420,6 +405,15 @@ function validateForm() {
                               </select>\
                             </div>\
                         </div>\
+                        <div class="col-md-6">\
+                            <div class="form-group">\
+                              <label for="fimagemode">Select Mode:</label>\
+                              <select class="form-control" name="fimagemode[]" id="fimagemode_'+p_id+'" required>\
+                                <option value="light">Light</option>\
+                                <option value="dark">Dark</option>\
+                              </select>\
+                            </div>\
+                        </div>\
 	                </div>\
 				</div>\
 				<div class="col-md-2 form-group">\
@@ -435,34 +429,18 @@ function validateForm() {
 }
 function removebox(curr){
 	$(curr).closest('.row').remove();
-	/*var remove = $(curr).attr("data-id");
-	$('.pip_'+remove).remove();
-    $('.row_'+remove).remove();*/
     p_id--;
 }
 
-function update(ele) 
+function update(ele)
 {
 	var id = $(ele).attr("data-id");
 	var g_id = $(ele).attr("data-p-id");
-	var  position_x = $("#position_x"+g_id).val();
-	var  position_y = $("#position_y"+g_id).val();
-	var  img_position_x = $("#img_position_x"+g_id).val();
-	var  img_position_y = $("#img_position_y"+g_id).val();
-	var  img_height = $("#img_height"+g_id).val();
-	var  img_width = $("#img_width"+g_id).val();
-	var  flanguage = $("#editflanguage_"+g_id).val();
-	var  fsubcategoryid = $("#editfsubcategoryid_"+g_id).val();
-	var  bannerimg = $('input[name="bannerimg'+g_id+'"]').val();
-	var  imageone = $('input[name="imageone'+g_id+'"]').val();
-	var  imageone = $('input[name="imageone'+g_id+'"]').val();
-	
-	var  btype = $('input[name="btype'+g_id+'"]:checked').val();
-	
+
 	var form = document.getElementById('categotyformdata'+g_id);
     var formData = new FormData(form);
     formData.append('id', id);
-	
+
 
 	$.ajaxSetup({
 	headers: {
@@ -477,12 +455,7 @@ function update(ele)
     	processData : false,
 		success: function (data)
 		{
-			//table.destroy()
-			//getallcat();
-    		//getallcatPost();
-    		//showfestivallist();
     		alert('Custom Category Post Update successfully');
-
 		}
 	});
 }
@@ -523,7 +496,7 @@ function remove(ele){
 					{
 						$(".rv"+g_id).remove();
 					    showinsertform();
-					  
+
 					}
 					$('.loader-custom').css('display','none');
 				}

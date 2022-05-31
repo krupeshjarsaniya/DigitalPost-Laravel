@@ -53,7 +53,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12 col-lg-12">
-                        
+
                             @csrf
                             <div class="row">
                                 <div class="col-md-6">
@@ -72,14 +72,14 @@
                                         </select>
                                     </div>
                                 </div>
-                                
+
                                 <div class="col-md-6 festdatediv">
                                     <div class="form-group">
                                         <label for="videodate">Date</label>
                                         <input type="text" class="form-control" id="videodate" placeholder="date" name="videodate" required>
                                     </div>
                                 </div>
-                                
+
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="fimage">Image</label>
@@ -97,7 +97,7 @@
                                         <img id="blah" src="#" id="fimage" alt="your image" height="100" width="100" />
                                     </div>
                                 </div>
-                                
+
                                 {{-- <div class="col-md-12">
                                     <div class="input-field form-group">
                                         <label class="active" for="files">Photos</label>
@@ -158,6 +158,15 @@
                                                   </select>
                                                 </div>
                                             </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                  <label for="fvideomode">Select Mode:</label>
+                                                  <select class="form-control" name="fvideomode[]" id="fvideomode" required>
+                                                      <option value="light">Light</option>
+                                                      <option value="dark">Dark</option>
+                                                  </select>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-2 form-group">
@@ -176,7 +185,7 @@
              </form>
         </div>
     </div>
-    
+
     <div class="col-md-12" id="viewVideosList">
         <div class="card">
             <div class="card-header">
@@ -244,7 +253,7 @@
       <!-- Modal body -->
       <div class="modal-body">
         <div class="text-center" id='showvideomodel'>
-            
+
         </div>
       </div>
 
@@ -316,7 +325,7 @@
         console.log(e.id);
         var pid = e.id.replace(/[^0-9]/g,'');
         var files = $("#"+e.id)[0].files[0];
-       
+
         var f = files;
         var fileReader = new FileReader();
         fileReader.onload = (function(e) {
@@ -328,19 +337,19 @@
             "</span>").insertBefore("#addphotos");
           $(".remove").click(function(){
             var remove = $(this).attr("data-id");
-            if (remove == "") 
+            if (remove == "")
             {
                 $('#files').val('');
             }
             $('.pip_'+remove).remove();
             $('.row_'+remove).remove();
-           
+
           });
-          
-          
+
+
         });
         fileReader.readAsDataURL(f);
-        
+
     }
 
     $('#ftype').change(function(){

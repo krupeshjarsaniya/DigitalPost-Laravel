@@ -3,14 +3,10 @@
 namespace Modules\Festival\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-//use Illuminate\Routing\Controller;
 use App\Http\Controllers\Controller;
 use App\Festival;
 use App\Post;
-use App\Language;
 use App\FestivalSubCategory;
-use Illuminate\Support\Str;
 use DB;
 use DataTables;
 use Validator;
@@ -26,19 +22,16 @@ class NewFestivalPostController extends Controller
     public function index()
     {
         $post = DB::table('business_category_post_data')->where('is_deleted',0)->where('post_thumb',null)->get();
-        
-        //$url = Storage::url($post->post_content);
-        foreach ($post as $key => $value) 
+
+        foreach ($post as $key => $value)
         {
-            
+
             $data = $this->uploadFile_thumnail_database('','',$value->thumbnail,'festival-post-thumb',true,300,300);
             $post = DB::table('business_category_post_data')->where('id',$value->id)->update(['post_thumb'=>$data]);
-            // $post->post_thumb = $data;
-            // $post->save();
-            
+
         }
         dd($data);
-        
+
     }
 
     /**
@@ -62,9 +55,7 @@ class NewFestivalPostController extends Controller
 
         $festivalsCount = count($festivals);
         $incidentsCount = count($incidents);
-        
-        // dd($festivalsCount,$incidentsCount);
-        
+
         $data = '';
         if($festivalsCount!=0)
         {
@@ -79,15 +70,9 @@ class NewFestivalPostController extends Controller
                 $data .= '<td>'.$festival->fest_info.'</td>';
                 $data .= '<td><button onclick="addFestivalCategory('.$festival->fest_id.')" class="btn btn-success">Sub Category</button><button onclick="editFestival('.$festival->fest_id.')" class="btn btn-primary ml-1">Edit</button><button onclick="deleteFestival('.$festival->fest_id.')" class="btn btn-danger ml-1">Delete</button></td>';
                 $data .= '</tr>';
-            }    
+            }
         }
-        // else
-        // {
-        //     $data .= '<tr>';
-        //     $data .= '<td colspan="6" align="center">No data found</td>';
-        //     $data .= '</tr>';
-        // }
-        
+
         $incidentdata = '';
         if($incidentsCount!=0)
         {
@@ -97,27 +82,16 @@ class NewFestivalPostController extends Controller
                 $incidentdata .= '<tr>';
                 $incidentdata .= '<td>'.$count++.'</td>';
                 $incidentdata .= '<td>'.$incident->fest_name.'</td>';
-                // $incidentdata .= '<td>'.$incident->fest_date.'</td>';
                 $incidentdata .= '<td>Incident</td>';
                 $incidentdata .= '<td>'.$incident->fest_info.'</td>';
                 $incidentdata .= '<td><button onclick="addFestivalCategory('.$incident->fest_id.')" class="btn btn-success">Sub Category</button><button onclick="editFestival('.$incident->fest_id.')" class="btn btn-primary ml-1">Edit</button><button onclick="deleteFestival('.$incident->fest_id.')" class="btn btn-danger ml-1">Delete</button></td>';
                 $incidentdata .= '</tr>';
             }
         }
-        // else
-        // {
-        //     $incidentdata .= '<tr>';
-        //     $incidentdata .= '<td colspan="6" align="center">No data found</td>';
-        //     $incidentdata .= '</tr>';
-        // }
 
-        // if(!empty($festivals))
-        // {
-            return response()->json(['status'=>true,'data'=>$data,'incidents'=>$incidentdata]); 
+        return response()->json(['status'=>true,'data'=>$data,'incidents'=>$incidentdata]);
 
-        // } else {
-        //     return response()->json(['status'=>false,'data'=>'No festival found']); 
-        // }
+
     }
 
     /**
@@ -129,7 +103,7 @@ class NewFestivalPostController extends Controller
     public function store(Request $request)
     {
         $fest_id = 0;
-        if ($request->festivalid == "") 
+        if ($request->festivalid == "")
         {
             $temp = $request->all();
             $name = $temp['festivalname'];
@@ -137,15 +111,12 @@ class NewFestivalPostController extends Controller
             $info = $temp['information'];
             $type = $temp['ftype'];
             $flanguage = $temp['flanguage'];
+            $post_mode = $temp['fimagemode'];
             $position_no = $temp['festivalposition'];
             $image = (isset($temp['thumnail'])) ? $temp['thumnail'] : 'undefined';
             $new_cat = (isset($temp['new_cat'])) ? $temp['new_cat'] : '0';
-            //$is_mark = (isset($temp['is_mark'])) ? $temp['is_mark'] : '0';
 
              if($image != 'undefined'){
-                /*$filename = Str::random(7).time().'.'.$image->getClientOriginalExtension();
-                $image->move(public_path('images'), $filename);
-                $path = url('/').'/public/images/'.$filename;*/
                 $path = $this->uploadFile($request, null, 'thumnail', 'festival-image',true,300,300);
             } else {
                 $path = '';
@@ -160,45 +131,25 @@ class NewFestivalPostController extends Controller
             $festival->fest_type = $type;
             $festival->position_no = $position_no;
             $festival->new_cat = $new_cat;
-            //$festival->is_mark = $is_mark;
-          
+
 
             $festival->save();
             $festid = $festival->id;
             $catid = $request->fsubcategory ? $request->fsubcategory : 0 ;
-            
-            // print_r($temp);die;
-            /*$image_ty = array();
-            for ($i=0; $i < count($flanguage) ; $i++) 
-            { 
-                if ($i == 0) 
-                {
-                   array_push($image_ty, $request->btype);
-                }
-                else
-                {
-                    array_push($image_ty, $request->btype.$i);
-                }
-            }*/
 
             if (isset($temp['files'])) {
                 foreach ($request->file('files') as $key => $image) {
-                    /*$filename = Str::random(7).time().'.'.$image->getClientOriginalExtension();
-                    $image->move(public_path('images'), $filename);
-                    $path = url('/').'/public/images/'.$filename;*/
-
-                    
                     $post = new Post();
                     $post->post_category_id = $festid;
                     $post->sub_category_id = $catid;
                     $post->language_id = $flanguage;
                     $post->image_type = $request->btype;
+                    $post->post_mode = $post_mode;
                     $post->post_content = $this->multipleUploadFile($image,'festival-post');
                     $post->post_thumb = $this->multipleUploadFileThumb($image,'festival-post-thumb',true,300,300);
                     $post->save();
                 }
             }
-          // return view('festival::index'); //response()->json(['status'=>true,'message'=>'Festival successfully added']); 
         }
         else
         {
@@ -210,16 +161,13 @@ class NewFestivalPostController extends Controller
             $info = $temp['information'];
             $type = $temp['ftype'];
             $flanguage = $temp['flanguage'];
+            $post_mode = $temp['fimagemode'];
             $position_no = $temp['festivalposition'];
             $image = (isset($temp['thumnail'])) ? $temp['thumnail'] : 'undefined';
             $new_cat = (isset($temp['new_cat'])) ? $temp['new_cat'] : '0';
-           // $is_mark = (isset($temp['is_mark'])) ? $temp['is_mark'] : '0';
-         
+
              if($image != 'undefined'){
-                /*$filename = Str::random(7).time().'.'.$image->getClientOriginalExtension();
-                $image->move(public_path('images'), $filename);
-                $path = url('/').'/public/images/'.$filename;*/
-                    $path = $this->uploadFile($request, null, 'thumnail', 'festival-image',true,300,300);
+                $path = $this->uploadFile($request, null, 'thumnail', 'festival-image',true,300,300);
                 Festival::where('fest_id', $id)->update(array(
                     'fest_name' => $name,
                     'fest_date' => $date,
@@ -228,7 +176,6 @@ class NewFestivalPostController extends Controller
                     'fest_image' => $path,
                     'position_no' => $position_no,
                     'new_cat' => $new_cat,
-                    //'is_mark' => $is_mark,
                 ));
 
             } else {
@@ -240,34 +187,18 @@ class NewFestivalPostController extends Controller
                     'fest_type' => $type,
                     'position_no' => $position_no,
                     'new_cat' => $new_cat,
-                    //'is_mark' => $is_mark,
                 ));
             }
-            /*$image_ty = array();
-            for ($i=0; $i < count($flanguage) ; $i++) 
-            { 
-                if ($i == 0) 
-                {
-                   array_push($image_ty, $request->btype);
-                }
-                else
-                {
-                    array_push($image_ty, $request->btype.$i);
-                }
-            }*/
 
             if (isset($temp['files'])) {
                 $catid = $request->fsubcategory ? $request->fsubcategory : 0 ;
                 foreach ($request->file('files') as $key => $image) {
-                    /*$filename = Str::random(7).time().'.'.$image->getClientOriginalExtension();
-                    $image->move(public_path('images'), $filename);
-                    $path = url('/').'/public/images/'.$filename;*/
-
                     $post = new Post();
                     $post->post_category_id = $id;
                     $post->sub_category_id = $catid;
                     $post->language_id = $flanguage;
                     $post->image_type = $request->btype;
+                    $post->post_mode = $post_mode;
                     $post->post_content = $this->multipleUploadFile($image,'festival-post');
                     $post->post_thumb = $this->multipleUploadFileThumb($image,'festival-post-thumb',true,300,300);
                     $post->save();
@@ -305,9 +236,8 @@ class NewFestivalPostController extends Controller
         $data = Festival::where('fest_id', $id)->first();
         $posts = Post::where('post_category_id','=',$id)->where('post_is_deleted','=',0)->get();
         $categories = FestivalSubCategory::where('festival_id','=',$id)->where('is_delete','=',0)->get();
-        // return $data; 
         $s_url = Storage::url('/');
-        
+
         return response()->json(['status'=>true,'data'=>$data,'images'=>$posts,'categories'=>$categories,'s_url'=>$s_url]);
     }
 
@@ -316,8 +246,8 @@ class NewFestivalPostController extends Controller
     {
 
         $id = $request->id;
-        $posts = Post::where('post_id','=',$id)->update(array(
-                'post_is_deleted' => 1,
+        Post::where('post_id','=',$id)->update(array(
+            'post_is_deleted' => 1,
         ));
 
         return response()->json(['status'=>true]);
@@ -325,10 +255,10 @@ class NewFestivalPostController extends Controller
 
     public function ChangeImageType(Request $request)
     {
-        
+
         $id = $request->id;
-        $posts = Post::where('post_id','=',$id)->update(array(
-                'image_type' => $request->image_ty,
+        Post::where('post_id','=',$id)->update(array(
+            'image_type' => $request->image_ty,
         ));
 
         return response()->json(['status'=>true]);
@@ -337,8 +267,8 @@ class NewFestivalPostController extends Controller
     public function ChangeLanguage(Request $request)
     {
         $id = $request->id;
-        $posts = Post::where('post_id','=',$id)->update(array(
-                'language_id' => $request->language_id,
+        Post::where('post_id','=',$id)->update(array(
+            'language_id' => $request->language_id,
         ));
 
         return response()->json(['status'=>true]);
@@ -347,11 +277,18 @@ class NewFestivalPostController extends Controller
     public function ChangeSubCategory(Request $request)
     {
         $id = $request->id;
-        $posts = Post::where('post_id','=',$id)->update(array(
-                'sub_category_id' => $request->sub_category_id,
+        Post::where('post_id','=',$id)->update(array(
+            'sub_category_id' => $request->sub_category_id,
         ));
 
         return response()->json(['status'=>true]);
+    }
+
+    public function ChangeImageMode(Request $request) {
+        $id = $request->id;
+        Post::where('post_id','=',$id)->update(array(
+            'post_mode' => $request->post_mode,
+        ));
     }
 
     /**
@@ -363,7 +300,6 @@ class NewFestivalPostController extends Controller
      */
     public function FestivalPostUpdate(Request $request)
     {
-       // dd($request);
         $temp = $request->all();
         $name = $temp['festivalname'];
         $date = $temp['festivaldate'];
@@ -372,11 +308,9 @@ class NewFestivalPostController extends Controller
         $flanguage = $temp['flanguage'];
         $image = (isset($temp['thumnail'])) ? $temp['thumnail'] : 'undefined';
         $id = $temp['festivalid'];
-     
+
          if($image != 'undefined'){
-            /*$filename = Str::random(7).time().'.'.$image->getClientOriginalExtension();
-            $image->move(public_path('images'), $filename);
-            $path = url('/').'/public/images/'.$filename;*/
+
             $path = $this->uploadFile($request, null, 'thumnail', 'festival-image');
             Festival::where('fest_id', $id)->update(array(
                 'fest_name' => $name,
@@ -395,24 +329,9 @@ class NewFestivalPostController extends Controller
                 'fest_type' => $type,
             ));
         }
-        /*$image_ty = array();
-        for ($i=0; $i < count($flanguage) ; $i++) 
-        { 
-            if ($i == 0) 
-            {
-               array_push($image_ty, $request->btype);
-            }
-            else
-            {
-                array_push($image_ty, $request->btype.$i);
-            }
-        }*/
 
         if (isset($temp['files'])) {
             foreach ($request->file('files') as $key => $image) {
-                /*$filename = Str::random(7).time().'.'.$image->getClientOriginalExtension();
-                $image->move(public_path('images'), $filename);
-                $path = url('/').'/public/images/'.$filename;*/
 
                 $post = new Post();
                 $post->post_category_id = $id;
@@ -422,7 +341,7 @@ class NewFestivalPostController extends Controller
                 $post->save();
             }
         }
-        
+
          return redirect('FestivalPost');
     }
 
@@ -436,11 +355,11 @@ class NewFestivalPostController extends Controller
     {
         $id = $request->id;
         $posts = Post::where('post_category_id','=',$id)->where('post_is_deleted','=',0)->get();
-        
+
         if(count($posts) == 0)
         {
             Festival::where('fest_id', $id)->update(array(
-                    'fest_is_delete' => 1,
+                'fest_is_delete' => 1,
             ));
 
             return response()->json(['status'=>200]);
@@ -453,7 +372,7 @@ class NewFestivalPostController extends Controller
 
     public function getSubCategory(Request $request) {
         $stickers = FestivalSubCategory::where('is_delete', 0)->where('festival_id', $request->id);
-        
+
         if ($request->ajax())
         {
             # code...
@@ -479,8 +398,8 @@ class NewFestivalPostController extends Controller
 
     public function addSubCategory(Request $request) {
         $validator = Validator::make($request->all(), [
-                'festival_id' => 'required',      
-                'sub_category_name' => 'required',      
+                'festival_id' => 'required',
+                'sub_category_name' => 'required',
             ],
             [
                 'festival_id.required' => 'Select Festival',
@@ -488,9 +407,9 @@ class NewFestivalPostController extends Controller
             ]
         );
 
-        if ($validator->fails()) 
-        {  
-            $error=json_decode($validator->errors());          
+        if ($validator->fails())
+        {
+            $error=json_decode($validator->errors());
 
             return response()->json(['status' => 401,'error1' => $error]);
             exit();
@@ -513,9 +432,9 @@ class NewFestivalPostController extends Controller
 
     public function editSubCategory(Request $request) {
         $validator = Validator::make($request->all(), [
-                'festival_id' => 'required',      
-                'sub_category_id' => 'required',      
-                'sub_category_name' => 'required',      
+                'festival_id' => 'required',
+                'sub_category_id' => 'required',
+                'sub_category_name' => 'required',
             ],
             [
                 'sub_category_id.required' => 'Select Festival',
@@ -524,9 +443,9 @@ class NewFestivalPostController extends Controller
             ]
         );
 
-        if ($validator->fails()) 
-        {  
-            $error=json_decode($validator->errors());          
+        if ($validator->fails())
+        {
+            $error=json_decode($validator->errors());
 
             return response()->json(['status' => 401,'error1' => $error]);
             exit();

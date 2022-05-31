@@ -27,7 +27,7 @@
 .form-check [type=checkbox]:checked, .form-check [type=checkbox]:not(:checked) {
     position: absolute !important;
     left: 10px !important;
-    
+
 }
 
 </style>
@@ -76,14 +76,14 @@
 		                               	</select>
 		                            </div>
                             	</div>
-                            	
+
                             	<div class="col-md-6 festdatediv">
                         		  	<div class="form-group">
 		                                <label for="festivaldate">Date</label>
 		                                <input type="text" class="form-control" id="festivaldate" placeholder="date" name="festivaldate">
 		                            </div>
                             	</div>
-                            	
+
                             	<div class="col-md-6">
                         		  	<div class="form-group">
 		                                <label for="fimage">Image</label>
@@ -124,7 +124,7 @@
                                     </div>
                                 </div>
                                 
-                                
+
                                 <div class="col-md-12">
                                     <div class="form-group" id="showphotos">
                                         <div>
@@ -168,6 +168,15 @@
                                                   </select>
                                                 </div>
                                             </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                  <label for="fimagemode">Select Mode:</label>
+                                                  <select class="form-control" name="fimagemode" id="fimagemode" required>
+                                                      <option value="light">Light</option>
+                                                      <option value="dark">Dark</option>
+                                                  </select>
+                                                </div>
+                                            </div>
                         </div>
                             
 
@@ -203,7 +212,7 @@
 	                	</div>
                 	</div>
             	</div>
-            
+
                 <div class="table-responsive">
                     <table class="display table table-striped table-hover text-center" id="festival-table">
                         <thead>
@@ -222,7 +231,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="card">
             <div class="card-header">
                 <h4 class="card-title">Other Categories</h4>
@@ -319,8 +328,8 @@
           $(".remove").click(function(){
             $(this).parent(".pip").remove();
           });
-          
-          
+
+
         });
         fileReader.readAsDataURL(f);
       }
@@ -329,7 +338,7 @@
         console.log(e.id);
         var pid = e.id.replace(/[^0-9]/g,'');
         var files = $("#"+e.id)[0].files[0];
-       
+
         var f = files;
         var fileReader = new FileReader();
         fileReader.onload = (function(e) {
@@ -341,24 +350,24 @@
             "</span>").insertBefore("#addphotos");
           $(".remove").click(function(){
             var remove = $(this).attr("data-id");
-            if (remove == "") 
+            if (remove == "")
             {
                 $('#files').val('');
             }
             $('.pip_'+remove).remove();
             $('.row_'+remove).remove();
-           
+
           });
-          
-          
+
+
         });
         fileReader.readAsDataURL(f);
-        
+
     }*/
     $('#festivaldate').datetimepicker({
 			format: 'YYYY-MM-DD',
 		});
-		
+
 		$('#ftype').change(function(){
 		    if($(this).val() == 'festival'){
 		        $('.festdatediv').show();
@@ -366,7 +375,8 @@
 		         $('.festdatediv').hide();
 		    }
 		})
-         
+
     </script>
 <?php $__env->stopSection(); ?>
+
 <?php echo $__env->make('admin.layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /opt/lampp/htdocs/digital-post/modules/Festival/Resources/views/newfestivalpost.blade.php ENDPATH**/ ?>

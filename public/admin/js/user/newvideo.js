@@ -30,15 +30,15 @@ $(document).ready(function() {
           search_video();
 });
 
-function ChangeType() 
+function ChangeType()
 {
 	var date = $("#ftype").val();
-	
-	if (date == 'festival') 
+
+	if (date == 'festival')
 	{
 		$("#videodate").attr('required', 'required');
 	}
-	else if (date == 'incident') 
+	else if (date == 'incident')
 	{
 		$("#videodate").removeAttr('required', 'required');
 	}
@@ -68,7 +68,7 @@ var date = "";
 			$('#video-post-tables tbody').html(response.incidents);
 
 			$('#video-post-tables').DataTable();
-			
+
 			$('.loader-custom').css('display','none');
 
 		}
@@ -120,7 +120,7 @@ function resetForm() {
 	$(".rv").remove();
 	$('#video-btn').attr('onclick', 'addFestival()');
 	$('#flanguage').attr('required', 'required');
-	
+
 }
 
 function removeVideo(id){
@@ -153,17 +153,17 @@ function removeVideo(id){
 				data: {"id":id},
 				success: function (data)
 				{
-					
+
 					if(data.status == 401)
 					{
 						alert('Please First Remove Festival Videos')
-						
+
 					}
-					
+
 					if (data.status == 200)
 					{
 						location.reload();
-						
+
 					}
 					$('.loader-custom').css('display','none');
 				}
@@ -191,8 +191,8 @@ function editVideoPost(id){
 				{
 					if (response.status)
 					{
-						var s_url = response.s_url; 
-						
+						var s_url = response.s_url;
+
 						$('#videoname').val(response.data['video_name']);
 						$('#videodate').val(response.data['video_date']);
 						$('#information').val(response.data['video_info']);
@@ -201,7 +201,7 @@ function editVideoPost(id){
 						$('#blah').attr('src', SPACE_STORE_URL+''+response.data['video_image']);
 						$("#flanguage").removeAttr('required');
 
-						if (response.data['video_type'] == 'incident') 
+						if (response.data['video_type'] == 'incident')
 						{
 							$('.festdatediv').hide();
 							$("#videodate").removeAttr('required', 'required');
@@ -240,8 +240,17 @@ function editVideoPost(id){
 			                    '</div>'+
 			                    '<div class="col-md-12">'+
 			                    '<div class="form-group">'+
-			                      '<label for="flanguage">Select Sub Category:</label>'+
+			                      '<label for="fsubcategory">Select Sub Category:</label>'+
 			                      '<select class="form-control" name="fsubcategory'+i+'" id="editfsubcategory_'+i+'" onchange="editsubcategory('+response.images[i]['id']+',this)">'+
+			                      '</select>'+
+			                    '</div>'+
+			                    '</div>'+
+                                '<div class="col-md-12">'+
+			                    '<div class="form-group">'+
+			                      '<label for="fvideomode">Select Sub Category:</label>'+
+			                      '<select class="form-control" name="fvideomode'+i+'" id="editfvideomode_'+i+'" onchange="editvideomode('+response.images[i]['id']+',this)">'+
+			                      '<option value="light">Light</option>'+
+			                      '<option value="dark">Dark</option>'+
 			                      '</select>'+
 			                    '</div>'+
 			                    '</div>'+
@@ -264,16 +273,17 @@ function editVideoPost(id){
 								var opn1 = $("#fsubcategory").html();
 								$("#editfsubcategory_"+i).html(opn1);
 								$("#editfsubcategory_"+i).val(response.images[i]['sub_category_id']);
+								$("#editfvideomode_"+i).val(response.images[i]['post_mode']);
 					          var btype = response.images[i]['image_type'];
-								if (btype == 1) 
+								if (btype == 1)
 								{
 									$("#btypepremium"+i).attr('checked', 'checked');
-									
+
 								}
-								else if (btype == 0) 
+								else if (btype == 0)
 								{
 									$("#btypefree"+i).attr('checked', 'checked');
-									
+
 
 								}
 								if(response.images[i]['video_store'] == "LOCAL") {
@@ -287,14 +297,14 @@ function editVideoPost(id){
 								}
 						}
 
-						
+
 					}
 					$('.loader-custom').css('display','none');
 				}
 			});
 }
 
-function editcolor(cid, ele) 
+function editcolor(cid, ele)
 {
 	var str = ele.id;
 	var res = str.replace("_", "");
@@ -319,7 +329,7 @@ function editcolor(cid, ele)
 
 }
 
-function edittype(typeid, ele) 
+function edittype(typeid, ele)
 {
 	var val_data = $('input[name="'+ele.name+'"]:checked').val()
 	$.ajaxSetup({
@@ -341,7 +351,7 @@ function edittype(typeid, ele)
 	});
 
 }
-function editlanguage(lid, ele) 
+function editlanguage(lid, ele)
 {
 	var val_data = $("#"+ele.id).val();
 	$.ajaxSetup({
@@ -364,7 +374,7 @@ function editlanguage(lid, ele)
 
 }
 
-function editsubcategory(lid, ele) 
+function editsubcategory(lid, ele)
 {
 	var val_data = $("#"+ele.id).val();
 	$.ajaxSetup({
@@ -378,6 +388,29 @@ function editsubcategory(lid, ele)
 		data: {
 			"id":lid,
 			"sub_category_id":val_data
+		},
+		success: function (data)
+		{
+			search_video();
+		}
+	});
+
+}
+
+function editvideomode(lid, ele)
+{
+	var val_data = $("#"+ele.id).val();
+	$.ajaxSetup({
+	headers: {
+	    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+	}});
+
+	$.ajax({
+		type:'POST',
+		url:APP_URL+"/festival/changevideomode",
+		data: {
+			"id":lid,
+			"post_mode":val_data
 		},
 		success: function (data)
 		{
@@ -456,6 +489,15 @@ function addbox(){
                               </select>\
                             </div>\
                         </div>\
+                        <div class="col-md-4">\
+                            <div class="form-group">\
+                              <label for="fvideomode">Select Mode:</label>\
+                              <select class="form-control" name="fvideomode[]" id="fvideomode_'+p_id+'" required>\
+                                <option value="light">Light</option>\
+                                <option value="dark">Dark</option>\
+                              </select>\
+                            </div>\
+                        </div>\
 	                </div>\
 				</div>\
 				<div class="col-md-2 form-group">\
@@ -478,7 +520,7 @@ function removebox(curr){
     p_id--;
 }
 
-function showvideo(ele) 
+function showvideo(ele)
 {
 	var data = "";
 	//console.log(vp_data[ele]);
@@ -491,10 +533,10 @@ function showvideo(ele)
 	$('#videomodel').modal('show');
 }
 
-function stopvideo() 
+function stopvideo()
 {
 	$('video').trigger('pause');
-    $('#videomodel').modal('hide'); 
+    $('#videomodel').modal('hide');
 }
 
 
@@ -584,7 +626,7 @@ function deleteSubCategory(ele) {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-    
+
             $.ajax({
                 type:'POST',
                 url:APP_URL+"/festival/deleteSubCategory",

@@ -3,7 +3,6 @@
 namespace Modules\Festival\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
 use DB;
@@ -49,30 +48,6 @@ class BusinessCategory extends Controller
             ->rawColumns(['action','image'])
             ->make(true);
 
-
-        $categoryCount = count($category_data);
-
-
-        /* $data = '';
-        if($categoryCount!=0)
-        {
-            $count = 1;
-            foreach ($category_data as $key => $category)
-            {
-
-                $premium_business = DB::table('business')->where('business.business_category', $category->name)->leftJoin('purchase_plan', 'purchase_plan.purc_business_id', '=', 'business.busi_id')->where('purchase_plan.purc_plan_id', '!=', 3)->where('purchase_plan.purc_is_cencal', 0)->where('purchase_plan.purc_is_expire', 0)->where('purchase_plan.purc_business_type', 1)->where('business.busi_is_approved', 0)->where('business.busi_delete',0)->count();
-                $data .= '<tr>';
-                $data .= '<td>'.$count++.'</td>';
-                $data .= '<td>'.$category->name.'</td>';
-                $data .= '<td>'.$free_business.'</td>';
-                $data .= '<td>'.$premium_business.'</td>';
-                $data .= '<td><img src="'.Storage::url($category->image).'" height="100" width="100"></td>';
-                $data .= '<td><button onclick="addSubCategory('.$category->id.')" class="btn btn-success">Sub Category</button><a href="'.route('businesscategory.video', ['id' => $category->id]).'" class="btn btn-danger ml-1">Video</a><button onclick="editcategory('.$category->id.')" class="btn btn-primary ml-1">Edit</button><button onclick="deletecategory('.$category->id.')" class="btn btn-danger ml-1">Delete</button></td>';
-                $data .= '</tr>';
-            }
-        }
-
-        return response()->json(['status'=>true,'data'=>$data]); */
     }
 
     public function ShowCategoryVideo(Request $request, $id) {
@@ -80,7 +55,6 @@ class BusinessCategory extends Controller
         if(empty($category)) {
             return redirect()->back();
         }
-        // dd($category);
         $language = Language::where('is_delete','=',0)->get();
         $subcategory = BusinessSubCategory::where('business_category_id',$id)->where('is_delete', 0)->get();
         $posts = DB::table('business_category_post_data')->where('post_type', 'video')->where('buss_cat_post_id','=',$request->id)->where('is_deleted','=',0)->get();
@@ -89,10 +63,10 @@ class BusinessCategory extends Controller
 
     public function ShowCategoryVideoStore(Request $request) {
         $temp = $request->all();
-        // dd($temp);
         $image_ty = array();
         $flanguage = $temp['flanguage'];
         $fsubcategory = $temp['fsubcategory'];
+        $fvideomode = $temp['fvideomode'];
         for ($i=0; $i < count($flanguage) ; $i++)
         {
             if (isset($temp['btype']) && $i == 0 )
@@ -115,10 +89,17 @@ class BusinessCategory extends Controller
                 $name = Str::random(7).time().'.'.$image->getClientOriginalExtension();
                 $image->move(public_path('images/videopost/bussness-post-video'), $name);
                 $path = 'public/images/videopost/bussness-post-video/'.$name;
-                //$path = $this->multipleUploadFile($image,'bussness-post-video');
-                DB::table('business_category_post_data')->insert(
-                    ['buss_cat_post_id' => $temp['business_category_id'], 'video_thumbnail' => $thumb_path[$key], 'video_url'=>$path, 'post_type' => 'video', 'image_type'=>$image_ty[$key],'language_id'=>$flanguage[$key],'business_sub_category_id'=>$fsubcategory[$key]]
-                );
+                DB::table('business_category_post_data')
+                ->insert([
+                    'buss_cat_post_id' => $temp['business_category_id'],
+                    'video_thumbnail' => $thumb_path[$key],
+                    'video_url'=>$path,
+                    'post_type' => 'video',
+                    'image_type'=>$image_ty[$key],
+                    'language_id'=>$flanguage[$key],
+                    'business_sub_category_id'=>$fsubcategory[$key],
+                    'post_mode'=>$fvideomode[$key]
+                ]);
             }
         }
         return redirect()->route('businesscategory.video', ['id' => $temp['business_category_id']]);
@@ -127,8 +108,8 @@ class BusinessCategory extends Controller
     public function ChangeVideoType(Request $request)
     {
         $id = $request->id;
-        $posts = DB::table('business_category_post_data')->where('id','=',$id)->update(array(
-                'image_type' => $request->image_ty,
+        DB::table('business_category_post_data')->where('id','=',$id)->update(array(
+            'image_type' => $request->image_ty,
         ));
 
         return response()->json(['status'=>true]);
@@ -137,18 +118,26 @@ class BusinessCategory extends Controller
     public function ChangeVideoLanguage(Request $request)
     {
         $id = $request->id;
-        $posts = DB::table('business_category_post_data')->where('id','=',$id)->update(array(
-                'language_id' => $request->language_id,
+        DB::table('business_category_post_data')->where('id','=',$id)->update(array(
+            'language_id' => $request->language_id,
         ));
-
         return response()->json(['status'=>true]);
     }
 
     public function ChangeVideoSubCategory(Request $request)
     {
         $id = $request->id;
-        $posts = DB::table('business_category_post_data')->where('id','=',$id)->update(array(
-                'business_sub_category_id' => $request->sub_category_id,
+        DB::table('business_category_post_data')->where('id','=',$id)->update(array(
+            'business_sub_category_id' => $request->sub_category_id,
+        ));
+        return response()->json(['status'=>true]);
+    }
+
+    public function ChangeVideoMode(Request $request)
+    {
+        $id = $request->id;
+        DB::table('business_category_post_data')->where('id','=',$id)->update(array(
+            'post_mode' => $request->post_mode,
         ));
 
         return response()->json(['status'=>true]);
@@ -156,9 +145,9 @@ class BusinessCategory extends Controller
 
     public function ShowCategoryVideoDelete(Request $request) {
         DB::table('business_category_post_data')->where('id', $request->id)
-            ->update(
-                    ['is_deleted' => 1]
-                );
+        ->update([
+            'is_deleted' => 1
+        ]);
     }
 
     public function getSubCategory(Request $request) {
@@ -287,24 +276,12 @@ class BusinessCategory extends Controller
      */
     public function store(Request $request)
     {
-        /* $validator = Validator::make($request->all(), [
-
-            'flanguage' => 'required',
-        ]);
-        if ($validator->fails())
-        {
-            $error=json_decode($validator->errors());
-
-            return response()->json(['status' => 401,'error1' => $error]);
-            exit();
-
-        }*/
-
         $temp = $request->all();
         $type = $temp['btype'];
         $flanguage = $temp['flanguage'];
         $fsubcategory = $temp['fsubcategory'];
         $ffestivalId = $temp['ffestivalId'];
+        $fimagemode = $temp['fimagemode'];
         if(isset($temp['files']))
         {
             foreach ($flanguage as $key => $value)
@@ -330,10 +307,7 @@ class BusinessCategory extends Controller
 
         $image = (isset($temp['thumnail'])) ? $temp['thumnail'] : 'undefined';
 
-         if($image != 'undefined'){
-            /*$filename = Str::random(7).time().'.'.$image->getClientOriginalExtension();
-            $image->move(public_path('images/businesscategory'), $filename);
-            $path = '/public/images/businesscategory/'.$filename;*/
+        if($image != 'undefined'){
 
             $path = $this->uploadFile($request, null, 'thumnail', 'bussness-post',true,300,300);
 
@@ -344,10 +318,11 @@ class BusinessCategory extends Controller
 
         if ($request->categoryid == "")
         {
-             $cat = DB::table('business_category')->insert(
-                    ['name' => $request->categoryname, 'image' => $path]
-                );
-             $bussness_cat_id = DB::getPdo()->lastInsertId();
+            DB::table('business_category')->insert([
+                'name' => $request->categoryname,
+                'image' => $path
+            ]);
+            $bussness_cat_id = DB::getPdo()->lastInsertId();
         }
         else
         {
@@ -357,17 +332,17 @@ class BusinessCategory extends Controller
 
             if($path == "")
             {
-                 DB::table('business_category')->where('id', $request->categoryid)
-                ->update(
-                        ['name' => $request->categoryname]
-                    );
+                DB::table('business_category')->where('id', $request->categoryid)
+                ->update([
+                    'name' => $request->categoryname
+                ]);
             }
             else
             {
                 DB::table('business_category')->where('id', $request->categoryid)
-                ->update(
-                        ['name' => $request->categoryname, 'image' => $path]
-                    );
+                ->update([
+                    'name' => $request->categoryname, 'image' => $path
+                ]);
             }
 
             $bussness_cat_id = $request->categoryid;
@@ -391,37 +366,45 @@ class BusinessCategory extends Controller
             for($j=0; $j< count($image_ty); $j++) {
                 if($j == 0) {
                     foreach ($request->file('files') as $key => $image) {
-                        /*$filename = Str::random(7).time().'.'.$image->getClientOriginalExtension();
-                        $image->move(public_path('images/businesscategory'), $filename);
-                        $path = '/public/images/businesscategory/'.$filename;*/
 
                         $path = $this->multipleUploadFile($image,'bussness-post');
                         $path_thumb = $this->multipleUploadFile($image,'bussness-post-thumb',true,300,300);
                         DB::table('business_category_post_data')->insert(
-                        ['buss_cat_post_id' => $bussness_cat_id, 'thumbnail' => $path, 'post_thumb'=>$path_thumb, 'image_type'=>$image_ty[$j],'language_id'=>$flanguage[$j],'business_sub_category_id'=>$fsubcategory[$j], 'festival_id'=> $ffestivalId[$j]]
-                    );
+                        [
+                            'buss_cat_post_id' => $bussness_cat_id,
+                            'thumbnail' => $path,
+                            'post_thumb'=>$path_thumb,
+                            'image_type'=>$image_ty[$j],
+                            'language_id'=>$flanguage[$j],
+                            'business_sub_category_id'=>$fsubcategory[$j],
+                            'festival_id'=> $ffestivalId[$j],
+                            'post_mode'=> $fimagemode[$j]
+                        ]);
                     }
                 }
                 else {
                     foreach ($request->file('files' . $j) as $key => $image) {
-                        /*$filename = Str::random(7).time().'.'.$image->getClientOriginalExtension();
-                        $image->move(public_path('images/businesscategory'), $filename);
-                        $path = '/public/images/businesscategory/'.$filename;*/
 
                         $path = $this->multipleUploadFile($image,'bussness-post');
                         $path_thumb = $this->multipleUploadFile($image,'bussness-post-thumb',true,300,300);
                         DB::table('business_category_post_data')->insert(
-                        ['buss_cat_post_id' => $bussness_cat_id, 'thumbnail' => $path, 'post_thumb'=>$path_thumb, 'image_type'=>$image_ty[$j],'language_id'=>$flanguage[$j],'business_sub_category_id'=>$fsubcategory[$j], 'festival_id'=> $ffestivalId[$j]]
-                    );
+                            [
+                            'buss_cat_post_id' => $bussness_cat_id,
+                            'thumbnail' => $path,
+                            'post_thumb'=>$path_thumb,
+                            'image_type'=>$image_ty[$j],
+                            'language_id'=>$flanguage[$j],
+                            'business_sub_category_id'=>$fsubcategory[$j],
+                            'festival_id'=> $ffestivalId[$j],
+                            'post_mode'=> $fimagemode[$j]
+                        ]);
                     }
                 }
             }
 
         }
 
-            return response()->json(['status' => 1,'data' => ""]);
-
-        //return redirect('businesscategory');
+        return response()->json(['status' => 1,'data' => ""]);
 
     }
 
@@ -455,8 +438,8 @@ class BusinessCategory extends Controller
     {
 
         $id = $request->id;
-        $posts = DB::table('business_category_post_data')->where('id','=',$id)->update(array(
-                'is_deleted' => 1,
+        DB::table('business_category_post_data')->where('id','=',$id)->update(array(
+            'is_deleted' => 1,
         ));
 
         return response()->json(['status'=>true]);
@@ -465,8 +448,8 @@ class BusinessCategory extends Controller
     public function ChangeImageType(Request $request)
     {
         $id = $request->id;
-        $posts = DB::table('business_category_post_data')->where('id','=',$id)->update(array(
-                'image_type' => $request->image_ty,
+        DB::table('business_category_post_data')->where('id','=',$id)->update(array(
+            'image_type' => $request->image_ty,
         ));
 
         return response()->json(['status'=>true]);
@@ -475,8 +458,8 @@ class BusinessCategory extends Controller
     public function ChangeLanguage(Request $request)
     {
         $id = $request->id;
-        $posts = DB::table('business_category_post_data')->where('id','=',$id)->update(array(
-                'language_id' => $request->language_id,
+        DB::table('business_category_post_data')->where('id','=',$id)->update(array(
+            'language_id' => $request->language_id,
         ));
 
         return response()->json(['status'=>true]);
@@ -485,8 +468,8 @@ class BusinessCategory extends Controller
     public function ChangeSubCategory(Request $request)
     {
         $id = $request->id;
-        $posts = DB::table('business_category_post_data')->where('id','=',$id)->update(array(
-                'business_sub_category_id' => $request->sub_category_id,
+        DB::table('business_category_post_data')->where('id','=',$id)->update(array(
+            'business_sub_category_id' => $request->sub_category_id,
         ));
 
         return response()->json(['status'=>true]);
@@ -495,8 +478,18 @@ class BusinessCategory extends Controller
     public function changefestival(Request $request)
     {
         $id = $request->id;
-        $posts = DB::table('business_category_post_data')->where('id','=',$id)->update(array(
-                'festival_id' => $request->festival_id,
+        DB::table('business_category_post_data')->where('id','=',$id)->update(array(
+            'festival_id' => $request->festival_id,
+        ));
+
+        return response()->json(['status'=>true]);
+    }
+
+    public function changeimagemode(Request $request)
+    {
+        $id = $request->id;
+        DB::table('business_category_post_data')->where('id','=',$id)->update(array(
+            'post_mode' => $request->imagemode,
         ));
 
         return response()->json(['status'=>true]);
@@ -530,14 +523,11 @@ class BusinessCategory extends Controller
         if(count($posts) == 0 && count($category) == 0)
         {
             DB::table('business_category')->where('id', $request->id)
-            ->update(
-                    ['is_delete' => 1]
-                );
+                ->update([
+                    'is_delete' => 1
+                ]);
             return response()->json(['status'=>200]);
         }
-        else
-        {
-            return response()->json(['status'=>401]);
-        }
+        return response()->json(['status'=>401]);
     }
 }

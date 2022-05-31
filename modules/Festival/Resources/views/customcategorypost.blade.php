@@ -76,7 +76,7 @@
                                                 <label for="position_x">Text Position X</label>
                                                 <input type="text" name="position_x[]" id="position_x" class="form-control" required>
                                             </div>
-                                        </div> 
+                                        </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="position_y">Text Position Y</label>
@@ -88,7 +88,7 @@
                                                 <label for="img_position_x">Image Position X</label>
                                                 <input type="text" name="img_position_x[]" id="img_position_x" class="form-control" required>
                                             </div>
-                                        </div> 
+                                        </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="img_position_y">Image Position Y</label>
@@ -100,13 +100,13 @@
                                                 <label for="img_height">Image Height</label>
                                                 <input type="text" name="img_height[]" id="img_height" class="form-control" required>
                                             </div>
-                                        </div> 
+                                        </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="img_width">Image Width</label>
                                                 <input type="text" name="img_width[]" id="img_width" class="form-control" required>
                                             </div>
-                                        </div>                  
+                                        </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="fimage">Banner Image</label>
@@ -154,11 +154,20 @@
                                                   </select>
                                                 </div>
                                             </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                  <label for="fimagemode">Select Mode:</label>
+                                                  <select class="form-control" name="fimagemode[]" id="fimagemode">
+                                                      <option value="light">Light</option>
+                                                      <option value="dark">Dark</option>
+                                                  </select>
+                                                </div>
+                                            </div>
                                     </div>
                                 </div>
                                 <div class="col-md-2 form-group">
                                     <button type="button" onclick="addbox()" class="btn btn-primary"><i class="fa fa-plus"></i></button>
-                                </div> 
+                                </div>
                             </div>
                             <!-- <div class="col-md-6">
                                 <div class="form-group">
@@ -167,7 +176,7 @@
                                     <img id="imagetwo" src="#" alt="your image" height="100" width="100" style="display: none;"/>
                                 </div>
                             </div> -->
-                            
+
 
                         </div>
                     </div>
@@ -180,7 +189,7 @@
              </form>
         </div>
     </div>
-    
+
     <div class="col-md-12" id="viewfestival">
         <div class="card">
             <div class="card-header">

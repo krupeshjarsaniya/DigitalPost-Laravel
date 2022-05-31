@@ -4,29 +4,29 @@
 
 <style>
     .imageThumb {
-  max-height: 75px;
-  border: 2px solid;
-  padding: 1px;
-  cursor: pointer;
-}
-.pip {
-  display: inline-block;
-  margin: 10px 10px 0 0;
-}
-.remove {
-  display: block;
-  background: #444;
-  border: 1px solid black;
-  color: white;
-  text-align: center;
-  cursor: pointer;
-}
-.remove:hover {
-  background: white;
-  color: black;
-}
+        max-height: 75px;
+        border: 2px solid;
+        padding: 1px;
+        cursor: pointer;
+    }
+    .pip {
+        display: inline-block;
+        margin: 10px 10px 0 0;
+    }
+    .remove {
+        display: block;
+        background: #444;
+        border: 1px solid black;
+        color: white;
+        text-align: center;
+        cursor: pointer;
+    }
+    .remove:hover {
+        background: white;
+        color: black;
+    }
 
-.select2-container {
+    .select2-container {
         width: 100% !important;
     }
 
@@ -82,95 +82,104 @@
             <div class="card-header">
                 <div class="card-title" id="country-title">Add Category</div>
             </div>
-            
+
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12 col-lg-12">
 
-                            @csrf
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <input type="hidden" name="categoryid" id="categoryid" value="">
-                                        <label for="categoryname">Category Name</label>
-                                        <input type="text" class="form-control" id="categoryname" placeholder="Enter category Name" name="categoryname" required>
-                                    </div>
+                        @csrf
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <input type="hidden" name="categoryid" id="categoryid" value="">
+                                    <label for="categoryname">Category Name</label>
+                                    <input type="text" class="form-control" id="categoryname" placeholder="Enter category Name" name="categoryname" required>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group err_thumnail">
-                                        <label for="fimage">Image</label>
-                                        <input type="file" class="form-control" onchange="readURL(this);" id="fimage" name="thumnail">
-                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group err_thumnail">
+                                    <label for="fimage">Image</label>
+                                    <input type="file" class="form-control" onchange="readURL(this);" id="fimage" name="thumnail">
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <img id="blah" src="#" id="fimage" alt="your image" height="100" width="100" />
-                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <img id="blah" src="#" id="fimage" alt="your image" height="100" width="100" />
                                 </div>
+                            </div>
 
-                            </div>
-                            <div class="form-group" id="showphotos">
-                            <label for="addphotos">Add Photos</label></div>
-                            <div id="addphotos">
-                                <form id="buss_cat_form" name="buss_cat_form" {{-- action={{route('addcategory')}} --}} method="POST" enctype='multipart/form-data' onsubmit="return false;">
-                                    <div class="row" >
-                                        <div class="col-md-8">
-                                            <div class="form-group">
-                                                <input type="file" id="files" {{-- onchange="photos(this)" --}} multiple  name="files[]" class="form-control photos" placeholder="Add photos">
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="information">Type</label>
-                                                    </div>
-                                                    <div class="form-check-inline">
-                                                      <label class="form-check-label">
-                                                        <input type="radio" class="form-check-input" name="btype" id="btypefree" value="0" checked="checked">Free
-                                                      </label>
-                                                    </div>
-                                                    <div class="form-check-inline">
-                                                      <label class="form-check-label">
-                                                        <input type="radio" class="form-check-input" name="btype" id="btypepremium" value="1">Premium
-                                                      </label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group err_flanguage">
-                                                      <label for="flanguage">Select Language:</label>
-                                                      <select class="form-control" name="flanguage[]" id="flanguage">
-                                                        <option value="">Select Language</option>
-                                                        @foreach($language as $value)
-                                                            <option value="{{$value->id}}">{{$value->name}}</option>
-                                                        @endforeach
-                                                      </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                      <label for="fsubcategory">Select Sub Category:</label>
-                                                      <select class="form-control" name="fsubcategory[]" id="fsubcategory" required>
-                                                      </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                      <label for="ffestivalId">Select Festival:</label>
-                                                      <select class="form-control festivals_select" name="ffestivalId[]" id="ffestivalId" required>
-                                                        <option value="0">Select Festival</option>
-                                                        @foreach($festivals as $festival)
-                                                            <option value="{{$festival->fest_id}}">{{$festival->fest_name}}</option>
-                                                        @endforeach
-                                                      </select>
-                                                    </div>
-                                                </div>
-                                            </div>
+                        </div>
+                        <div class="form-group" id="showphotos">
+                        <label for="addphotos">Add Photos</label></div>
+                        <div id="addphotos">
+                            <form id="buss_cat_form" name="buss_cat_form" method="POST" enctype='multipart/form-data' onsubmit="return false;">
+                                <div class="row" >
+                                    <div class="col-md-8">
+                                        <div class="form-group">
+                                            <input type="file" id="files" multiple  name="files[]" class="form-control photos" placeholder="Add photos">
                                         </div>
-                                        <div class="col-md-2 form-group">
-                                            <button type="button" onclick="addbox()" class="btn btn-primary"><i class="fa fa-plus"></i></button>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="information">Type</label>
+                                                </div>
+                                                <div class="form-check-inline">
+                                                    <label class="form-check-label">
+                                                    <input type="radio" class="form-check-input" name="btype" id="btypefree" value="0" checked="checked">Free
+                                                    </label>
+                                                </div>
+                                                <div class="form-check-inline">
+                                                    <label class="form-check-label">
+                                                    <input type="radio" class="form-check-input" name="btype" id="btypepremium" value="1">Premium
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group err_flanguage">
+                                                    <label for="flanguage">Select Language:</label>
+                                                    <select class="form-control" name="flanguage[]" id="flanguage">
+                                                    <option value="">Select Language</option>
+                                                    @foreach($language as $value)
+                                                        <option value="{{$value->id}}">{{$value->name}}</option>
+                                                    @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="fsubcategory">Select Sub Category:</label>
+                                                    <select class="form-control" name="fsubcategory[]" id="fsubcategory" required>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="ffestivalId">Select Festival:</label>
+                                                    <select class="form-control festivals_select" name="ffestivalId[]" id="ffestivalId" required>
+                                                    <option value="0">Select Festival</option>
+                                                    @foreach($festivals as $festival)
+                                                        <option value="{{$festival->fest_id}}">{{$festival->fest_name}}</option>
+                                                    @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="fimagemode">Select Image Mode:</label>
+                                                    <select class="form-control" name="fimagemode[]" id="fimagemode" required>
+                                                        <option value="light">Light</option>
+                                                        <option value="dark">Dark</option>
+                                                    </select>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </form>
-                            </div>
+                                    <div class="col-md-2 form-group">
+                                        <button type="button" onclick="addbox()" class="btn btn-primary"><i class="fa fa-plus"></i></button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
 
                     </div>
                 </div>
@@ -242,58 +251,25 @@
         $(".photos").on("change", function(e) {
             var object = $(this).parent('div');
             $(object).children('span.pip').remove();
-      var files = e.target.files,
-        filesLength = files.length;
-      for (var i = 0; i < filesLength; i++) {
-        var f = files[i]
-        var fileReader = new FileReader();
-        fileReader.onload = (function(e) {
-          var file = e.target;
-          $(object).prepend("<span class=\"pip\">" +
-            "<img class=\"imageThumb\" src=\"" + e.target.result + "\" title=\"" + file.name + "\"/>" +
-            "<br/>" +
-            "</span>");
-          $(".remove").click(function(){
-            $(this).parent(".pip").remove();
-          });
+            var files = e.target.files,
+            filesLength = files.length;
+            for (var i = 0; i < filesLength; i++) {
+                var f = files[i]
+                var fileReader = new FileReader();
+                fileReader.onload = (function(e) {
+                    var file = e.target;
+                    $(object).prepend("<span class=\"pip\">" +
+                        "<img class=\"imageThumb\" src=\"" + e.target.result + "\" title=\"" + file.name + "\"/>" +
+                        "<br/>" +
+                        "</span>"
+                    );
+                    $(".remove").click(function(){
+                        $(this).parent(".pip").remove();
+                    });
 
-
+                });
+                fileReader.readAsDataURL(f);
+            }
         });
-        fileReader.readAsDataURL(f);
-      }
-    });
-    //     function photos(e) {
-    //     console.log(e.id);
-    //     var pid = e.id.replace(/[^0-9]/g,'');
-    //     var files = e.target.files,
-    //     filesLength = files.length;
-    //       for (var i = 0; i < filesLength; i++) {
-    //         var f = files[i];
-    //         var fileReader = new FileReader();
-    //         fileReader.onload = (function(e) {
-    //           var file = e.target;
-
-    //             $('<span class="pip pip_'+pid+'">' +
-    //             "<img class=\"imageThumb\" src=\"" + e.target.result + "\" title=\"" + file.name + "\"/>" +
-    //             "<br/><span data-id=\""+pid+"\" class=\"remove\">Remove image</span>" +
-    //             "</span>").insertBefore("#addphotos");
-    //           $(".remove").click(function(){
-    //             var remove = $(this).attr("data-id");
-    //             if (remove == "")
-    //             {
-    //                 $('#files').val('');
-    //             }
-    //             $('.pip_'+remove).remove();
-    //             $('.row_'+remove).remove();
-
-    //           });
-
-
-    //         });
-    //         fileReader.readAsDataURL(f);
-    //       }
-
-
-    // }
 </script>
 @endsection

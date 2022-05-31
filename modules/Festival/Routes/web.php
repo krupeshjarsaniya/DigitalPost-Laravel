@@ -107,6 +107,7 @@ Route::prefix('festival')->middleware('auth','adminauth')->group(function() {
     Route::post('changeimagetype','NewVideoPostController@ChangeImageType');
     Route::post('changelanguage','NewVideoPostController@ChangeLanguage');
     Route::post('changesubcategory','NewVideoPostController@ChangeSubCategory');
+    Route::post('changevideomode','NewVideoPostController@ChangeVideoMode');
     Route::post('newremovefestivalimage','NewVideoPostController@removefestivalimage');
     Route::post('removenewvideo','NewVideoPostController@destroy');
     Route::post('changeColor','NewVideoPostController@changeColor');
@@ -144,6 +145,7 @@ Route::prefix('businesscategory')->middleware('auth','adminauth')->group(functio
     Route::post('video/changeimagetype','BusinessCategory@ChangeVideoType');
     Route::post('video/changelanguage','BusinessCategory@ChangeVideoLanguage');
     Route::post('video/changesubcategory','BusinessCategory@ChangeVideoSubCategory');
+    Route::post('video/changevideomode','BusinessCategory@Changevideomode');
     Route::get('video/{id}','BusinessCategory@ShowCategoryVideo')->name('businesscategory.video');
     Route::post('video/store','BusinessCategory@ShowCategoryVideoStore')->name('businesscategory.video.add');
     Route::post('video/delete','BusinessCategory@ShowCategoryVideoDelete');
@@ -159,6 +161,7 @@ Route::prefix('businesscategory')->middleware('auth','adminauth')->group(functio
     Route::post('changelanguage','BusinessCategory@ChangeLanguage');
     Route::post('changesubcategory','BusinessCategory@ChangeSubCategory');
     Route::post('changefestival','BusinessCategory@changefestival');
+    Route::post('changeimagemode','BusinessCategory@changeimagemode');
     Route::post('removebussinessCATimage','BusinessCategory@removeBuseinesCATimage');
 
 
@@ -183,6 +186,7 @@ Route::get('/', function(Request $request){
     Route::post('changeimagetypefestivalpost','NewFestivalPostController@ChangeImageType');
     Route::post('changelanguagefestivalpost','NewFestivalPostController@ChangeLanguage');
     Route::post('changesubcategoryfestivalpost','NewFestivalPostController@ChangeSubCategory');
+    Route::post('changepostmodefestivalpost','NewFestivalPostController@ChangeImageMode');
     Route::post('newremovefestivalpostimage','NewFestivalPostController@removefestivalimage');
     Route::post('removenewFestivalPost','NewFestivalPostController@destroy');
 });

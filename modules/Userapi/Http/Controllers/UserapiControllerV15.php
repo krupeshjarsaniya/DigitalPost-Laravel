@@ -52,6 +52,7 @@ use App\MusicCategory;
 use App\Music;
 use App\BGCreditPlan;
 use App\BGCreditPlanHistory;
+use App\UserDownloadHistory;
 
 class UserapiControllerV15 extends Controller
 {
@@ -1875,6 +1876,27 @@ class UserapiControllerV15 extends Controller
                 $isVideoAvailable = true;
             }
         }
+
+        $category_type = 0;
+        if($type == 'image') {
+            if($festival_data->fest_type == 'festival') {
+                $category_type = 3;
+            }
+            else {
+                $category_type = 5;
+            }
+        }
+        else {
+            if($festival_data->fest_type == 'festival') {
+                $category_type = 4;
+            }
+            else {
+                $category_type = 6;
+            }
+        }
+
+        $limitData = Helper::getUserRemainingLimit($user_id, $category_type, $input['postcategoryid']);
+
         $sub_category_id = $input['sub_category_id'];
         $sub_category_data = FestivalSubCategory::find($sub_category_id);
 
@@ -2059,7 +2081,7 @@ class UserapiControllerV15 extends Controller
                 'next' => $next
             );
 
-            return response()->json(['categories' => $categories, 'data' => $temp, "isVideoAvailable" => $isVideoAvailable, 'meta'=>$meta, 'language'=>$language, 'status' => true,'message'=>'List of all festival']);
+            return response()->json(['categories' => $categories , 'limitData' => $limitData, 'data' => $temp, "isVideoAvailable" => $isVideoAvailable, 'meta'=>$meta, 'language'=>$language, 'status' => true,'message'=>'List of all festival']);
         }
         else {
             if($videoFestival) {
@@ -2246,7 +2268,7 @@ class UserapiControllerV15 extends Controller
                     'next' => $next
                 );
 
-            return response()->json(['categories' => $categories, 'data' =>$videos, "isVideoAvailable" => $isVideoAvailable, 'meta'=>$meta, 'language'=>$language, 'status' => true,'message'=>"Video List Successfully" ]);
+            return response()->json(['categories' => $categories, 'limitData' => $limitData, 'data' =>$videos, "isVideoAvailable" => $isVideoAvailable, 'meta'=>$meta, 'language'=>$language, 'status' => true,'message'=>"Video List Successfully" ]);
         }
 
     }
@@ -3938,10 +3960,20 @@ class UserapiControllerV15 extends Controller
         }
         $transactionLimit = Helper::GetLimit();
 
+        $category_data = DB::table('video_data')->where('video_id', $videoid)->first();
+        $category_type = $category_data->video_type;
+        if($category_type == 'festival') {
+            $category_type = 4;
+        }
+        else {
+            $category_type = 6;
+        }
+
+        $limitData = Helper::getUserRemainingLimit($user_id, $category_type, $videoid);
+
         $user_language = User::where('id',$user_id)->value('user_language');
         $user_selected_language = explode(",", $user_language);
         array_push($user_selected_language, '2','4');
-        //$user_language = !empty($user_language) ? explode(',',$user_language) : array();
 
         $categories = VideoSubCategory::where('festival_id', $videoid)->where('is_delete',0)->get();
         $sub_category_id = $input['sub_category_id'];
@@ -4065,7 +4097,7 @@ class UserapiControllerV15 extends Controller
 
         // if(count($video) != 0)
         // {
-            return response()->json(['categories' => $categories, 'data' =>$videos, 'meta'=>$meta, 'language'=>$language, 'status' => true,'message'=>"Video List Successfully" ]);
+            return response()->json(['categories' => $categories, 'limitData' => $limitData, 'data' =>$videos, 'meta'=>$meta, 'language'=>$language, 'status' => true,'message'=>"Video List Successfully" ]);
         // }
 
         // else
@@ -4275,10 +4307,13 @@ class UserapiControllerV15 extends Controller
         }
         $transactionLimit = Helper::GetLimit();
 
+        $category_type = 7;
+
+        $limitData = Helper::getUserRemainingLimit($user_id, $category_type, $catid);
+
         $user_language = User::where('id',$user_id)->value('user_language');
         $user_selected_language = explode(",", $user_language);
         array_push($user_selected_language, '2', '4');
-        //$user_language = !empty($user_language) ? explode(',',$user_language) : array();
 
         $sub_category_id = $input['sub_category_id'];
         $categoriesIds = DB::table('custom_cateogry_data')->whereIn('language_id', $user_selected_language)->where('custom_cateogry_id','=',$catid)->where('is_delete','=',0)->groupBy('custom_sub_category_id')->pluck('custom_sub_category_id')->toArray();
@@ -4318,7 +4353,6 @@ class UserapiControllerV15 extends Controller
         }
 
         $language_ids = DB::table('custom_cateogry_data')->whereIn('language_id', $user_selected_language)->where('is_delete','=',0)->where('custom_cateogry_id','=',$catid)->select('language_id')->get()->toArray();
-        // $language_id_array = array_unique($language_ids, SORT_REGULAR);
 
         $language_id_array = [];
         foreach ($language_ids as $id){
@@ -4393,27 +4427,18 @@ class UserapiControllerV15 extends Controller
         }
 
         $next = true;
-            if(count($cat_next) == 0) {
-                $next = false;
-            }
+        if(count($cat_next) == 0) {
+            $next = false;
+        }
 
         $meta = array(
-                'offset' => $offset + count($cat),
-                'limit' => intval($transactionLimit),
-                'record' => count($cat),
-                'next' => $next
-            );
+            'offset' => $offset + count($cat),
+            'limit' => intval($transactionLimit),
+            'record' => count($cat),
+            'next' => $next
+        );
 
-        // if(count($cat) != 0)
-        // {
-            return response()->json(['categories' => $categories, 'data' => $cats, 'meta'=>$meta, 'language'=>$language, 'status' => true,'message'=>"Custome Category Post List Successfully" ]);
-        // }
-
-        // else
-        // {
-        //     return response()->json(['status' => false, 'language'=>$language,'message'=>"Custome Category Post Not Found" ]);
-
-        // }
+        return response()->json(['categories' => $categories, 'limitData' => $limitData, 'data' => $cats, 'meta'=>$meta, 'language'=>$language, 'status' => true,'message'=>"Custome Category Post List Successfully" ]);
 
     }
 
@@ -4549,6 +4574,16 @@ class UserapiControllerV15 extends Controller
             $isVideoAvailable = true;
         }
 
+        $category_type = 0;
+        if($type == 'image') {
+            $category_type = 1;
+        }
+        else {
+            $category_type = 2;
+        }
+
+        $limitData = Helper::getUserRemainingLimit($user_id, $category_type, $request->buss_cat_id);
+
         $sub_category_id = $input['sub_category_id'];
         $categoriesIds = DB::table('business_category_post_data')->where('post_type', $type)->where('buss_cat_post_id','=',$request->buss_cat_id)->where('is_deleted','=',0)->where('festival_id', 0)->groupBy('business_sub_category_id')->pluck('business_sub_category_id')->toArray();
         // $categories = BusinessSubCategory::where('business_category_id', $request->buss_cat_id)->where('is_delete', 0)->get();
@@ -4677,7 +4712,7 @@ class UserapiControllerV15 extends Controller
         );
 
         // if(!empty($images)){
-           return response()->json(['categories' => $categories, 'isVideoAvailable' => $isVideoAvailable, 'buss_images' => $buss_images, 'meta'=>$meta, 'language'=>$language, 'status' => true,'message'=>'List of all images']);
+           return response()->json(['categories' => $categories, 'limitData' => $limitData, 'isVideoAvailable' => $isVideoAvailable, 'buss_images' => $buss_images, 'meta'=>$meta, 'language'=>$language, 'status' => true,'message'=>'List of all images']);
         // } else {
         //     return response()->json(['status' => false,'message'=>'There is no images']);
         // }
@@ -4714,6 +4749,16 @@ class UserapiControllerV15 extends Controller
         //$user_language = !empty($user_language) ? explode(',',$user_language) : array();
 
         $type = $request->type;
+
+        $category_type = 0;
+        if($type == 'image') {
+            $category_type = 1;
+        }
+        else {
+            $category_type = 2;
+        }
+
+        $limitData = Helper::getUserRemainingLimit($user_id, $category_type, $request->busi_id);
 
         $isVideoAvailable = false;
         $videoPost = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type','video')->where('buss_cat_post_id','=',$request->busi_id)->where('festival_id', 0)->where('is_deleted','=',0)->first();
@@ -4848,21 +4893,13 @@ class UserapiControllerV15 extends Controller
                 'next' => $next
             );
 
-
-        // if(!empty($images)){
             if($type == "image") {
-                return response()->json(['categories' => $categories, 'isVideoAvailable' => $isVideoAvailable, 'images' => $images, 'meta'=>$meta, 'language'=>$language, 'status' => true,'message'=>'List of all images']);
+                return response()->json(['categories' => $categories, 'limitData' => $limitData, 'isVideoAvailable' => $isVideoAvailable, 'images' => $images, 'meta'=>$meta, 'language'=>$language, 'status' => true,'message'=>'List of all images']);
             }
             else {
-                return response()->json(['categories' => $categories, 'isVideoAvailable' => $isVideoAvailable, 'videos' => $images, 'meta'=>$meta, 'language'=>$language, 'status' => true,'message'=>'List of all images']);
+                return response()->json(['categories' => $categories, 'limitData' => $limitData, 'isVideoAvailable' => $isVideoAvailable, 'videos' => $images, 'meta'=>$meta, 'language'=>$language, 'status' => true,'message'=>'List of all images']);
 
             }
-
-        // } else {
-        //     return response()->json(['status' => false,'message'=>'There is no images']);
-
-        // }
-
 
     }
 
@@ -4874,18 +4911,8 @@ class UserapiControllerV15 extends Controller
         if($user_id == 0){
             return response()->json(['status'=>false,'message'=>'user not valid']);
         }
-        /*$new_category_data = Festival::where('fest_type','=','incident')->where('fest_is_delete','=',0)->where('new_cat',1)->get();
-            $new_category_dataArray = array();
-            for ($i=0; $i < sizeof($new_category_data); $i++) {
-                $photo = Post::where('post_category_id','=',$new_category_data[$i]['fest_id'])->where('post_is_deleted','=',0)->select('post_content','post_id','post_category_id')->orderBy('post_id','DESC')->get();
 
-                $temp['id'] = $new_category_data[$i]['fest_id'];
-                $temp['title'] = $new_category_data[$i]['fest_name'];
-                $temp['img_url'] = $photo;
-
-                array_push($new_category_dataArray,$temp);
-            }*/
-                $photo = Post::where('post_category_id','=',$request->category_id)->where('post_is_deleted','=',0)->select('post_content','post_id','image_type','post_category_id')->orderBy('post_id','DESC')->get();
+        $photo = Post::where('post_category_id','=',$request->category_id)->where('post_is_deleted','=',0)->select('post_content','post_id','image_type','post_category_id')->orderBy('post_id','DESC')->get();
 
         if(!empty($photo)){
 
@@ -5045,9 +5072,6 @@ class UserapiControllerV15 extends Controller
         $business_id = $business->id;
 
         $start_date = date('Y-m-d');
-
-        // $end_date = date('Y-m-d', strtotime($start_date. ' + 3 days'));
-
 
         $purchase = new Purchase();
         $purchase->purc_user_id = $user_id;
@@ -7171,6 +7195,158 @@ class UserapiControllerV15 extends Controller
             'new_credit' => $new_credit,
         ];
         return response()->json(['status' => true, 'data' => $data, 'message' => "BG Remover plan purchased successfully"]);
+    }
+
+    public function removeBackground(Request $request) {
+        $token = $request->token;
+        $user_id = $this->get_userid($token);
+        if($user_id == 0){
+            return response()->json(['status'=>false,'message'=>'user not valid']);
+        }
+        $userData = User::find($user_id);
+        if($userData->bg_credit < 1) {
+            return response()->json(['status'=>false,'message'=>'No credit remaining']);
+        }
+        $file = $request->image;
+        $file_data = Helper::removeBackgroundImage($file);
+        return response()->json([
+            'status' => true,
+            'data' => $file_data
+        ]);
+    }
+
+    public function userDownloadPhoto(Request $request) {
+        $token = $request->token;
+        $user_id = $this->get_userid($token);
+        if($user_id == 0){
+            return response()->json(['status'=>false,'message'=>'user not valid']);
+        }
+
+        if(empty($request->type)) {
+            return response()->json(['status'=>false,'message'=>'Type is required']);
+        }
+
+        $type = $request->type;
+        if($type < 1 || $type > 7) {
+            return response()->json(['status'=>false,'message'=>'Type not valid']);
+        }
+
+        if(empty($request->category_id)) {
+            return response()->json(['status'=>false,'message'=>'Category Id is required']);
+        }
+        $category_id = $request->category_id;
+        if($type == 1 || $type == 2) {
+            $category = DB::table('business_category')->where('id', $category_id)->where('is_delete','=',0)->first();
+            if(empty($category)) {
+                return response()->json(['status'=>false,'message'=>'Category not found']);
+            }
+        }
+
+        if($type == 3) {
+            $category = Festival::where('fest_id', $category_id)->where('fest_type', 'festival')->where('fest_is_delete', 0)->first();
+            if(empty($category)) {
+                return response()->json(['status'=>false,'message'=>'Category not found']);
+            }
+        }
+        if($type == 4) {
+            $category = VideoData::where('video_id', $category_id)->where('video_type', 'festival')->where('video_is_delete', 0)->first();
+            if(empty($category)) {
+                return response()->json(['status'=>false,'message'=>'Category not found']);
+            }
+        }
+
+        if($type == 5) {
+            $category = Festival::where('fest_id', $category_id)->where('fest_type', 'incident')->where('fest_is_delete', 0)->first();
+            if(empty($category)) {
+                return response()->json(['status'=>false,'message'=>'Category not found']);
+            }
+        }
+
+        if($type == 6) {
+            $category = VideoData::where('video_id', $category_id)->where('video_type', 'incident')->where('video_is_delete', 0)->first();
+            if(empty($category)) {
+                return response()->json(['status'=>false,'message'=>'Category not found']);
+            }
+        }
+
+        if($type == 7) {
+            $category = DB::table('custom_cateogry')->where('custom_cateogry_id',$category_id)->first();
+            if(empty($category)) {
+                return response()->json(['status'=>false,'message'=>'Category not found']);
+            }
+        }
+
+        if(empty($request->business_type)) {
+            return response()->json(['status'=>false,'message'=>'Business Type Is Required']);
+        }
+
+        $business_type = $request->business_type;
+        if($business_type != 1 && $business_type != 2) {
+            return response()->json(['status'=>false,'message'=>'Business Type not valid']);
+        }
+
+        $userData = User::find($user_id);
+
+        $business_id = 0;
+        if($business_type == 1) {
+            $business_id = $userData->default_business_id;
+        }
+        else {
+            $business_id = $userData->default_political_business_id;
+        }
+
+        if($business_type == 1) {
+            $business = Business::where('busi_id', $business_id)->where('busi_delete', 0)->first();
+            if(empty($business)) {
+                return response()->json(['status'=>false,'message'=>'Business not found']);
+            }
+        }
+        else {
+            $business = PoliticalBusiness::where('pb_id', $business_id)->where('pb_is_deleted', 0)->first();
+            if(empty($business)) {
+                return response()->json(['status'=>false,'message'=>'Business not found']);
+            }
+        }
+
+        $now = Carbon::now();
+        $oldData = UserDownloadHistory::where('user_id', $user_id)->whereDate('created_at', '<', $now)->count();
+        if($oldData > 0) {
+            UserDownloadHistory::where('user_id', $user_id)->whereDate('created_at', '<', $now)->delete();
+        }
+
+        $limit = new UserDownloadHistory;
+        $limit->user_id = $user_id;
+        $limit->type = $request->type;
+        $limit->category_id = $request->category_id;
+        $limit->business_type = $request->business_type;
+        $limit->business_id = $business_id;
+        $limit->save();
+
+        return response()->json(['status' => true, 'message' => 'User download history added successfully']);
+    }
+
+    public function checkUserRemainingLimit(Request $request) {
+
+        $token = $request->token;
+        $user_id = $this->get_userid($token);
+        if($user_id == 0){
+            return response()->json(['status'=>false,'message'=>'user not valid']);
+        }
+
+        if(empty($request->type)) {
+            return response()->json(['status'=>false,'message'=>'type not found']);
+        }
+
+        if(empty($request->category_id)) {
+            return response()->json(['status'=>false,'message'=>'category id not found']);
+        }
+
+        $type = $request->type;
+        $category_id = $request->category_id;
+
+        $data = Helper::getUserRemainingLimit($user_id, $type, $category_id);
+
+        return response()->json(['status' => true, 'data' => $data, 'message' => 'User Remaining Limits']);
     }
 
 }

@@ -1,4 +1,3 @@
-
 <?php $__env->startSection('title', 'category'); ?>
 <?php $__env->startSection('content'); ?>
 
@@ -102,6 +101,15 @@
                                             </select>
                                         </div>
                                     </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="fvideomode">Select Mode:</label>
+                                            <select class="form-control" id="fvideomode_<?php echo e($post->id); ?>" onchange="editvideomode(<?php echo e($post->id); ?>,this)">
+                                                <option <?php if($post->post_mode == 'light'): ?> selected <?php endif; ?> value="light">Light</option>
+                                                <option <?php if($post->post_mode == 'dark'): ?> selected <?php endif; ?> value="dark">Dark</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                                 <br/>
                                 <span onclick="removeVideo(this)" data-id="<?php echo e($post->id); ?>" class="removevideo remove">Remove image</span>
@@ -160,6 +168,15 @@
                                               </select>
                                             </div>
                                         </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                              <label for="fvideomode">Select Mode:</label>
+                                              <select class="form-control" name="fvideomode[]" id="fvideomode" required>
+                                                <option value="light">Light</option>
+                                                <option value="dark">Dark</option>
+                                              </select>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-2 form-group">
@@ -196,7 +213,7 @@
       <!-- Modal body -->
       <div class="modal-body">
         <div class="text-center" id='showvideomodel'>
-            
+
         </div>
       </div>
 
@@ -212,14 +229,13 @@
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('js'); ?>
-    
     <script>
         var p_id = 1;
         function photos(e) {
         console.log(e.id);
         var pid = e.id.replace(/[^0-9]/g,'');
         var files = $("#"+e.id)[0].files[0];
-       
+
         var f = files;
         var fileReader = new FileReader();
         fileReader.onload = (function(e) {
@@ -231,19 +247,19 @@
             "</span>").insertBefore("#addphotos");
           $(".remove").click(function(){
             var remove = $(this).attr("data-id");
-            if (remove == "") 
+            if (remove == "")
             {
                 $('#files').val('');
             }
             $('.pip_'+remove).remove();
             $('.row_'+remove).remove();
-           
+
           });
-          
-          
+
+
         });
         fileReader.readAsDataURL(f);
-        
+
     }
 
     function removeVideo(ele) {
@@ -309,6 +325,15 @@
                                   </select>\
                                 </div>\
                             </div>\
+                            <div class="col-md-4">\
+                                <div class="form-group">\
+                                  <label for="fvideomode">Select Mode:</label>\
+                                  <select class="form-control" name="fvideomode[]" id="fvideomode_'+p_id+'" required>\
+                                    <option value="light">Light</option>\
+                                    <option value="dark">Dark</option>\
+                                  </select>\
+                                </div>\
+                            </div>\
                         </div>\
                     </div>\
                     <div class="col-md-2 form-group">\
@@ -323,14 +348,13 @@
     }
 
     function removebox(curr){
-        //$(curr).closest('.row').remove();
         var remove = $(curr).attr("data-id");
         $('.pip_'+remove).remove();
         $('.row_'+remove).remove();
         p_id--;
     }
 
-    function showvideo(ele) 
+    function showvideo(ele)
     {
         var src = $(ele).data('video');
         var data = "";
@@ -342,14 +366,14 @@
         $('#videomodel').modal('show');
     }
 
-    function stopvideo() 
+    function stopvideo()
     {
         $('video').trigger('pause');
         $("#showvideomodel").html("");
-        $('#videomodel').modal('hide'); 
+        $('#videomodel').modal('hide');
     }
 
-    function edittype(typeid, ele) 
+    function edittype(typeid, ele)
     {
         var val_data = $('input[name="'+ele.name+'"]:checked').val()
         $.ajaxSetup({
@@ -366,12 +390,12 @@
             },
             success: function (data)
             {
-                
+
             }
         });
 
     }
-    function editlanguage(lid, ele) 
+    function editlanguage(lid, ele)
     {
         var val_data = $("#"+ele.id).val();
         $.ajaxSetup({
@@ -393,7 +417,7 @@
 
     }
 
-    function editsubcategory(lid, ele) 
+    function editsubcategory(lid, ele)
     {
         var val_data = $("#"+ele.id).val();
         $.ajaxSetup({
@@ -415,6 +439,29 @@
 
     }
 
+    function editvideomode(lid, ele)
+    {
+        var val_data = $("#"+ele.id).val();
+        $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }});
+
+        $.ajax({
+            type:'POST',
+            url:APP_URL+"/businesscategory/video/changevideomode",
+            data: {
+                "id":lid,
+                "post_mode":val_data
+            },
+            success: function (data)
+            {
+            }
+        });
+
+    }
+
 </script>
 <?php $__env->stopSection(); ?>
+
 <?php echo $__env->make('admin.layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /opt/lampp/htdocs/digital-post/modules/Festival/Resources/views/businesscategoryvideo.blade.php ENDPATH**/ ?>
