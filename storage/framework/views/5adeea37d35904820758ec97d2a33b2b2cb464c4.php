@@ -334,36 +334,7 @@
         fileReader.readAsDataURL(f);
       }
     });
-   /* function photos(e) {
-        console.log(e.id);
-        var pid = e.id.replace(/[^0-9]/g,'');
-        var files = $("#"+e.id)[0].files[0];
 
-        var f = files;
-        var fileReader = new FileReader();
-        fileReader.onload = (function(e) {
-          var file = e.target;
-
-            $('<span class="pip pip_'+pid+'">' +
-            "<img class=\"imageThumb\" src=\"" + e.target.result + "\" title=\"" + file.name + "\"/>" +
-            "<br/><span data-id=\""+pid+"\" class=\"remove\">Remove image</span>" +
-            "</span>").insertBefore("#addphotos");
-          $(".remove").click(function(){
-            var remove = $(this).attr("data-id");
-            if (remove == "")
-            {
-                $('#files').val('');
-            }
-            $('.pip_'+remove).remove();
-            $('.row_'+remove).remove();
-
-          });
-
-
-        });
-        fileReader.readAsDataURL(f);
-
-    }*/
     $('#festivaldate').datetimepicker({
 			format: 'YYYY-MM-DD',
 		});

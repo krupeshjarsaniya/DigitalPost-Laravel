@@ -5,12 +5,13 @@ namespace Modules\Festival\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
-use DB;
-use DataTables;
 use App\BusinessSubCategory;
 use App\Language;
-use Validator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Yajra\DataTables\Facades\DataTables;
+
 class BusinessCategory extends Controller
 {
     /**
@@ -20,86 +21,82 @@ class BusinessCategory extends Controller
      */
     public function ShowCategory()
     {
-        $category_data = DB::table('business_category')->where('is_delete','=',0);
+        $category_data = DB::table('business_category')->where('is_delete', '=', 0);
 
         return DataTables::of($category_data)
             ->addIndexColumn()
-            ->addColumn('free_business',function($row) {
-                $free_business = DB::table('business')->where('business.business_category', $row->name)->leftJoin('purchase_plan', 'purchase_plan.purc_business_id', '=', 'business.busi_id')->where('purchase_plan.purc_plan_id', 3)->where('purchase_plan.purc_business_type', 1)->where('business.busi_delete',0)->count();
+            ->addColumn('free_business', function ($row) {
+                $free_business = DB::table('business')->where('business.business_category', $row->name)->leftJoin('purchase_plan', 'purchase_plan.purc_business_id', '=', 'business.busi_id')->where('purchase_plan.purc_plan_id', 3)->where('purchase_plan.purc_business_type', 1)->where('business.busi_delete', 0)->count();
 
-               return $free_business;
+                return $free_business;
             })
-            ->addColumn('premium_business',function($row) {
+            ->addColumn('premium_business', function ($row) {
 
-                $premium_business = DB::table('business')->where('business.business_category', $row->name)->leftJoin('purchase_plan', 'purchase_plan.purc_business_id', '=', 'business.busi_id')->where('purchase_plan.purc_plan_id', '!=', 3)->where('purchase_plan.purc_is_cencal', 0)->where('purchase_plan.purc_is_expire', 0)->where('purchase_plan.purc_business_type', 1)->where('business.busi_delete',0)->count();
+                $premium_business = DB::table('business')->where('business.business_category', $row->name)->leftJoin('purchase_plan', 'purchase_plan.purc_business_id', '=', 'business.busi_id')->where('purchase_plan.purc_plan_id', '!=', 3)->where('purchase_plan.purc_is_cencal', 0)->where('purchase_plan.purc_is_expire', 0)->where('purchase_plan.purc_business_type', 1)->where('business.busi_delete', 0)->count();
 
-               return $premium_business;
+                return $premium_business;
             })
-            ->addColumn('image',function($row) {
-               $btn = '<img src="'.Storage::url($row->image).'" height="100" width="100">';
-
-               return $btn;
-            })
-            ->addColumn('action',function($row) {
-                $btn = '<button onclick="addSubCategory('.$row->id.')" class="btn btn-success">Sub Category</button><a href="'.route('businesscategory.video', ['id' => $row->id]).'" class="btn btn-danger ml-1">Video</a><button onclick="editcategory('.$row->id.')" class="btn btn-primary ml-1">Edit</button><button onclick="deletecategory('.$row->id.')" class="btn btn-danger ml-1">Delete</button></td>';
+            ->addColumn('image', function ($row) {
+                $btn = '<img src="' . Storage::url($row->image) . '" height="100" width="100">';
 
                 return $btn;
             })
-            ->rawColumns(['action','image'])
-            ->make(true);
+            ->addColumn('action', function ($row) {
+                $btn = '<button onclick="addSubCategory(' . $row->id . ')" class="btn btn-success">Sub Category</button><a href="' . route('businesscategory.video', ['id' => $row->id]) . '" class="btn btn-danger ml-1">Video</a><button onclick="editcategory(' . $row->id . ')" class="btn btn-primary ml-1">Edit</button><button onclick="deletecategory(' . $row->id . ')" class="btn btn-danger ml-1">Delete</button></td>';
 
+                return $btn;
+            })
+            ->rawColumns(['action', 'image'])
+            ->make(true);
     }
 
-    public function ShowCategoryVideo(Request $request, $id) {
-        $category = DB::table('business_category')->where('id', $id)->where('is_delete','=',0)->first();
-        if(empty($category)) {
+    public function ShowCategoryVideo(Request $request, $id)
+    {
+        $category = DB::table('business_category')->where('id', $id)->where('is_delete', '=', 0)->first();
+        if (empty($category)) {
             return redirect()->back();
         }
-        $language = Language::where('is_delete','=',0)->get();
-        $subcategory = BusinessSubCategory::where('business_category_id',$id)->where('is_delete', 0)->get();
-        $posts = DB::table('business_category_post_data')->where('post_type', 'video')->where('buss_cat_post_id','=',$request->id)->where('is_deleted','=',0)->get();
+        $language = Language::where('is_delete', '=', 0)->get();
+        $subcategory = BusinessSubCategory::where('business_category_id', $id)->where('is_delete', 0)->get();
+        $posts = DB::table('business_category_post_data')->where('post_type', 'video')->where('buss_cat_post_id', '=', $request->id)->where('is_deleted', '=', 0)->get();
         return view('festival::businesscategoryvideo', ['category' => $category, 'language' => $language, 'subcategory' => $subcategory, 'posts' => $posts]);
     }
 
-    public function ShowCategoryVideoStore(Request $request) {
+    public function ShowCategoryVideoStore(Request $request)
+    {
         $temp = $request->all();
         $image_ty = array();
         $flanguage = $temp['flanguage'];
         $fsubcategory = $temp['fsubcategory'];
         $fvideomode = $temp['fvideomode'];
-        for ($i=0; $i < count($flanguage) ; $i++)
-        {
-            if (isset($temp['btype']) && $i == 0 )
-            {
+        for ($i = 0; $i < count($flanguage); $i++) {
+            if (isset($temp['btype']) && $i == 0) {
                 array_push($image_ty, $temp['btype']);
-            }
-            else
-            {
-                array_push($image_ty, $temp['btype'.$i]);
+            } else {
+                array_push($image_ty, $temp['btype' . $i]);
             }
         }
         if (isset($temp['video_file'])) {
             $thumb_path = array();
-            foreach ($request->file('files') as $v_image)
-            {
-                $video_thumb = $this->multipleUploadFile($v_image,'bussness-post-video-thumb',true,300,300);
+            foreach ($request->file('files') as $v_image) {
+                $video_thumb = $this->multipleUploadFile($v_image, 'bussness-post-video-thumb', true, 300, 300);
                 array_push($thumb_path, $video_thumb);
             }
             foreach ($request->file('video_file') as $key => $image) {
-                $name = Str::random(7).time().'.'.$image->getClientOriginalExtension();
+                $name = Str::random(7) . time() . '.' . $image->getClientOriginalExtension();
                 $image->move(public_path('images/videopost/bussness-post-video'), $name);
-                $path = 'public/images/videopost/bussness-post-video/'.$name;
+                $path = 'public/images/videopost/bussness-post-video/' . $name;
                 DB::table('business_category_post_data')
-                ->insert([
-                    'buss_cat_post_id' => $temp['business_category_id'],
-                    'video_thumbnail' => $thumb_path[$key],
-                    'video_url'=>$path,
-                    'post_type' => 'video',
-                    'image_type'=>$image_ty[$key],
-                    'language_id'=>$flanguage[$key],
-                    'business_sub_category_id'=>$fsubcategory[$key],
-                    'post_mode'=>$fvideomode[$key]
-                ]);
+                    ->insert([
+                        'buss_cat_post_id' => $temp['business_category_id'],
+                        'video_thumbnail' => $thumb_path[$key],
+                        'video_url' => $path,
+                        'post_type' => 'video',
+                        'image_type' => $image_ty[$key],
+                        'language_id' => $flanguage[$key],
+                        'business_sub_category_id' => $fsubcategory[$key],
+                        'post_mode' => $fvideomode[$key]
+                    ]);
             }
         }
         return redirect()->route('businesscategory.video', ['id' => $temp['business_category_id']]);
@@ -108,76 +105,80 @@ class BusinessCategory extends Controller
     public function ChangeVideoType(Request $request)
     {
         $id = $request->id;
-        DB::table('business_category_post_data')->where('id','=',$id)->update(array(
+        DB::table('business_category_post_data')->where('id', '=', $id)->update(array(
             'image_type' => $request->image_ty,
         ));
 
-        return response()->json(['status'=>true]);
+        return response()->json(['status' => true]);
     }
 
     public function ChangeVideoLanguage(Request $request)
     {
         $id = $request->id;
-        DB::table('business_category_post_data')->where('id','=',$id)->update(array(
+        DB::table('business_category_post_data')->where('id', '=', $id)->update(array(
             'language_id' => $request->language_id,
         ));
-        return response()->json(['status'=>true]);
+        return response()->json(['status' => true]);
     }
 
     public function ChangeVideoSubCategory(Request $request)
     {
         $id = $request->id;
-        DB::table('business_category_post_data')->where('id','=',$id)->update(array(
+        DB::table('business_category_post_data')->where('id', '=', $id)->update(array(
             'business_sub_category_id' => $request->sub_category_id,
         ));
-        return response()->json(['status'=>true]);
+        return response()->json(['status' => true]);
     }
 
     public function ChangeVideoMode(Request $request)
     {
         $id = $request->id;
-        DB::table('business_category_post_data')->where('id','=',$id)->update(array(
+        DB::table('business_category_post_data')->where('id', '=', $id)->update(array(
             'post_mode' => $request->post_mode,
         ));
 
-        return response()->json(['status'=>true]);
+        return response()->json(['status' => true]);
     }
 
-    public function ShowCategoryVideoDelete(Request $request) {
+    public function ShowCategoryVideoDelete(Request $request)
+    {
         DB::table('business_category_post_data')->where('id', $request->id)
-        ->update([
-            'is_deleted' => 1
-        ]);
+            ->update([
+                'is_deleted' => 1
+            ]);
     }
 
-    public function getSubCategory(Request $request) {
+    public function getSubCategory(Request $request)
+    {
         $stickers = BusinessSubCategory::where('is_delete', 0)->where('business_category_id', $request->id);
 
-        if ($request->ajax())
-        {
+        if ($request->ajax()) {
             # code...
             return DataTables::of($stickers)
-            ->editColumn('name',function($row) {
-                $name = "<div class='row' >";
-                $name .= "<div class='col-9' >";
-                $name .= "<input class='form-control' type='text' id='name_".$row->id."' value='".$row->name."' />";
-                $name .= "</div>";
-                $name .= "<div class='col-3' >";
-                $name .= "<button class='btn btn-primary' data-business-category-id='".$row->business_category_id."' data-sub-category-id='".$row->id."' onclick='editSubCategory(this)'>Update</button>";
-                $name .= "</div>";
-                return $name;
-            })
-            ->addColumn('action',function($row) {
-                $btn = '<button class="btn btn-danger btn-sm mb-2" data-id="'.$row->id.'" onclick="deleteSubCategory(this)"><i class="fa fa-trash" aria-hidden="true"></i></button>';
-                return $btn;
-            })
-            ->rawColumns(['action', 'name'])
-            ->make(true);
+                ->editColumn('name', function ($row) {
+                    $name = "<div class='row' >";
+                    $name .= "<div class='col-9' >";
+                    $name .= "<input class='form-control' type='text' id='name_" . $row->id . "' value='" . $row->name . "' />";
+                    $name .= "</div>";
+                    $name .= "<div class='col-3' >";
+                    $name .= "<button class='btn btn-primary' data-business-category-id='" . $row->business_category_id . "' data-sub-category-id='" . $row->id . "' onclick='editSubCategory(this)'>Update</button>";
+                    $name .= "</div>";
+                    return $name;
+                })
+                ->addColumn('action', function ($row) {
+                    $btn = '<button class="btn btn-danger btn-sm mb-2" data-id="' . $row->id . '" onclick="deleteSubCategory(this)"><i class="fa fa-trash" aria-hidden="true"></i></button>';
+                    return $btn;
+                })
+                ->rawColumns(['action', 'name'])
+                ->make(true);
         }
     }
 
-    public function addSubCategory(Request $request) {
-        $validator = Validator::make($request->all(), [
+    public function addSubCategory(Request $request)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
                 'business_category_id' => 'required',
                 'sub_category_name' => 'required',
             ],
@@ -187,18 +188,17 @@ class BusinessCategory extends Controller
             ]
         );
 
-        if ($validator->fails())
-        {
-            $error=json_decode($validator->errors());
+        if ($validator->fails()) {
+            $error = json_decode($validator->errors());
 
-            return response()->json(['status' => 401,'error1' => $error]);
+            return response()->json(['status' => 401, 'error1' => $error]);
             exit();
         }
 
-        $checkCategory = BusinessSubCategory::where('name', $request->sub_category_name)->where('business_category_id', $request->business_category_id)->where('is_delete',0)->first();
-        if($checkCategory) {
-            $error=['sub_category_name' => 'Category already exists'];
-            return response()->json(['status' => 401,'error1' => $error]);
+        $checkCategory = BusinessSubCategory::where('name', $request->sub_category_name)->where('business_category_id', $request->business_category_id)->where('is_delete', 0)->first();
+        if ($checkCategory) {
+            $error = ['sub_category_name' => 'Category already exists'];
+            return response()->json(['status' => 401, 'error1' => $error]);
             exit();
         }
 
@@ -207,11 +207,14 @@ class BusinessCategory extends Controller
         $category->business_category_id = $request->business_category_id;
         $category->save();
 
-        return response()->json(['status' => 1,'data' => "", 'message' => 'Category added' ]);
+        return response()->json(['status' => 1, 'data' => "", 'message' => 'Category added']);
     }
 
-    public function editSubCategory(Request $request) {
-        $validator = Validator::make($request->all(), [
+    public function editSubCategory(Request $request)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
                 'business_category_id' => 'required',
                 'sub_category_id' => 'required',
                 'sub_category_name' => 'required',
@@ -223,17 +226,16 @@ class BusinessCategory extends Controller
             ]
         );
 
-        if ($validator->fails())
-        {
-            $error=json_decode($validator->errors());
+        if ($validator->fails()) {
+            $error = json_decode($validator->errors());
 
-            return response()->json(['status' => 401,'error1' => $error]);
+            return response()->json(['status' => 401, 'error1' => $error]);
             exit();
         }
 
-        $checkCategory = BusinessSubCategory::where('name', $request->sub_category_name)->where('id', $request->sub_category_id)->where('business_category_id', $request->business_category_id)->where('is_delete',0)->first();
-        if($checkCategory) {
-            return response()->json(['status' => false,'message' => "Sub Category already exists"]);
+        $checkCategory = BusinessSubCategory::where('name', $request->sub_category_name)->where('id', $request->sub_category_id)->where('business_category_id', $request->business_category_id)->where('is_delete', 0)->first();
+        if ($checkCategory) {
+            return response()->json(['status' => false, 'message' => "Sub Category already exists"]);
             exit();
         }
 
@@ -241,21 +243,22 @@ class BusinessCategory extends Controller
         $category->name = $request->sub_category_name;
         $category->save();
 
-        return response()->json(['status' => true, 'message' => 'Category updated' ]);
+        return response()->json(['status' => true, 'message' => 'Category updated']);
     }
 
-    public function deleteSubCategory(Request $request) {
+    public function deleteSubCategory(Request $request)
+    {
         $id = $request->id;
-        $posts = DB::table('business_category_post_data')->where('business_sub_category_id','=',$id)->where('is_deleted',0)->count();
-        if($posts > 0) {
-            return response()->json(['status' => 1,'data' => "", 'message' => 'Delete related images before delete sub category']);
+        $posts = DB::table('business_category_post_data')->where('business_sub_category_id', '=', $id)->where('is_deleted', 0)->count();
+        if ($posts > 0) {
+            return response()->json(['status' => 1, 'data' => "", 'message' => 'Delete related images before delete sub category']);
         }
         $category = BusinessSubCategory::find($request->id);
-        if($category) {
+        if ($category) {
             $category->is_delete = 1;
         }
         $category->save();
-        return response()->json(['status' => 1,'data' => "", 'message' => 'Sub Category deleted' ]);
+        return response()->json(['status' => 1, 'data' => "", 'message' => 'Sub Category deleted']);
     }
 
     /**
@@ -282,130 +285,111 @@ class BusinessCategory extends Controller
         $fsubcategory = $temp['fsubcategory'];
         $ffestivalId = $temp['ffestivalId'];
         $fimagemode = $temp['fimagemode'];
-        if(isset($temp['files']))
-        {
-            foreach ($flanguage as $key => $value)
-            {
+        if (isset($temp['files'])) {
+            foreach ($flanguage as $key => $value) {
                 $value = trim($value);
-                if (empty($value))
-                {
-                    if ($key == 0)
-                    {
+                if (empty($value)) {
+                    if ($key == 0) {
                         $error = ['flanguage' => 'Select Language'];
-                    }
-                    else
-                    {
-                        $error = ['flanguage'.$key => 'Select Language'];
+                    } else {
+                        $error = ['flanguage' . $key => 'Select Language'];
                     }
 
-                    return response()->json(['status' => 401,'error1' => $error]);
+                    return response()->json(['status' => 401, 'error1' => $error]);
                     exit();
                 }
-
             }
         }
 
         $image = (isset($temp['thumnail'])) ? $temp['thumnail'] : 'undefined';
 
-        if($image != 'undefined'){
+        if ($image != 'undefined') {
 
-            $path = $this->uploadFile($request, null, 'thumnail', 'bussness-post',true,300,300);
-
+            $path = $this->uploadFile($request, null, 'thumnail', 'bussness-post', true, 300, 300);
         } else {
             $path = '';
         }
 
 
-        if ($request->categoryid == "")
-        {
+        if ($request->categoryid == "") {
             DB::table('business_category')->insert([
                 'name' => $request->categoryname,
                 'image' => $path
             ]);
             $bussness_cat_id = DB::getPdo()->lastInsertId();
-        }
-        else
-        {
+        } else {
             $data_get = DB::table('business_category')->where('id', $request->categoryid)->first();
-            DB::table('business')->where('business_category', $data_get->name)->update(['business_category'=>$request->categoryname]);
-            DB::table('business_new')->where('business_category', $data_get->name)->update(['business_category'=>$request->categoryname]);
+            DB::table('business')->where('business_category', $data_get->name)->update(['business_category' => $request->categoryname]);
+            DB::table('business_new')->where('business_category', $data_get->name)->update(['business_category' => $request->categoryname]);
 
-            if($path == "")
-            {
+            if ($path == "") {
                 DB::table('business_category')->where('id', $request->categoryid)
-                ->update([
-                    'name' => $request->categoryname
-                ]);
-            }
-            else
-            {
+                    ->update([
+                        'name' => $request->categoryname
+                    ]);
+            } else {
                 DB::table('business_category')->where('id', $request->categoryid)
-                ->update([
-                    'name' => $request->categoryname, 'image' => $path
-                ]);
+                    ->update([
+                        'name' => $request->categoryname, 'image' => $path
+                    ]);
             }
 
             $bussness_cat_id = $request->categoryid;
         }
 
         $image_ty = array();
-        for ($i=0; $i < count($flanguage) ; $i++)
-        {
-            if (isset($temp['btype']) && $i == 0 )
-            {
+        for ($i = 0; $i < count($flanguage); $i++) {
+            if (isset($temp['btype']) && $i == 0) {
                 array_push($image_ty, $temp['btype']);
-            }
-            else
-            {
-                array_push($image_ty, $temp['btype'.$i]);
+            } else {
+                array_push($image_ty, $temp['btype' . $i]);
             }
         }
 
 
         if (isset($temp['files'])) {
-            for($j=0; $j< count($image_ty); $j++) {
-                if($j == 0) {
+            for ($j = 0; $j < count($image_ty); $j++) {
+                if ($j == 0) {
                     foreach ($request->file('files') as $key => $image) {
 
-                        $path = $this->multipleUploadFile($image,'bussness-post');
-                        $path_thumb = $this->multipleUploadFile($image,'bussness-post-thumb',true,300,300);
-                        DB::table('business_category_post_data')->insert(
-                        [
-                            'buss_cat_post_id' => $bussness_cat_id,
-                            'thumbnail' => $path,
-                            'post_thumb'=>$path_thumb,
-                            'image_type'=>$image_ty[$j],
-                            'language_id'=>$flanguage[$j],
-                            'business_sub_category_id'=>$fsubcategory[$j],
-                            'festival_id'=> $ffestivalId[$j],
-                            'post_mode'=> $fimagemode[$j]
-                        ]);
-                    }
-                }
-                else {
-                    foreach ($request->file('files' . $j) as $key => $image) {
-
-                        $path = $this->multipleUploadFile($image,'bussness-post');
-                        $path_thumb = $this->multipleUploadFile($image,'bussness-post-thumb',true,300,300);
+                        $path = $this->multipleUploadFile($image, 'bussness-post');
+                        $path_thumb = $this->multipleUploadFile($image, 'bussness-post-thumb', true, 300, 300);
                         DB::table('business_category_post_data')->insert(
                             [
-                            'buss_cat_post_id' => $bussness_cat_id,
-                            'thumbnail' => $path,
-                            'post_thumb'=>$path_thumb,
-                            'image_type'=>$image_ty[$j],
-                            'language_id'=>$flanguage[$j],
-                            'business_sub_category_id'=>$fsubcategory[$j],
-                            'festival_id'=> $ffestivalId[$j],
-                            'post_mode'=> $fimagemode[$j]
-                        ]);
+                                'buss_cat_post_id' => $bussness_cat_id,
+                                'thumbnail' => $path,
+                                'post_thumb' => $path_thumb,
+                                'image_type' => $image_ty[$j],
+                                'language_id' => $flanguage[$j],
+                                'business_sub_category_id' => $fsubcategory[$j],
+                                'festival_id' => $ffestivalId[$j],
+                                'post_mode' => $fimagemode[$j]
+                            ]
+                        );
+                    }
+                } else {
+                    foreach ($request->file('files' . $j) as $key => $image) {
+
+                        $path = $this->multipleUploadFile($image, 'bussness-post');
+                        $path_thumb = $this->multipleUploadFile($image, 'bussness-post-thumb', true, 300, 300);
+                        DB::table('business_category_post_data')->insert(
+                            [
+                                'buss_cat_post_id' => $bussness_cat_id,
+                                'thumbnail' => $path,
+                                'post_thumb' => $path_thumb,
+                                'image_type' => $image_ty[$j],
+                                'language_id' => $flanguage[$j],
+                                'business_sub_category_id' => $fsubcategory[$j],
+                                'festival_id' => $ffestivalId[$j],
+                                'post_mode' => $fimagemode[$j]
+                            ]
+                        );
                     }
                 }
             }
-
         }
 
-        return response()->json(['status' => 1,'data' => ""]);
-
+        return response()->json(['status' => 1, 'data' => ""]);
     }
 
     /**
@@ -427,72 +411,71 @@ class BusinessCategory extends Controller
      */
     public function edit(Request $request)
     {
-        $category_data = DB::table('business_category')->where('id','=',$request->id)->where('is_delete','=',0)->first();
-        $posts = DB::table('business_category_post_data')->where('post_type', 'image')->where('buss_cat_post_id','=',$request->id)->where('is_deleted','=',0)->get();
+        $category_data = DB::table('business_category')->where('id', '=', $request->id)->where('is_delete', '=', 0)->first();
+        $posts = DB::table('business_category_post_data')->where('post_type', 'image')->where('buss_cat_post_id', '=', $request->id)->where('is_deleted', '=', 0)->get();
         $categories = BusinessSubCategory::where('business_category_id', $request->id)->get();
-        return response()->json(['status'=>true,'data'=>$category_data, 'images'=>$posts, 'categories'=>$categories]);
-
+        return response()->json(['status' => true, 'data' => $category_data, 'images' => $posts, 'categories' => $categories]);
     }
 
     public function removeBuseinesCATimage(Request $request)
     {
 
         $id = $request->id;
-        DB::table('business_category_post_data')->where('id','=',$id)->update(array(
+        DB::table('business_category_post_data')->where('id', '=', $id)->update(array(
             'is_deleted' => 1,
         ));
 
-        return response()->json(['status'=>true]);
+        return response()->json(['status' => true]);
     }
 
     public function ChangeImageType(Request $request)
     {
         $id = $request->id;
-        DB::table('business_category_post_data')->where('id','=',$id)->update(array(
+        DB::table('business_category_post_data')->where('id', '=', $id)->update(array(
             'image_type' => $request->image_ty,
         ));
 
-        return response()->json(['status'=>true]);
+        return response()->json(['status' => true]);
     }
 
     public function ChangeLanguage(Request $request)
     {
         $id = $request->id;
-        DB::table('business_category_post_data')->where('id','=',$id)->update(array(
+        DB::table('business_category_post_data')->where('id', '=', $id)->update(array(
             'language_id' => $request->language_id,
         ));
 
-        return response()->json(['status'=>true]);
+        return response()->json(['status' => true]);
     }
 
     public function ChangeSubCategory(Request $request)
     {
         $id = $request->id;
-        DB::table('business_category_post_data')->where('id','=',$id)->update(array(
+        DB::table('business_category_post_data')->where('id', '=', $id)->update(array(
             'business_sub_category_id' => $request->sub_category_id,
         ));
 
-        return response()->json(['status'=>true]);
+        return response()->json(['status' => true]);
     }
 
     public function changefestival(Request $request)
     {
         $id = $request->id;
-        DB::table('business_category_post_data')->where('id','=',$id)->update(array(
+        DB::table('business_category_post_data')->where('id', '=', $id)->update(array(
             'festival_id' => $request->festival_id,
         ));
 
-        return response()->json(['status'=>true]);
+        return response()->json(['status' => true]);
     }
 
     public function changeimagemode(Request $request)
     {
         $id = $request->id;
-        DB::table('business_category_post_data')->where('id','=',$id)->update(array(
+        DB::table('business_category_post_data')->where('id', '=', $id)->update(array(
             'post_mode' => $request->imagemode,
         ));
 
-        return response()->json(['status'=>true]);
+        return response()->json(['status' => true]);
     }
 
     /**
@@ -515,19 +498,18 @@ class BusinessCategory extends Controller
      */
     public function destroy(Request $request)
     {
-        $posts = DB::table('business_category_post_data')->where('buss_cat_post_id','=',$request->id)->where('is_deleted','=',0)->get();
-        $category_data = DB::table('business_category')->where('id','=',$request->id)->where('is_delete','=',0)->first();
+        $posts = DB::table('business_category_post_data')->where('buss_cat_post_id', '=', $request->id)->where('is_deleted', '=', 0)->get();
+        $category_data = DB::table('business_category')->where('id', '=', $request->id)->where('is_delete', '=', 0)->first();
 
-        $category = DB::table('business')->where('business_category','=',$category_data->name)->where('is_deleted','=',0)->get();
+        $category = DB::table('business')->where('business_category', '=', $category_data->name)->where('is_deleted', '=', 0)->get();
 
-        if(count($posts) == 0 && count($category) == 0)
-        {
+        if (count($posts) == 0 && count($category) == 0) {
             DB::table('business_category')->where('id', $request->id)
                 ->update([
                     'is_delete' => 1
                 ]);
-            return response()->json(['status'=>200]);
+            return response()->json(['status' => 200]);
         }
-        return response()->json(['status'=>401]);
+        return response()->json(['status' => 401]);
     }
 }

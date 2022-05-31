@@ -6,41 +6,42 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\CustomSubCategory;
 use Illuminate\Support\Str;
-use DB;
-use DataTables;
+use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class CustomCategoryPostControllaer extends Controller
 {
     public function getCustomeCategoryPost(Request $request)
     {
-    	$customcat = DB::table('custom_cateogry')->get();
+        $customcat = DB::table('custom_cateogry')->get();
 
         return DataTables::of($customcat)
-        ->addIndexColumn()
-        ->addColumn('action',function($row) {
-            $btn = '<button class="btn btn-info btn-sm" id="editCatPost" onclick="editCat('.$row->custom_cateogry_id.')">Edit</button>';
-            return $btn;
-        })
-        ->rawColumns(['action'])
-        ->make(true);
+            ->addIndexColumn()
+            ->addColumn('action', function ($row) {
+                $btn = '<button class="btn btn-info btn-sm" id="editCatPost" onclick="editCat(' . $row->custom_cateogry_id . ')">Edit</button>';
+                return $btn;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
 
-    public function getcatlist(){
+    public function getcatlist()
+    {
 
         $posts =  DB::table('custom_cateogry')->get();
         $first =  DB::table('custom_cateogry')->first();
         $category = array();
-        if($first) {
+        if ($first) {
             $category =  CustomSubCategory::where('custom_category_id', $first->custom_cateogry_id)->get();
         }
 
-        return response()->json(['status'=>true,'data'=>$posts, 'category'=> $category]);
+        return response()->json(['status' => true, 'data' => $posts, 'category' => $category]);
     }
 
     public function addCustomCategoryPost(Request $request)
     {
 
-    	$temp = $request->all();
+        $temp = $request->all();
 
         $name = $temp['customcatid'];
 
@@ -69,11 +70,10 @@ class CustomCategoryPostControllaer extends Controller
 
         $bannerimg_path = array();
 
-        if($bannerimgs != 'undefined'){
-            foreach ($bannerimgs as $bannerimg)
-            {
-               $bannerimgpath = "";
-                $bannerimgpath = $this->multipleUploadFileThumb($bannerimg,'customcat-post',true,300,300);
+        if ($bannerimgs != 'undefined') {
+            foreach ($bannerimgs as $bannerimg) {
+                $bannerimgpath = "";
+                $bannerimgpath = $this->multipleUploadFileThumb($bannerimg, 'customcat-post', true, 300, 300);
                 array_push($bannerimg_path, $bannerimgpath);
             }
         } else {
@@ -81,136 +81,124 @@ class CustomCategoryPostControllaer extends Controller
         }
 
         $imageone_path = array();
-        if($imageones != 'undefined'){
+        if ($imageones != 'undefined') {
 
-            foreach ($imageones as $imageone)
-            {
-               $bannerimgpath = "";
+            foreach ($imageones as $imageone) {
+                $bannerimgpath = "";
 
-                $imageonepath = $this->multipleUploadFile($imageone,'customcat-post');
+                $imageonepath = $this->multipleUploadFile($imageone, 'customcat-post');
                 array_push($imageone_path, $imageonepath);
             }
         } else {
             $imageonepath = '';
         }
 
-       	$image_tp = array();
-        for ($i=0; $i < count($position_x) ; $i++)
-        {
-            if (isset($temp['btype']) && $i == 0 )
-            {
+        $image_tp = array();
+        for ($i = 0; $i < count($position_x); $i++) {
+            if (isset($temp['btype']) && $i == 0) {
                 array_push($image_tp, $temp['btype']);
-            }
-            else
-            {
-                array_push($image_tp, $temp['btype'.$i]);
+            } else {
+                array_push($image_tp, $temp['btype' . $i]);
             }
         }
 
 
 
-        for ($i=0; $i < count($position_x); $i++)
-        {
-	        if($custom_cateogry_data_id == '')
-	        {
-	            DB::table('custom_cateogry_data')
-                ->insert([
-                    'custom_cateogry_id' => $name,
-                    'banner_image'=>$bannerimg_path[$i],
-                    'image_one'=>$imageone_path[$i],
-                    'image_two'=>'',
-                    'position_x' => $position_x[$i],
-                    'position_y' => $position_y[$i],
-                    'img_position_x' => $img_position_x[$i],
-                    'img_position_y' => $img_position_y[$i],
-                    'img_height' => $img_height[$i],
-                    'img_width' => $img_width[$i],
-                    'image_type'=>$image_tp[$i],
-                    'language_id'=>$language_id[$i],
-                    'custom_sub_category_id'=>$sub_category_id[$i],
-                    'post_mode'=>$post_mode[$i],
-                ]);
-	        } else {
+        for ($i = 0; $i < count($position_x); $i++) {
+            if ($custom_cateogry_data_id == '') {
+                DB::table('custom_cateogry_data')
+                    ->insert([
+                        'custom_cateogry_id' => $name,
+                        'banner_image' => $bannerimg_path[$i],
+                        'image_one' => $imageone_path[$i],
+                        'image_two' => '',
+                        'position_x' => $position_x[$i],
+                        'position_y' => $position_y[$i],
+                        'img_position_x' => $img_position_x[$i],
+                        'img_position_y' => $img_position_y[$i],
+                        'img_height' => $img_height[$i],
+                        'img_width' => $img_width[$i],
+                        'image_type' => $image_tp[$i],
+                        'language_id' => $language_id[$i],
+                        'custom_sub_category_id' => $sub_category_id[$i],
+                        'post_mode' => $post_mode[$i],
+                    ]);
+            } else {
 
-	            if($imageone_path[$i] == '' && $bannerimg_path[$i] == '')
-	            {
-	                DB::table('custom_cateogry_data')
-                    ->where('custom_cateogry_data_id', $custom_cateogry_data_id)
-                    ->update([
-                        'custom_cateogry_id' => $name,
-                        'image_two'=>'',
-                        'position_x' => $position_x[$i],
-                        'position_y' => $position_y[$i],
-                        'img_position_x' => $img_position_x[$i],
-                        'img_position_y' => $img_position_y[$i],
-                        'img_height' => $img_height[$i],
-                        'img_width' => $img_width[$i],
-                        'image_type'=>$image_tp[$i],
-                        'language_id'=>$language_id[$i],
-                        'custom_sub_category_id'=>$sub_category_id[$i],
-                        'post_mode'=>$post_mode[$i],
-                    ]);
-	            }
-	            else if($imageone_path[$i] == '' && $bannerimg_path[$i] != ''){
-	                DB::table('custom_cateogry_data')
-	                ->where('custom_cateogry_data_id', $custom_cateogry_data_id)
-	                ->update([
-                        'custom_cateogry_id' => $name,
-                        'banner_image'=>$bannerimg_path[$i],
-                        'image_two'=>'',
-                        'position_x' => $position_x[$i],
-                        'position_y' => $position_y[$i],
-                        'img_position_x' => $img_position_x[$i],
-                        'img_position_y' => $img_position_y[$i],
-                        'img_height' => $img_height[$i],
-                        'img_width' => $img_width[$i],
-                        'image_type'=>$image_tp[$i],
-                        'language_id'=>$language_id[$i],
-                        'custom_sub_category_id'=>$sub_category_id[$i],
-                        'post_mode'=>$post_mode[$i],
-                    ]);
-	            }
-
-	            else if($imageone_path[$i] != '' && $bannerimg_path[$i] == ''){
-	                DB::table('custom_cateogry_data')
-	                ->where('custom_cateogry_data_id', $custom_cateogry_data_id)
-	                ->update([
-                        'custom_cateogry_id' => $name,
-                        'image_one'=>$imageone_path[$i],
-                        'image_two'=>'',
-                        'position_x' => $position_x[$i],
-                        'position_y' => $position_y[$i],
-                        'img_position_x' => $img_position_x[$i],
-                        'img_position_y' => $img_position_y[$i],
-                        'img_height' => $img_height[$i],
-                        'img_width' => $img_width[$i],
-                        'image_type'=>$image_tp[$i],
-                        'language_id'=>$language_id[$i],
-                        'custom_sub_category_id'=>$sub_category_id[$i],
-                        'post_mode'=>$post_mode[$i],
-                    ]);
-	            }
-	            else {
-	                DB::table('custom_cateogry_data')
-	                ->where('custom_cateogry_data_id', $custom_cateogry_data_id)
-	                ->update([
-                        'custom_cateogry_id' => $name,
-                        'banner_image'=>$bannerimg_path[$i],
-                        'image_one'=>$imageone_path[$i],
-                        'image_two'=>'',
-                        'position_x' => $position_x[$i],
-                        'position_y' => $position_y[$i],
-                        'img_position_x' => $img_position_x[$i],
-                        'img_position_y' => $img_position_y[$i],
-                        'img_height' => $img_height[$i],
-                        'img_width' => $img_width[$i],
-                        'image_type'=>$image_tp[$i],
-                        'language_id'=>$language_id[$i],
-                        'custom_sub_category_id'=>$sub_category_id[$i],
-                        'post_mode'=>$post_mode[$i],
-                    ]);
-	            }
-	        }
+                if ($imageone_path[$i] == '' && $bannerimg_path[$i] == '') {
+                    DB::table('custom_cateogry_data')
+                        ->where('custom_cateogry_data_id', $custom_cateogry_data_id)
+                        ->update([
+                            'custom_cateogry_id' => $name,
+                            'image_two' => '',
+                            'position_x' => $position_x[$i],
+                            'position_y' => $position_y[$i],
+                            'img_position_x' => $img_position_x[$i],
+                            'img_position_y' => $img_position_y[$i],
+                            'img_height' => $img_height[$i],
+                            'img_width' => $img_width[$i],
+                            'image_type' => $image_tp[$i],
+                            'language_id' => $language_id[$i],
+                            'custom_sub_category_id' => $sub_category_id[$i],
+                            'post_mode' => $post_mode[$i],
+                        ]);
+                } else if ($imageone_path[$i] == '' && $bannerimg_path[$i] != '') {
+                    DB::table('custom_cateogry_data')
+                        ->where('custom_cateogry_data_id', $custom_cateogry_data_id)
+                        ->update([
+                            'custom_cateogry_id' => $name,
+                            'banner_image' => $bannerimg_path[$i],
+                            'image_two' => '',
+                            'position_x' => $position_x[$i],
+                            'position_y' => $position_y[$i],
+                            'img_position_x' => $img_position_x[$i],
+                            'img_position_y' => $img_position_y[$i],
+                            'img_height' => $img_height[$i],
+                            'img_width' => $img_width[$i],
+                            'image_type' => $image_tp[$i],
+                            'language_id' => $language_id[$i],
+                            'custom_sub_category_id' => $sub_category_id[$i],
+                            'post_mode' => $post_mode[$i],
+                        ]);
+                } else if ($imageone_path[$i] != '' && $bannerimg_path[$i] == '') {
+                    DB::table('custom_cateogry_data')
+                        ->where('custom_cateogry_data_id', $custom_cateogry_data_id)
+                        ->update([
+                            'custom_cateogry_id' => $name,
+                            'image_one' => $imageone_path[$i],
+                            'image_two' => '',
+                            'position_x' => $position_x[$i],
+                            'position_y' => $position_y[$i],
+                            'img_position_x' => $img_position_x[$i],
+                            'img_position_y' => $img_position_y[$i],
+                            'img_height' => $img_height[$i],
+                            'img_width' => $img_width[$i],
+                            'image_type' => $image_tp[$i],
+                            'language_id' => $language_id[$i],
+                            'custom_sub_category_id' => $sub_category_id[$i],
+                            'post_mode' => $post_mode[$i],
+                        ]);
+                } else {
+                    DB::table('custom_cateogry_data')
+                        ->where('custom_cateogry_data_id', $custom_cateogry_data_id)
+                        ->update([
+                            'custom_cateogry_id' => $name,
+                            'banner_image' => $bannerimg_path[$i],
+                            'image_one' => $imageone_path[$i],
+                            'image_two' => '',
+                            'position_x' => $position_x[$i],
+                            'position_y' => $position_y[$i],
+                            'img_position_x' => $img_position_x[$i],
+                            'img_position_y' => $img_position_y[$i],
+                            'img_height' => $img_height[$i],
+                            'img_width' => $img_width[$i],
+                            'image_type' => $image_tp[$i],
+                            'language_id' => $language_id[$i],
+                            'custom_sub_category_id' => $sub_category_id[$i],
+                            'post_mode' => $post_mode[$i],
+                        ]);
+                }
+            }
         }
 
         return redirect('CustomCategorypost');
@@ -218,20 +206,19 @@ class CustomCategoryPostControllaer extends Controller
 
     public function editCustomeCategoryPost(Request $request)
     {
-    	$id = $request->id;
+        $id = $request->id;
 
-        $posts =  DB::table('custom_cateogry_data')->where('custom_cateogry_id','=',$id)->where('is_delete','=',0)->get();
-        $category =  DB::table('custom_cateogry')->where('custom_cateogry_id','=',$id)->first();
+        $posts =  DB::table('custom_cateogry_data')->where('custom_cateogry_id', '=', $id)->where('is_delete', '=', 0)->get();
+        $category =  DB::table('custom_cateogry')->where('custom_cateogry_id', '=', $id)->first();
 
-        $subCategories =  CustomSubCategory::where('is_delete', 0)->where('custom_category_id','=',$id)->get();
+        $subCategories =  CustomSubCategory::where('is_delete', 0)->where('custom_category_id', '=', $id)->get();
 
-        return response()->json(['status'=>true,'data'=>$category, 'images'=>$posts, 'subCategories'=>$subCategories]);
-
+        return response()->json(['status' => true, 'data' => $category, 'images' => $posts, 'subCategories' => $subCategories]);
     }
 
     public function updateCustomCategoryvalue(Request $request)
     {
-    	$temp = $request->all();
+        $temp = $request->all();
 
         $position_x = $temp['position_x'];
 
@@ -259,106 +246,101 @@ class CustomCategoryPostControllaer extends Controller
 
         $imageone = (isset($temp['imageone'])) ? $temp['imageone'] : 'undefined';
 
-        if($bannerimg != 'undefined'){
-            $filename = Str::random(7).time().'.'.$bannerimg->getClientOriginalExtension();
+        if ($bannerimg != 'undefined') {
+            $filename = Str::random(7) . time() . '.' . $bannerimg->getClientOriginalExtension();
             $bannerimg->move(public_path('images/customcat'), $filename);
-            $bannerimgpath = '/public/images/customcat/'.$filename;
+            $bannerimgpath = '/public/images/customcat/' . $filename;
         } else {
             $bannerimgpath = '';
         }
-        if($imageone != 'undefined'){
-            $filename = Str::random(7).time().'.'.$imageone->getClientOriginalExtension();
+        if ($imageone != 'undefined') {
+            $filename = Str::random(7) . time() . '.' . $imageone->getClientOriginalExtension();
             $imageone->move(public_path('images/customcat'), $filename);
-            $imageonepath = '/public/images/customcat/'.$filename;
+            $imageonepath = '/public/images/customcat/' . $filename;
         } else {
             $imageonepath = '';
         }
 
-        if($imageonepath == '' && $bannerimgpath == ''){
+        if ($imageonepath == '' && $bannerimgpath == '') {
             DB::table('custom_cateogry_data')
-            ->where('custom_cateogry_data_id', $custom_cateogry_data_id)
-            ->update([
-                'image_two'=>'',
-                'position_x' => $position_x,
-                'position_y' => $position_y,
-                'img_position_x' => $img_position_x,
-                'img_position_y' => $img_position_y,
-                'img_height' => $img_height,
-                'img_width' => $img_width,
-                'image_type'=>$image_tp,
-                'language_id'=>$language_id,
-                'custom_sub_category_id'=>$sub_category_id,
-                'post_mode'=>$post_mode,
-            ]);
-        }
-        else if($imageonepath == '' && $bannerimgpath != ''){
+                ->where('custom_cateogry_data_id', $custom_cateogry_data_id)
+                ->update([
+                    'image_two' => '',
+                    'position_x' => $position_x,
+                    'position_y' => $position_y,
+                    'img_position_x' => $img_position_x,
+                    'img_position_y' => $img_position_y,
+                    'img_height' => $img_height,
+                    'img_width' => $img_width,
+                    'image_type' => $image_tp,
+                    'language_id' => $language_id,
+                    'custom_sub_category_id' => $sub_category_id,
+                    'post_mode' => $post_mode,
+                ]);
+        } else if ($imageonepath == '' && $bannerimgpath != '') {
             DB::table('custom_cateogry_data')
-            ->where('custom_cateogry_data_id', $custom_cateogry_data_id)
-            ->update([
-                'banner_image'=>$bannerimgpath,
-                'image_two'=>'',
-                'position_x' => $position_x,
-                'position_y' => $position_y,
-                'img_position_x' => $img_position_x,
-                'img_position_y' => $img_position_y,
-                'img_height' => $img_height,
-                'img_width' => $img_width,
-                'image_type'=>$image_tp,
-                'language_id'=>$language_id,
-                'custom_sub_category_id'=>$sub_category_id,
-                'post_mode'=>$post_mode,
-            ]);
-        }
-
-        else if($imageonepath != '' && $bannerimgpath == ''){
+                ->where('custom_cateogry_data_id', $custom_cateogry_data_id)
+                ->update([
+                    'banner_image' => $bannerimgpath,
+                    'image_two' => '',
+                    'position_x' => $position_x,
+                    'position_y' => $position_y,
+                    'img_position_x' => $img_position_x,
+                    'img_position_y' => $img_position_y,
+                    'img_height' => $img_height,
+                    'img_width' => $img_width,
+                    'image_type' => $image_tp,
+                    'language_id' => $language_id,
+                    'custom_sub_category_id' => $sub_category_id,
+                    'post_mode' => $post_mode,
+                ]);
+        } else if ($imageonepath != '' && $bannerimgpath == '') {
             DB::table('custom_cateogry_data')
-            ->where('custom_cateogry_data_id', $custom_cateogry_data_id)
-            ->update([
-                'image_one'=>$imageonepath,
-                'image_two'=>'',
-                'position_x' => $position_x,
-                'position_y' => $position_y,
-                'img_position_x' => $img_position_x,
-                'img_position_y' => $img_position_y,
-                'img_height' => $img_height,
-                'img_width' => $img_width,
-                'image_type'=>$image_tp,
-                'language_id'=>$language_id,
-                'custom_sub_category_id'=>$sub_category_id,
-                'post_mode'=>$post_mode,
-            ]);
-        }
-        else {
+                ->where('custom_cateogry_data_id', $custom_cateogry_data_id)
+                ->update([
+                    'image_one' => $imageonepath,
+                    'image_two' => '',
+                    'position_x' => $position_x,
+                    'position_y' => $position_y,
+                    'img_position_x' => $img_position_x,
+                    'img_position_y' => $img_position_y,
+                    'img_height' => $img_height,
+                    'img_width' => $img_width,
+                    'image_type' => $image_tp,
+                    'language_id' => $language_id,
+                    'custom_sub_category_id' => $sub_category_id,
+                    'post_mode' => $post_mode,
+                ]);
+        } else {
             DB::table('custom_cateogry_data')
-            ->where('custom_cateogry_data_id', $custom_cateogry_data_id)
-            ->update([
-                'banner_image'=>$bannerimgpath,
-                'image_one'=>$imageonepath,
-                'image_two'=>'',
-                'position_x' => $position_x,
-                'position_y' => $position_y,
-                'img_position_x' => $img_position_x,
-                'img_position_y' => $img_position_y,
-                'img_height' => $img_height,
-                'img_width' => $img_width,
-                'image_type'=>$image_tp,
-                'language_id'=>$language_id,
-                'custom_sub_category_id'=>$sub_category_id,
-                'post_mode'=>$post_mode,
-            ]);
+                ->where('custom_cateogry_data_id', $custom_cateogry_data_id)
+                ->update([
+                    'banner_image' => $bannerimgpath,
+                    'image_one' => $imageonepath,
+                    'image_two' => '',
+                    'position_x' => $position_x,
+                    'position_y' => $position_y,
+                    'img_position_x' => $img_position_x,
+                    'img_position_y' => $img_position_y,
+                    'img_height' => $img_height,
+                    'img_width' => $img_width,
+                    'image_type' => $image_tp,
+                    'language_id' => $language_id,
+                    'custom_sub_category_id' => $sub_category_id,
+                    'post_mode' => $post_mode,
+                ]);
         }
 
-        return response()->json(['status'=>true]);
-
+        return response()->json(['status' => true]);
     }
 
     public function RemoveCustomCategoryvalue(Request $request)
     {
-    	DB::table('custom_cateogry_data')
-        ->where('custom_cateogry_data_id', $request->id)
-        ->update([
-            'is_delete'=>1
-        ]);
-        return response()->json(['status'=>true]);
+        DB::table('custom_cateogry_data')
+            ->where('custom_cateogry_data_id', $request->id)
+            ->update([
+                'is_delete' => 1
+            ]);
+        return response()->json(['status' => true]);
     }
 }

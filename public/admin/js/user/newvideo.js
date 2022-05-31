@@ -3,31 +3,13 @@ var vp_data = [];
 var store_url = SPACE_STORE_URL;
 var subcategorytable = "";
 
-
-/*var allpost = $('#video-post-table').DataTable({
-    processing: true,
-    serverSide: true,
-    ajax: APP_URL+'/festival/getVideoData',
-    columns: [
-        {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-		{data: 'name', name: 'name'},
-		{data: 'date', name: 'date'},
-		{data: 'type', name: 'type'},
-		{data: 'information', name: 'information'},
-		{data: 'action', name: 'action', orderable: false, searchable: false},
-    ]
-});*/
-
 $(document).ready(function() {
-	/*$('#videodate').datepicker({
-	 	 autoclose: true,
-	});*/
 	$('#videodate').datetimepicker({
-			format: 'YYYY-MM-DD',
-		});
+		format: 'YYYY-MM-DD',
+	});
 	var today = new Date().toISOString().split('T')[0];
 	$('#videodate').attr('min', today);
-          search_video();
+    search_video();
 });
 
 function ChangeType()
@@ -47,7 +29,7 @@ function ChangeType()
 function search_video(){
 
     $('.loader-custom').css('display','block');
-var date = "";
+    var date = "";
 	$.ajaxSetup({
 	headers: {
 	    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -78,6 +60,7 @@ var date = "";
 $('#festivaldate').datetimepicker({
     format: 'YYYY-MM-DD',
 });
+
 function showinsertform(){
 	$('#fsubcategory').html('<option value="0">Select Sub Category</option>');
 	$('#addVideo').show();
@@ -90,6 +73,7 @@ function showvideolist(){
 	var p_id = 1;
 	resetForm();
 }
+
 function readURL(input) {
     if (input.files && input.files[0]) {
         var reader = new FileReader();
@@ -178,130 +162,128 @@ function removeVideo(id){
 
 function editVideoPost(id){
 	$('.loader-custom').css('display','block');
-			$.ajaxSetup({
-			headers: {
-			    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-			}});
 
-			$.ajax({
-				type:'POST',
-				url:APP_URL+"/festival/get-newvideo-post-edit",
-				data: {"id":id},
-				success: function (response)
-				{
-					if (response.status)
-					{
-						var s_url = response.s_url;
+    $.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }});
 
-						$('#videoname').val(response.data['video_name']);
-						$('#videodate').val(response.data['video_date']);
-						$('#information').val(response.data['video_info']);
-						$('#ftype').val(response.data['video_type']);
-						$('#videoid').val(response.data['video_id']);
-						$('#blah').attr('src', SPACE_STORE_URL+''+response.data['video_image']);
-						$("#flanguage").removeAttr('required');
+    $.ajax({
+        type:'POST',
+        url:APP_URL+"/festival/get-newvideo-post-edit",
+        data: {"id":id},
+        success: function (response)
+        {
+            if (response.status)
+            {
+                var s_url = response.s_url;
 
-						if (response.data['video_type'] == 'incident')
-						{
-							$('.festdatediv').hide();
-							$("#videodate").removeAttr('required', 'required');
-							$("#videocolor").removeAttr('required', 'required');
-						}
-						showinsertform();
-						var categories = '<option value="0">Select Sub Category</option>';
-			            for (var i = 0; i < response.categories.length; i++) {
-			            	categories += '<option value="' + response.categories[i]['id'] + '">' + response.categories[i]['name'] + '</option>';
-			            }
-			            $('#fsubcategory').html(categories);
-						for (var i = 0; i < response.images.length; i++) {
-							$("<span class=\"pip\">" +
-								'<div class="row">'+
-								'<div class="col-md-5">'+
-					            "<img class=\"imageThumb\" src=\""+SPACE_STORE_URL+''+response.images[i]['thumbnail'] + "\" onclick=\"showvideo("+i+")\" />" +
-					            '</div>'+
-					            '<div class="col-md-6">'+
-					            '<div class="form-check">'+
-			                      '<label class="form-check-label">'+
-			                        '<input type="radio" onchange="edittype('+response.images[i]['id']+',this)" class="form-check-input" name="btype'+i+'" id="btypefree'+i+'" value="0" checked="checked">Free'+
-			                      '</label>'+
-			                    '</div>'+
-			                    '<div class="form-check">'+
-			                      '<label class="form-check-label">'+
-			                        '<input type="radio" onchange="edittype('+response.images[i]['id']+',this)" class="form-check-input" name="btype'+i+'" id="btypepremium'+i+'" value="1">Premium'+
-			                      '</label>'+
-			                    '</div>'+
-			                    '</div>'+
-			                    '<div class="col-md-12">'+
-			                    '<div class="form-group">'+
-			                      '<label for="flanguage">Select Language:</label>'+
-			                      '<select class="form-control" name="flanguage'+i+'" id="editflanguage_'+i+'" onchange="editlanguage('+response.images[i]['id']+',this)">'+
-			                      '</select>'+
-			                    '</div>'+
-			                    '</div>'+
-			                    '<div class="col-md-12">'+
-			                    '<div class="form-group">'+
-			                      '<label for="fsubcategory">Select Sub Category:</label>'+
-			                      '<select class="form-control" name="fsubcategory'+i+'" id="editfsubcategory_'+i+'" onchange="editsubcategory('+response.images[i]['id']+',this)">'+
-			                      '</select>'+
-			                    '</div>'+
-			                    '</div>'+
-                                '<div class="col-md-12">'+
-			                    '<div class="form-group">'+
-			                      '<label for="fvideomode">Select Sub Category:</label>'+
-			                      '<select class="form-control" name="fvideomode'+i+'" id="editfvideomode_'+i+'" onchange="editvideomode('+response.images[i]['id']+',this)">'+
-			                      '<option value="light">Light</option>'+
-			                      '<option value="dark">Dark</option>'+
-			                      '</select>'+
-			                    '</div>'+
-			                    '</div>'+
-			                    '</div>'+
-			                    '<div class="col-md-12">'+
-			                    '<div class="form-group">'+
-                                    '<label for="videoname">Color</label>'+
-                                    '<input type="text" class="form-control"  id="videocolor'+i+'" placeholder="Enter color" name="videocolor" value="'+response.images[i]['color']+'">'+
-                                    '<button type="button" class="btn btn-success" onclick="editcolor('+response.images[i]['id']+',this)"  id="videocolor_'+i+'">Update color</button>'+
-                                '</div>'+
-					            '</div>'+
-					            "<br/><span class=\"remove\" onclick='removethisimgae("+response.images[i]['id']+")'>Remove image</span>" +
-					            "</span>").insertBefore("#showphotos");
-					          $(".remove").click(function(){
-					            $(this).parent(".pip").remove();
-					          });
-					          var opn = $("#flanguage").html();
-								$("#editflanguage_"+i).html(opn);
-								$("#editflanguage_"+i).val(response.images[i]['language_id']);
-								var opn1 = $("#fsubcategory").html();
-								$("#editfsubcategory_"+i).html(opn1);
-								$("#editfsubcategory_"+i).val(response.images[i]['sub_category_id']);
-								$("#editfvideomode_"+i).val(response.images[i]['post_mode']);
-					          var btype = response.images[i]['image_type'];
-								if (btype == 1)
-								{
-									$("#btypepremium"+i).attr('checked', 'checked');
+                $('#videoname').val(response.data['video_name']);
+                $('#videodate').val(response.data['video_date']);
+                $('#information').val(response.data['video_info']);
+                $('#ftype').val(response.data['video_type']);
+                $('#videoid').val(response.data['video_id']);
+                $('#blah').attr('src', SPACE_STORE_URL+''+response.data['video_image']);
+                $("#flanguage").removeAttr('required');
 
-								}
-								else if (btype == 0)
-								{
-									$("#btypefree"+i).attr('checked', 'checked');
-
-
-								}
-								if(response.images[i]['video_store'] == "LOCAL") {
-									var vp_url = APP_URL+'/'+response.images[i]['video_url'];
-									vp_data.push(vp_url);
-								}
-								else {
-									var vp_url = SPACE_STORE_URL+''+response.images[i]['video_url'];
-									var vp_url = APP_URL+'/'+response.images[i]['video_url'];
-									vp_data.push(vp_url);
-								}
-						}
+                if (response.data['video_type'] == 'incident')
+                {
+                    $('.festdatediv').hide();
+                    $("#videodate").removeAttr('required', 'required');
+                    $("#videocolor").removeAttr('required', 'required');
+                }
+                showinsertform();
+                var categories = '<option value="0">Select Sub Category</option>';
+                for (var i = 0; i < response.categories.length; i++) {
+                    categories += '<option value="' + response.categories[i]['id'] + '">' + response.categories[i]['name'] + '</option>';
+                }
+                $('#fsubcategory').html(categories);
+                for (var i = 0; i < response.images.length; i++) {
+                    $("<span class=\"pip\">" +
+                        '<div class="row">'+
+                        '<div class="col-md-5">'+
+                        "<img class=\"imageThumb\" src=\""+SPACE_STORE_URL+''+response.images[i]['thumbnail'] + "\" onclick=\"showvideo("+i+")\" />" +
+                        '</div>'+
+                        '<div class="col-md-6">'+
+                        '<div class="form-check">'+
+                            '<label class="form-check-label">'+
+                            '<input type="radio" onchange="edittype('+response.images[i]['id']+',this)" class="form-check-input" name="btype'+i+'" id="btypefree'+i+'" value="0" checked="checked">Free'+
+                            '</label>'+
+                        '</div>'+
+                        '<div class="form-check">'+
+                            '<label class="form-check-label">'+
+                            '<input type="radio" onchange="edittype('+response.images[i]['id']+',this)" class="form-check-input" name="btype'+i+'" id="btypepremium'+i+'" value="1">Premium'+
+                            '</label>'+
+                        '</div>'+
+                        '</div>'+
+                        '<div class="col-md-12">'+
+                        '<div class="form-group">'+
+                            '<label for="flanguage">Select Language:</label>'+
+                            '<select class="form-control" name="flanguage'+i+'" id="editflanguage_'+i+'" onchange="editlanguage('+response.images[i]['id']+',this)">'+
+                            '</select>'+
+                        '</div>'+
+                        '</div>'+
+                        '<div class="col-md-12">'+
+                        '<div class="form-group">'+
+                            '<label for="fsubcategory">Select Sub Category:</label>'+
+                            '<select class="form-control" name="fsubcategory'+i+'" id="editfsubcategory_'+i+'" onchange="editsubcategory('+response.images[i]['id']+',this)">'+
+                            '</select>'+
+                        '</div>'+
+                        '</div>'+
+                        '<div class="col-md-12">'+
+                        '<div class="form-group">'+
+                            '<label for="fvideomode">Select Sub Category:</label>'+
+                            '<select class="form-control" name="fvideomode'+i+'" id="editfvideomode_'+i+'" onchange="editvideomode('+response.images[i]['id']+',this)">'+
+                            '<option value="light">Light</option>'+
+                            '<option value="dark">Dark</option>'+
+                            '</select>'+
+                        '</div>'+
+                        '</div>'+
+                        '</div>'+
+                        '<div class="col-md-12">'+
+                        '<div class="form-group">'+
+                            '<label for="videoname">Color</label>'+
+                            '<input type="text" class="form-control"  id="videocolor'+i+'" placeholder="Enter color" name="videocolor" value="'+response.images[i]['color']+'">'+
+                            '<button type="button" class="btn btn-success" onclick="editcolor('+response.images[i]['id']+',this)"  id="videocolor_'+i+'">Update color</button>'+
+                        '</div>'+
+                        '</div>'+
+                        "<br/><span class=\"remove\" onclick='removethisimgae("+response.images[i]['id']+")'>Remove image</span>" +
+                        "</span>").insertBefore("#showphotos");
+                        $(".remove").click(function(){
+                        $(this).parent(".pip").remove();
+                        });
+                        var opn = $("#flanguage").html();
+                        $("#editflanguage_"+i).html(opn);
+                        $("#editflanguage_"+i).val(response.images[i]['language_id']);
+                        var opn1 = $("#fsubcategory").html();
+                        $("#editfsubcategory_"+i).html(opn1);
+                        $("#editfsubcategory_"+i).val(response.images[i]['sub_category_id']);
+                        $("#editfvideomode_"+i).val(response.images[i]['post_mode']);
+                        var btype = response.images[i]['image_type'];
+                        if (btype == 1)
+                        {
+                            $("#btypepremium"+i).attr('checked', 'checked');
+                        }
+                        else if (btype == 0)
+                        {
+                            $("#btypefree"+i).attr('checked', 'checked');
+                        }
+                        if(response.images[i]['video_store'] == "LOCAL") {
+                            var vp_url = APP_URL+'/'+response.images[i]['video_url'];
+                            vp_data.push(vp_url);
+                        }
+                        else {
+                            var vp_url = SPACE_STORE_URL+''+response.images[i]['video_url'];
+                            var vp_url = APP_URL+'/'+response.images[i]['video_url'];
+                            vp_data.push(vp_url);
+                        }
+                }
 
 
-					}
-					$('.loader-custom').css('display','none');
-				}
-			});
+            }
+            $('.loader-custom').css('display','none');
+        }
+    });
 }
 
 function editcolor(cid, ele)
@@ -513,7 +495,6 @@ function addbox(){
 }
 
 function removebox(curr){
-	//$(curr).closest('.row').remove();
 	var remove = $(curr).attr("data-id");
 	$('.pip_'+remove).remove();
     $('.row_'+remove).remove();
@@ -523,12 +504,10 @@ function removebox(curr){
 function showvideo(ele)
 {
 	var data = "";
-	//console.log(vp_data[ele]);
-	//$("#showvideomodel source").attr('src', vp_data[ele]);
-		data += '<video width="650" height="500" controls >';
-	    data += '<source src="'+vp_data[ele]+'" type="video/mp4" >';
-	    data += '<source src="'+vp_data[ele]+'" type="video/ogg" >';
-	    data += '</video>';
+    data += '<video width="650" height="500" controls >';
+    data += '<source src="'+vp_data[ele]+'" type="video/mp4" >';
+    data += '<source src="'+vp_data[ele]+'" type="video/ogg" >';
+    data += '</video>';
 	$("#showvideomodel").html(data);
 	$('#videomodel').modal('show');
 }

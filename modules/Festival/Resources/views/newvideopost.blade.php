@@ -4,29 +4,30 @@
 
 <style>
     .imageThumb {
-  max-height: 75px;
-  border: 2px solid;
-  padding: 1px;
-  cursor: pointer;
-}
-.pip {
-  display: inline-block;
-  margin: 10px 10px 0 0;
-}
-.remove {
-  display: block;
-  background: #444;
-  border: 1px solid black;
-  color: white;
-  text-align: center;
-  cursor: pointer;
-}
-.remove:hover {
-  background: white;
-  color: black;
-}
+        max-height: 75px;
+        border: 2px solid;
+        padding: 1px;
+        cursor: pointer;
+    }
+    .pip {
+        display: inline-block;
+        margin: 10px 10px 0 0;
+    }
+    .remove {
+        display: block;
+        background: #444;
+        border: 1px solid black;
+        color: white;
+        text-align: center;
+        cursor: pointer;
+    }
+    .remove:hover {
+        background: white;
+        color: black;
+    }
 
 </style>
+
 <div class="page-header">
     <h4 class="page-title">New Video</h4>
     <ul class="breadcrumbs">
@@ -43,16 +44,18 @@
         </li>
     </ul>
 </div>
+
 <div class="row">
     <div class="col-md-12" id="addVideo" style="display: none;">
         <div class="card">
             <div class="card-header">
                 <div class="card-title" id="country-title">Add Video</div>
             </div>
+
             <form id="categotyform" name="categotyform" action={{route('addnewvideopost')}} method="post" enctype='multipart/form-data'>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-12 col-lg-12">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12 col-lg-12">
 
                             @csrf
                             <div class="row">
@@ -98,15 +101,11 @@
                                     </div>
                                 </div>
 
-                                {{-- <div class="col-md-12">
-                                    <div class="input-field form-group">
-                                        <label class="active" for="files">Photos</label>
-                                        <input type="file" id="files" name="files[]" multiple /><br>
-                                    </div>
-                                </div> --}}
-                        </div>
+                            </div>
+
                             <div class="form-group" id="showphotos">
                             <label for="addphotos">Add Videos</label></div>
+
                             <div id="addphotos">
                                 <div class="row" >
                                     <div class="col-md-8">
@@ -130,41 +129,41 @@
                                                     <label for="information">Type</label>
                                                 </div>
                                                 <div class="form-check-inline">
-                                                  <label class="form-check-label">
+                                                    <label class="form-check-label">
                                                     <input type="radio" class="form-check-input" name="btype" id="btypefree" value="0" checked="checked">Free
-                                                  </label>
+                                                    </label>
                                                 </div>
                                                 <div class="form-check-inline">
-                                                  <label class="form-check-label">
+                                                    <label class="form-check-label">
                                                     <input type="radio" class="form-check-input" name="btype" id="btypepremium" value="1">Premium
-                                                  </label>
+                                                    </label>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                  <label for="flanguage">Select Language:</label>
-                                                  <select class="form-control" name="flanguage[]" id="flanguage" required>
+                                                    <label for="flanguage">Select Language:</label>
+                                                    <select class="form-control" name="flanguage[]" id="flanguage" required>
                                                     <option value="">Select Language</option>
                                                     @foreach($language as $value)
                                                         <option value="{{$value->id}}">{{$value->name}}</option>
                                                     @endforeach
-                                                  </select>
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                  <label for="fsubcategory">Select Sub Category:</label>
-                                                  <select class="form-control" name="fsubcategory[]" id="fsubcategory" required>
-                                                  </select>
+                                                    <label for="fsubcategory">Select Sub Category:</label>
+                                                    <select class="form-control" name="fsubcategory[]" id="fsubcategory" required>
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                  <label for="fvideomode">Select Mode:</label>
-                                                  <select class="form-control" name="fvideomode[]" id="fvideomode" required>
-                                                      <option value="light">Light</option>
-                                                      <option value="dark">Dark</option>
-                                                  </select>
+                                                    <label for="fvideomode">Select Mode:</label>
+                                                    <select class="form-control" name="fvideomode[]" id="fvideomode" required>
+                                                        <option value="light">Light</option>
+                                                        <option value="dark">Dark</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
@@ -175,14 +174,16 @@
                                 </div>
                             </div>
 
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="card-action text-right">
-                <button class="btn btn-success" type="submit"  id="video-btn">Submit</button>&nbsp;&nbsp;
-                <button class="btn btn-danger"  type="button" onclick="showvideolist()">Cancel</button>
-            </div>
-             </form>
+
+                <div class="card-action text-right">
+                    <button class="btn btn-success" type="submit"  id="video-btn">Submit</button>&nbsp;&nbsp;
+                    <button class="btn btn-danger"  type="button" onclick="showvideolist()">Cancel</button>
+                </div>
+
+            </form>
         </div>
     </div>
 
@@ -238,32 +239,32 @@
         </div>
 
     </div>
+
 </div>
 
 <div class="modal" id="videomodel">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
 
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <h4 class="modal-title">Video</h4>
-        <button type="button"  class="close" onclick="stopvideo()">&times;</button>
-      </div>
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Video</h4>
+                <button type="button"  class="close" onclick="stopvideo()">&times;</button>
+            </div>
 
-      <!-- Modal body -->
-      <div class="modal-body">
-        <div class="text-center" id='showvideomodel'>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="text-center" id='showvideomodel'>
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" onclick="stopvideo()">Close</button>
+            </div>
 
         </div>
-      </div>
-
-      <!-- Modal footer -->
-      <div class="modal-footer">
-        <button type="button" class="btn btn-danger" onclick="stopvideo()" {{-- data-dismiss="modal" --}}>Close</button>
-      </div>
-
     </div>
-  </div>
 </div>
 
 <div class="modal fade" id="addSubCategoryModal">
@@ -329,23 +330,23 @@
         var f = files;
         var fileReader = new FileReader();
         fileReader.onload = (function(e) {
-          var file = e.target;
+            var file = e.target;
 
             $('<span class="pip pip_'+pid+'">' +
-            "<img class=\"imageThumb\" src=\"" + e.target.result + "\" title=\"" + file.name + "\"/>" +
-            "<br/><span data-id=\""+pid+"\" class=\"remove\">Remove image</span>" +
-            "</span>").insertBefore("#addphotos");
-          $(".remove").click(function(){
-            var remove = $(this).attr("data-id");
-            if (remove == "")
-            {
-                $('#files').val('');
-            }
-            $('.pip_'+remove).remove();
-            $('.row_'+remove).remove();
+                "<img class=\"imageThumb\" src=\"" + e.target.result + "\" title=\"" + file.name + "\"/>" +
+                "<br/><span data-id=\""+pid+"\" class=\"remove\">Remove image</span>" +
+                "</span>"
+            ).insertBefore("#addphotos");
+            $(".remove").click(function(){
+                var remove = $(this).attr("data-id");
+                if (remove == "")
+                {
+                    $('#files').val('');
+                }
+                $('.pip_'+remove).remove();
+                $('.row_'+remove).remove();
 
-          });
-
+            });
 
         });
         fileReader.readAsDataURL(f);
@@ -353,11 +354,11 @@
     }
 
     $('#ftype').change(function(){
-            if($(this).val() == 'festival'){
-                $('.festdatediv').show();
-            } else {
-                 $('.festdatediv').hide();
-            }
-        })
+        if($(this).val() == 'festival'){
+            $('.festdatediv').show();
+        } else {
+                $('.festdatediv').hide();
+        }
+    })
     </script>
 @endsection
