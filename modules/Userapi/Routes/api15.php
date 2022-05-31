@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 Route::post('getInstagramAccount', 'UserapiControllerV15@getInstagramAccount');
 
@@ -30,7 +30,6 @@ Route::post('getmyallbusiness', 'UserapiControllerV15@getmyallbusiness');
 
 Route::post('removemybusiness', 'UserapiControllerV15@removeMyBusiness');
 
-//Route::post('gethomepage', 'UserapiControllerV15@getthisMonthsFestival');
 Route::post('gethomepage', 'UserapiControllerV15@getHomePage');
 
 Route::post('getdays', 'UserapiControllerV15@getDays');
