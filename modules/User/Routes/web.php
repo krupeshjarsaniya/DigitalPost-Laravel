@@ -298,3 +298,9 @@ Route::prefix('download-limit')->middleware('adminauth')->group(function() {
 	Route::get('/', 'DownloadLimitController@index')->name('downloadLimit');
 	Route::post('/update', 'DownloadLimitController@update');
 });
+
+Route::prefix('bg-remove-request')->middleware('adminauth')->group(function() {
+	Route::get('/', 'BGRemoveRequestController@index')->name('bgRemoveRequest');
+	Route::get('/list', 'BGRemoveRequestController@list')->name('bg-request-list');
+	Route::post('/remove', 'BGRemoveRequestController@remove')->name('bg-request-remove');
+});

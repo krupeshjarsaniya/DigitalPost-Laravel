@@ -181,6 +181,7 @@ Route::prefix('CustomCategorypost')->middleware('auth', 'adminauth')->group(func
     Route::post('editCustomeCategoryPost', 'CustomCategoryPostControllaer@editCustomeCategoryPost');
     Route::post('updateCustomCategoryvalue', 'CustomCategoryPostControllaer@updateCustomCategoryvalue');
     Route::post('RemoveCustomCategoryvalue', 'CustomCategoryPostControllaer@RemoveCustomCategoryvalue');
+    Route::post('changeStatus', 'CustomCategoryPostControllaer@changeStatus');
 });
 
 Route::prefix('advetisement')->middleware('auth', 'adminauth')->group(function () {

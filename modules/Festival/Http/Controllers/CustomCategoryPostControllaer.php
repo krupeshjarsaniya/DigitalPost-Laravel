@@ -18,7 +18,14 @@ class CustomCategoryPostControllaer extends Controller
         return DataTables::of($customcat)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                $btn = '<button class="btn btn-info btn-sm" id="editCatPost" onclick="editCat(' . $row->custom_cateogry_id . ')">Edit</button>';
+                $btn = "";
+                if($row->is_active) {
+                    $btn .= '<button onclick="changeStatus(this, 0)" data-id="' . $row->custom_cateogry_id . '" class="edit btn btn-danger btn-sm editCategory mr-2">InActive</a>';
+                }
+                else {
+                    $btn .= '<button onclick="changeStatus(this, 1)" data-id="' . $row->custom_cateogry_id . '" class="edit btn btn-success btn-sm editCategory mr-2">Active</a>';
+                }
+                $btn .= '<button class="btn btn-info btn-sm" id="editCatPost" onclick="editCat(' . $row->custom_cateogry_id . ')">Edit</button>';
                 return $btn;
             })
             ->rawColumns(['action'])
@@ -232,7 +239,7 @@ class CustomCategoryPostControllaer extends Controller
 
         $img_width = $temp['img_width'];
 
-        $language_id = $temp['flanguage'];
+        $language_id = isset($temp['flanguage']) ? $temp['flanguage'] : 0;
 
         $sub_category_id = $temp['fsubcategory'];
 
@@ -241,6 +248,8 @@ class CustomCategoryPostControllaer extends Controller
         $image_tp = $temp['btype'];
 
         $custom_cateogry_data_id = $temp['id'];
+
+        $customcatid = $temp['customcatid'];
 
         $bannerimg = (isset($temp['bannerimg'])) ? $temp['bannerimg'] : 'undefined';
 
@@ -266,6 +275,7 @@ class CustomCategoryPostControllaer extends Controller
                 ->where('custom_cateogry_data_id', $custom_cateogry_data_id)
                 ->update([
                     'image_two' => '',
+                    "custom_cateogry_id" => $customcatid,
                     'position_x' => $position_x,
                     'position_y' => $position_y,
                     'img_position_x' => $img_position_x,
@@ -282,6 +292,7 @@ class CustomCategoryPostControllaer extends Controller
                 ->where('custom_cateogry_data_id', $custom_cateogry_data_id)
                 ->update([
                     'banner_image' => $bannerimgpath,
+                    "custom_cateogry_id" => $customcatid,
                     'image_two' => '',
                     'position_x' => $position_x,
                     'position_y' => $position_y,
@@ -299,6 +310,7 @@ class CustomCategoryPostControllaer extends Controller
                 ->where('custom_cateogry_data_id', $custom_cateogry_data_id)
                 ->update([
                     'image_one' => $imageonepath,
+                    "custom_cateogry_id" => $customcatid,
                     'image_two' => '',
                     'position_x' => $position_x,
                     'position_y' => $position_y,
@@ -316,6 +328,7 @@ class CustomCategoryPostControllaer extends Controller
                 ->where('custom_cateogry_data_id', $custom_cateogry_data_id)
                 ->update([
                     'banner_image' => $bannerimgpath,
+                    "custom_cateogry_id" => $customcatid,
                     'image_one' => $imageonepath,
                     'image_two' => '',
                     'position_x' => $position_x,
@@ -340,6 +353,18 @@ class CustomCategoryPostControllaer extends Controller
             ->where('custom_cateogry_data_id', $request->id)
             ->update([
                 'is_delete' => 1
+            ]);
+        return response()->json(['status' => true]);
+    }
+
+    public function changeStatus(Request $request)
+    {
+        $id = $request->id;
+        $status = $request->status;
+        DB::table('custom_cateogry')
+            ->where('custom_cateogry_id', $id)
+            ->update([
+                'is_active' => $status
             ]);
         return response()->json(['status' => true]);
     }

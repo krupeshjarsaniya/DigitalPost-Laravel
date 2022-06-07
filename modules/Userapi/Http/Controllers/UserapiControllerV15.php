@@ -54,6 +54,7 @@ use App\Music;
 use App\BGCreditPlan;
 use App\BGCreditPlanHistory;
 use App\UserDownloadHistory;
+use App\BackgroundRemoveRequest;
 
 class UserapiControllerV15 extends Controller
 {
@@ -460,6 +461,7 @@ class UserapiControllerV15 extends Controller
         if ($user_id == 0) {
             return response()->json(['status' => false, 'message' => 'user not valid']);
         }
+
         $name = $input['name'];
         $email = $input['email'];
         $mobile = $input['mobile'];
@@ -509,7 +511,6 @@ class UserapiControllerV15 extends Controller
 
         $start_date = date('Y-m-d');
 
-
         $purchase = new Purchase();
         $purchase->purc_user_id = $user_id;
         $purchase->purc_business_id = $business_id;
@@ -524,6 +525,32 @@ class UserapiControllerV15 extends Controller
                 'default_business_id' => $business_id,
             ));
         }
+
+        if(isset($input['logoBackgroundRemove']) && isset($input['watermarkBackgroundRemove'])) {
+            $logoBackgroundRemove = $input['logoBackgroundRemove'];
+            $watermarkBackgroundRemove = $input['watermarkBackgroundRemove'];
+
+            $backgroundRemoveRequest = BackgroundRemoveRequest::where('business_type', 1)->where('business_id', $business_id)->first();
+
+            if($logoBackgroundRemove == 0 && $watermarkBackgroundRemove == 0){
+                if(empty($backgroundRemoveRequest)) {
+                    $backgroundRemoveRequest->delete();
+                }
+            }
+            else {
+                if(empty($backgroundRemoveRequest)) {
+                    $backgroundRemoveRequest = new BackgroundRemoveRequest;
+                    $backgroundRemoveRequest->user_id = $user_id;
+                    $backgroundRemoveRequest->business_type = 1;
+                    $backgroundRemoveRequest->business_id = $business_id;
+                }
+                $backgroundRemoveRequest->remove_logo = $logoBackgroundRemove;
+                $backgroundRemoveRequest->remove_watermark = $watermarkBackgroundRemove;
+                $backgroundRemoveRequest->save();
+            }
+        }
+
+
         return response()->json(['status' => true, 'message' => 'Data successfully Added']);
 
     }
@@ -857,6 +884,31 @@ class UserapiControllerV15 extends Controller
 
                 return response()->json(['status' => true, 'message' => 'Business Information Update']);
             }
+
+            if(isset($input['logoBackgroundRemove']) && isset($input['watermarkBackgroundRemove'])) {
+                $logoBackgroundRemove = $input['logoBackgroundRemove'];
+                $watermarkBackgroundRemove = $input['watermarkBackgroundRemove'];
+
+                $backgroundRemoveRequest = BackgroundRemoveRequest::where('business_type', 1)->where('business_id', $id)->first();
+
+                if($logoBackgroundRemove == 0 && $watermarkBackgroundRemove == 0){
+                    if(empty($backgroundRemoveRequest)) {
+                        $backgroundRemoveRequest->delete();
+                    }
+                }
+                else {
+                    if(empty($backgroundRemoveRequest)) {
+                        $backgroundRemoveRequest = new BackgroundRemoveRequest;
+                        $backgroundRemoveRequest->user_id = $user_id;
+                        $backgroundRemoveRequest->business_type = 1;
+                        $backgroundRemoveRequest->business_id = $id;
+                    }
+                    $backgroundRemoveRequest->remove_logo = $logoBackgroundRemove;
+                    $backgroundRemoveRequest->remove_watermark = $watermarkBackgroundRemove;
+                    $backgroundRemoveRequest->save();
+                }
+            }
+
         } else {
             return response()->json(['status' => false, 'message' => 'Record not Found']);
         }
@@ -1902,6 +1954,7 @@ class UserapiControllerV15 extends Controller
                 }
                 $data['type'] = strval($value->image_type);
                 $data['color'] = !empty($value->color) ? $value->color : "";
+                $data['post_mode'] = !empty($value->post_mode) ? $value->post_mode : "";
                 array_push($videos, $data);
             }
 
@@ -4329,6 +4382,36 @@ class UserapiControllerV15 extends Controller
                 ));
             }
         }
+
+        if( isset($input['partyLogoBackgroundRemove']) && isset($input['watermarkBackgroundRemove']) && isset($input['leftImageBackgroundRemove']) && isset($input['rightImageBackgroundRemove']) ) {
+
+            $partyLogoBackgroundRemove = $input['partyLogoBackgroundRemove'];
+            $watermarkBackgroundRemove = $input['watermarkBackgroundRemove'];
+            $leftImageBackgroundRemove = $input['leftImageBackgroundRemove'];
+            $rightImageBackgroundRemove = $input['rightImageBackgroundRemove'];
+
+            $backgroundRemoveRequest = BackgroundRemoveRequest::where('business_type', 2)->where('business_id', $business_id)->first();
+
+            if($partyLogoBackgroundRemove == 0 && $watermarkBackgroundRemove == 0 && $leftImageBackgroundRemove == 0 && $rightImageBackgroundRemove == 0){
+                if(empty($backgroundRemoveRequest)) {
+                    $backgroundRemoveRequest->delete();
+                }
+            }
+            else {
+                if(empty($backgroundRemoveRequest)) {
+                    $backgroundRemoveRequest = new BackgroundRemoveRequest;
+                    $backgroundRemoveRequest->user_id = $user_id;
+                    $backgroundRemoveRequest->business_type = 2;
+                    $backgroundRemoveRequest->business_id = $business_id;
+                }
+                $backgroundRemoveRequest->remove_logo = $partyLogoBackgroundRemove;
+                $backgroundRemoveRequest->remove_watermark = $watermarkBackgroundRemove;
+                $backgroundRemoveRequest->remove_left_image = $leftImageBackgroundRemove;
+                $backgroundRemoveRequest->remove_right_image = $rightImageBackgroundRemove;
+                $backgroundRemoveRequest->save();
+            }
+        }
+
         return response()->json(['status' => true, 'message' => 'Data successfully Added']);
     }
 
@@ -4345,6 +4428,9 @@ class UserapiControllerV15 extends Controller
         if (empty($getBusiness)) {
             return response()->json(['status' => false, 'message' => 'Something goes wrong']);
         }
+
+        $business_id = $input['id'];
+
         $name = $input['name'];
         $designation = $input['designation'];
         $mobile = $input['mobile'];
@@ -4392,14 +4478,14 @@ class UserapiControllerV15 extends Controller
             $right_image_path = $getBusiness->pb_right_image;
         }
 
-        $_isPremiumUser = DB::table('purchase_plan')->where('purc_business_type', 2)->where('purc_business_id', '=', $input['id'])->where('purc_plan_id', '!=', 3)->first();
+        $_isPremiumUser = DB::table('purchase_plan')->where('purc_business_type', 2)->where('purc_business_id', '=', $business_id)->where('purc_plan_id', '!=', 3)->first();
 
         if (!empty($_isPremiumUser) || $_isPremiumUser != '' || $_isPremiumUser != null) {
 
             if ($name != $getBusiness->pb_name) {
 
                 PoliticalBusinessApprovalList::updateOrCreate(
-                    ['pb_id' => $input['id']],
+                    ['pb_id' => $business_id],
                     [
                         'pbal_name' => $name,
                         'user_id' => $user_id,
@@ -4420,7 +4506,7 @@ class UserapiControllerV15 extends Controller
             }
 
 
-            PoliticalBusiness::where('pb_id', '=', $input['id'])->update([
+            PoliticalBusiness::where('pb_id', '=', $business_id)->update([
                 'user_id' => $user_id,
                 'pb_designation' => $designation,
                 'pb_mobile' => $mobile,
@@ -4443,7 +4529,7 @@ class UserapiControllerV15 extends Controller
                 return response()->json(['status' => true, 'message' => 'Business information update']);
             }
         } else {
-            PoliticalBusiness::where('pb_id', '=', $input['id'])->update([
+            PoliticalBusiness::where('pb_id', '=', $business_id)->update([
                 'pb_name' => $name,
                 'user_id' => $user_id,
                 'pb_designation' => $designation,
@@ -4461,6 +4547,36 @@ class UserapiControllerV15 extends Controller
                 'pb_linkedin' => $linkedin,
                 'pb_youtube' => $youtube,
             ]);
+
+            if( isset($input['partyLogoBackgroundRemove']) && isset($input['watermarkBackgroundRemove']) && isset($input['leftImageBackgroundRemove']) && isset($input['rightImageBackgroundRemove']) ) {
+
+                $partyLogoBackgroundRemove = $input['partyLogoBackgroundRemove'];
+                $watermarkBackgroundRemove = $input['watermarkBackgroundRemove'];
+                $leftImageBackgroundRemove = $input['leftImageBackgroundRemove'];
+                $rightImageBackgroundRemove = $input['rightImageBackgroundRemove'];
+
+                $backgroundRemoveRequest = BackgroundRemoveRequest::where('business_type', 2)->where('business_id', $business_id)->first();
+
+                if($partyLogoBackgroundRemove == 0 && $watermarkBackgroundRemove == 0 && $leftImageBackgroundRemove == 0 && $rightImageBackgroundRemove == 0){
+                    if(empty($backgroundRemoveRequest)) {
+                        $backgroundRemoveRequest->delete();
+                    }
+                }
+                else {
+                    if(empty($backgroundRemoveRequest)) {
+                        $backgroundRemoveRequest = new BackgroundRemoveRequest;
+                        $backgroundRemoveRequest->user_id = $user_id;
+                        $backgroundRemoveRequest->business_type = 2;
+                        $backgroundRemoveRequest->business_id = $business_id;
+                    }
+                    $backgroundRemoveRequest->remove_logo = $partyLogoBackgroundRemove;
+                    $backgroundRemoveRequest->remove_watermark = $watermarkBackgroundRemove;
+                    $backgroundRemoveRequest->remove_left_image = $leftImageBackgroundRemove;
+                    $backgroundRemoveRequest->remove_right_image = $rightImageBackgroundRemove;
+                    $backgroundRemoveRequest->save();
+                }
+            }
+
             return response()->json(['status' => true, 'message' => 'Business information update']);
         }
     }

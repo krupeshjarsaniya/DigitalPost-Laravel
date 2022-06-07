@@ -32,12 +32,12 @@ function getallcat(){
 		type:'GET',
 		url:APP_URL+"/festival/getcatlist",
 		success: function (response)
-		{	
+		{
             // $('#categoryname').val(response.data['name']);
 			// $('#categoryid').val(response.data['custom_cateogry_id']);
-            
+
             let data = response.data;
-            
+
             var list = $("#custom_cat_id");
             $.each(data, function(index, item) {
             list.append(new Option(item.name, item.custom_cateogry_id));
@@ -101,7 +101,7 @@ function removeCatPost(id){
 }
 
 function editCat(id) {
-    
+
     $('.loader-custom').css('display','block');
 	$.ajaxSetup({
 	headers: {
@@ -115,7 +115,7 @@ function editCat(id) {
 			"id":id,
 		},
 		success: function (response)
-		{	
+		{
 			$('#categoryname').val(response.data['name']);
 			$('#custom_cateogry_data_id').val(response.data['custom_cateogry_data_id']);
 			$('#custom_cat_id').val(response.data['custom_cateogry_id']);
@@ -152,14 +152,14 @@ function validateForm() {
 	  return false;
 	}
 
-	// var fileInput =  document.getElementById('fimage'); 
-		
+	// var fileInput =  document.getElementById('fimage');
+
 	// if(!fileValidation(fileInput)){
 	// 	return false;
 	// }
 
-	// var fileInput =  document.getElementById('imgone'); 
-		
+	// var fileInput =  document.getElementById('imgone');
+
 	// if(!fileValidation(fileInput)){
 	// 	return false;
 	// }
@@ -167,19 +167,19 @@ function validateForm() {
 	return true;
   }
 
-  function fileValidation(fileInput) { 
+  function fileValidation(fileInput) {
 
-	var filePath = fileInput.value; 
-	
-	// Allowing file type 
-	var allowedExtensions = /(\.jpg|\.png|\.jpeg)$/i; 
-		
-	if (!allowedExtensions.exec(filePath)) { 
-		alert('Invalid file type'); 
-		fileInput.value = ''; 
-		return false; 
+	var filePath = fileInput.value;
+
+	// Allowing file type
+	var allowedExtensions = /(\.jpg|\.png|\.jpeg)$/i;
+
+	if (!allowedExtensions.exec(filePath)) {
+		alert('Invalid file type');
+		fileInput.value = '';
+		return false;
 	}
-	
+
 	return true;
   }
 

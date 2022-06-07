@@ -258,10 +258,12 @@ function editCat(id) {
                 {
                     $("#btypefree"+i).attr('checked', 'checked');
                 }
-                var list = $("#custom_cat_id"+i);
-                $.each(options, function(index, item) {
-                    list.append(new Option(item.name, item.custom_cateogry_id));
-                });
+                var list = $('#custom_cat_id').html();
+                $("#custom_cat_id"+i).html(list);
+                // var list = $("#custom_cat_id"+i);
+                // $.each(options, function(index, item) {
+                //     list.append(new Option(item.name, item.custom_cateogry_id));
+                // });
                 $('#custom_cat_id'+i).val(response.images[i]['custom_cateogry_id']);
 			}
 			$(".r_h").hide();
@@ -507,4 +509,52 @@ function remove(ele){
 			swal.close();
 		}
 	});
+}
+
+
+function changeStatus(ele, status) {
+    var id = $(ele).attr("data-id");
+    var status = status;
+    swal({
+        title: 'Are you sure?',
+        text: "Change Status",
+        type: 'warning',
+        buttons:{
+            confirm: {
+                text : 'Yes, Change it!',
+                className : 'btn btn-success'
+            },
+            cancel: {
+                visible: true,
+                className: 'btn btn-danger'
+            }
+        }
+    }).then((block) => {
+        if (block)
+        {
+            $('.loader-custom').css('display','block');
+            $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }});
+
+            $.ajax({
+                type:'POST',
+                url:APP_URL+"/CustomCategorypost/changeStatus",
+                data: {"id":id, "status":status},
+                success: function (data)
+                {
+                    if (data.status)
+                    {
+                        table.ajax.reload();
+                    }
+                    $('.loader-custom').css('display','none');
+                }
+            });
+        }
+        else
+        {
+            swal.close();
+        }
+    });
 }
