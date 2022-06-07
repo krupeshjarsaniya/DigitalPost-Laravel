@@ -4,18 +4,14 @@ namespace Modules\User\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-// use Illuminate\Routing\Controller;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
-use Carbon\Carbon;
-use DataTables;
-use Validator;
-use DB;
-use App\User;
-use App\Popup;
+use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 use App\Frame;
 use App\FrameComponent;
 use App\BusinessField;
+use App\FrameField;
 use App\FrameText;
 
 class FrameController extends Controller
@@ -26,7 +22,9 @@ class FrameController extends Controller
      */
     public function index()
     {
-        return view('user::frame');
+        $normalFields = BusinessField::where('field_for', 1)->get();
+        $politicalFields = BusinessField::where('field_for', 2)->get();
+        return view('user::frame', compact('normalFields', 'politicalFields'));
     }
 
     public function getFrame(Request $request)
@@ -44,18 +42,28 @@ class FrameController extends Controller
                 }
                 return $img;
             })
+            ->editColumn('thumbnail_image',function($row) {
+                $img = "";
+                if($row->thumbnail_image != "") {
+                    $img = '<img src="'.Storage::url($row->thumbnail_image).'" height="100" width="100">';
+                }
+                return $img;
+            })
             ->editColumn('is_active',function($row) {
                 if($row->is_active) {
                     return '<span class="badge badge-success">Active</span>';
                 }
                 return '<span class="badge badge-danger">Inactive</span>';
             })
+            ->editColumn('frame_mode', function($row) {
+                return ucfirst($row->frame_mode);
+            })
             ->addColumn('action',function($row) {
                 $btn = '<button class="btn btn-primary btn-sm mb-2 mt-2" data-id="'.$row->id.'" onclick="editFrame(this)">Edit</button><br />';
                 $btn .= '<a href="' . route('addlayers', ['id' => $row->id]) . '" class="btn btn-success btn-sm mb-2 mt-2" onclick="AddLayers(this)">Add/Edit layers</a><br />';
                 return $btn;
             })
-            ->rawColumns(['action', 'frame_image', 'is_active'])
+            ->rawColumns(['action', 'frame_image', 'thumbnail_image', 'is_active'])
             ->make(true);
         }
     }
@@ -65,11 +73,15 @@ class FrameController extends Controller
                 'frame_image' => 'required',
                 'thumbnail_image' => 'required',
                 'frame_type' => 'required',
+                'frame_mode' => 'required',
+                'frame_fields' => 'required',
             ],
             [
                 'frame_image.required' => 'Image Is Required',
                 'thumbnail_image.required' => 'Thumbnail Image Is Required',
                 'frame_type.required' => 'Frame Type Is Required',
+                'frame_mode.required' => 'Frame Mode Is Required',
+                'frame_fields.required' => 'Frame Fields Is Required',
             ]
         );
 
@@ -86,9 +98,19 @@ class FrameController extends Controller
         $thumb_image_name = $this->uploadFile($request, null, 'thumbnail_image', 'frame');
         $frame->thumbnail_image = $thumb_image_name;
         $frame->frame_type = $request->frame_type;
+        $frame->frame_mode = $request->frame_mode;
         $frame->is_active = 0;
         $frame->display_order = isset($request->display_order) ? $request->display_order : 999;
         $frame->save();
+
+        $frame_id = $frame->id;
+
+        foreach ($request->frame_fields as $value) {
+            $frame_field = new FrameField();
+            $frame_field->frame_id = $frame_id;
+            $frame_field->field_id = $value;
+            $frame_field->save();
+        }
 
         return response()->json(['status' => 1,'data' => "", 'message' => 'Popup created' ]);
     }
@@ -105,6 +127,8 @@ class FrameController extends Controller
         if($frame->thumbnail_image) {
             $frame->thumbnail_image = Storage::url($frame->thumbnail_image);
         }
+        $fields = FrameField::where('frame_id', $frameId)->pluck('field_id')->toArray();
+        $frame->frame_fields = $fields;
         return response()->json(['status' => true,'data' => $frame, 'message' => 'Frame fetched successfully' ]);
     }
 
@@ -113,11 +137,15 @@ class FrameController extends Controller
         $validator = Validator::make($request->all(), [
                 'edit_id' => 'required',
                 'edit_frame_type' => 'required',
+                'edit_frame_mode' => 'required',
                 'edit_is_active' => 'required',
+                'edit_frame_fields' => 'required',
             ],
             [
-                'edit_frame_type.required' => 'Start Date Is Required',
+                'edit_frame_type.required' => 'Frame Type Is Required',
+                'edit_frame_mode.required' => 'Frame Mode Is Required',
                 'edit_is_active.required' => 'Status Is Required',
+                'edit_frame_fields.required' => 'Frame Fields Is Required',
             ]
         );
 
@@ -139,9 +167,23 @@ class FrameController extends Controller
             $frame->thumbnail_image = $thumb_image_name;
         }
         $frame->frame_type = $request->edit_frame_type;
+        $frame->frame_mode = $request->edit_frame_mode;
         $frame->is_active = $request->edit_is_active;
         $frame->display_order = isset($request->edit_display_order) ? $request->edit_display_order : 999;
         $frame->save();
+
+        FrameField::where('frame_id', $frameId)->whereNotIn('field_id', $request->edit_frame_fields)->delete();
+
+        foreach ($request->edit_frame_fields as $value) {
+            $checkField = FrameField::where('frame_id', $frameId)->where('field_id', $value)->first();
+            if(!$checkField) {
+                $frame_field = new FrameField();
+                $frame_field->frame_id = $frameId;
+                $frame_field->field_id = $value;
+                $frame_field->save();
+            }
+        }
+
         return response()->json(['status' => 1,'message' => "Frame updated!"]);
     }
 

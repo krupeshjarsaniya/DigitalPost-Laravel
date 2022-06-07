@@ -45,7 +45,9 @@
                     <thead>
                         <tr>
                             <th>Frame</th>
+                            <th>Thumbnail</th>
                             <th>Type</th>
+                            <th>Mode</th>
                             <th>Is Active</th>
                             <th>Order</th>
                             <th>Action</th>
@@ -58,6 +60,17 @@
         </div>
     </div>
 </div>
+
+<select class="d-none" id="normalFields">
+    @foreach ($normalFields as $field)
+        <option value="{{ $field->id }}">{{ $field->field_value }}</option>
+    @endforeach
+</select>
+<select class="d-none" id="politicalFields">
+    @foreach ($politicalFields as $field)
+        <option value="{{ $field->id }}">{{ $field->field_value }}</option>
+    @endforeach
+</select>
 
 <div class="modal fade" id="addFrameModal">
     <div class="modal-dialog modal-lg">
@@ -87,9 +100,28 @@
                         <div class="col-md-6">
                             <div class="form-group err_frame_type">
                                 <label for="frame_type">Frame Type</label>
-                                <select class="form-control" id="frame_type" name="frame_type" required>
+                                <select onchange="getBusinessFields(this)" class="form-control" id="frame_type" name="frame_type" required>
                                     <option value="Business">Business</option>
                                     <option value="Photo">Photo</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group err_frame_fields">
+                                <label for="frame_fields">Frame Fields</label>
+                                <select class="form-control" id="frame_fields" multiple name="frame_fields[]" required>
+                                    @foreach ($normalFields as $field)
+                                        <option value="{{ $field->id }}">{{ $field->field_value }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group err_frame_mode">
+                                <label for="frame_mode">Frame Mode</label>
+                                <select class="form-control" id="frame_mode" name="frame_mode" required>
+                                    <option value="light">Light</option>
+                                    <option value="dark">Dark</option>
                                 </select>
                             </div>
                         </div>
@@ -147,9 +179,25 @@
                         <div class="col-md-6">
                             <div class="form-group err_edit_frame_type">
                                 <label for="edit_frame_type">Frame Type</label>
-                                <select class="form-control" id="edit_frame_type" name="edit_frame_type" required>
+                                <select onchange="getBusinessFieldsEdit(this)" class="form-control" id="edit_frame_type" name="edit_frame_type" required>
                                     <option value="Business">Business</option>
                                     <option value="Photo">Photo</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group err_edit_frame_fields">
+                                <label for="edit_frame_fields">Frame Fields</label>
+                                <select class="form-control" id="edit_frame_fields" multiple name="edit_frame_fields[]" required>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group err_edit_frame_mode">
+                                <label for="edit_frame_mode">Frame Mode</label>
+                                <select class="form-control" id="edit_frame_mode" name="edit_frame_mode" required>
+                                    <option value="light">Light</option>
+                                    <option value="dark">Dark</option>
                                 </select>
                             </div>
                         </div>

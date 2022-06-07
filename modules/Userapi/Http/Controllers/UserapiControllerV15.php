@@ -42,6 +42,7 @@ use App\ReferralData;
 use App\WithdrawRequest;
 use App\PaymentDetail;
 use App\Frame;
+use App\FrameField;
 use App\FrameComponent;
 use App\FrameText;
 use App\BusinessField;
@@ -1274,7 +1275,7 @@ class UserapiControllerV15 extends Controller
                     }
                     if ($days > $plantrial->plan_validity && $days > 0) {
                         $ispreminum = false;
-                        
+
                     } else {
                         $ispreminum = true;
                     }
@@ -1352,7 +1353,7 @@ class UserapiControllerV15 extends Controller
             $cur_status = 1;
             $updatedCurrentBusinessDetails['status'] = strval($cur_status);
 
-            
+
         } else {
             $cur_status = 0;
             $updatedCurrentBusinessDetails['status'] = strval($cur_status);
@@ -1591,10 +1592,12 @@ class UserapiControllerV15 extends Controller
             $retrunData = $politicalCurrentBusinessDetails[0];
         }
 
+        $remaining_bg_credit = $checkReferralCode->bg_credit;
+
         if (!empty($festivals) || !empty($incedents)) {
-            return response()->json(['slider' => $advetisement, 'festival' => $festival, 'cateogry' => $incedent, 'business_category' => $buss_category, 'current_business' => $updatedCurrentBusinessDetails, 'premium' => $ispreminum, 'current_date' => $currnt_date, 'logout' => $logout, 'frameList' => $frameList, 'share_message' => $sharemsg, 'currntbusiness_photos' => (object)$currntbusiness_photos, 'new_category' => $new_category_dataArray, 'greetings' => $new_category_data_greetingsArray, 'status' => true, 'user_language' => $user_language_check, 'message' => 'List of all festival', 'politicalCurrentBusinessDetails' => $retrunData, 'isPoliticalPrimium' => $politicalCurrentBusinessDetails[1], 'popup' => $popupData, 'renewalPopup' => $renewalPopup, 'referral_code' => $referral_code]);
+            return response()->json(['remaining_bg_credit' => $remaining_bg_credit, 'slider' => $advetisement, 'festival' => $festival, 'cateogry' => $incedent, 'business_category' => $buss_category, 'current_business' => $updatedCurrentBusinessDetails, 'premium' => $ispreminum, 'current_date' => $currnt_date, 'logout' => $logout, 'frameList' => $frameList, 'share_message' => $sharemsg, 'currntbusiness_photos' => (object)$currntbusiness_photos, 'new_category' => $new_category_dataArray, 'greetings' => $new_category_data_greetingsArray, 'status' => true, 'user_language' => $user_language_check, 'message' => 'List of all festival', 'politicalCurrentBusinessDetails' => $retrunData, 'isPoliticalPrimium' => $politicalCurrentBusinessDetails[1], 'popup' => $popupData, 'renewalPopup' => $renewalPopup, 'referral_code' => $referral_code]);
         } else {
-            return response()->json(['status' => false, 'message' => 'There is no festival in this month', 'current_date' => $currnt_date]);
+            return response()->json(['remaining_bg_credit' => $remaining_bg_credit, 'status' => false, 'message' => 'There is no festival in this month', 'current_date' => $currnt_date]);
         }
     }
 
@@ -1636,6 +1639,7 @@ class UserapiControllerV15 extends Controller
         }
 
         $limitData = Helper::getUserRemainingLimit($user_id, $category_type, $input['postcategoryid']);
+        $limitData['type'] = $category_type;
 
         $sub_category_id = $input['sub_category_id'];
 
@@ -1726,7 +1730,7 @@ class UserapiControllerV15 extends Controller
                     array_push($temp, $img_data);
                 }
             }
-            
+
             foreach ($posts as $ph_value) {
                 $data_ph['post_content'] = !empty($ph_value->post_content) ? Storage::url($ph_value->post_content) : "";
                 $data_ph['image_thumbnail_url'] = !empty($ph_value->post_thumb) ? Storage::url($ph_value->post_thumb) : Storage::url($ph_value->post_content);
@@ -1811,7 +1815,7 @@ class UserapiControllerV15 extends Controller
                 $offset = $request->offset;
             }
             $transactionLimit = Helper::GetLimit();
-            
+
             $user_language = User::where('id', $user_id)->value('user_language');
             if (in_array(0, $languageid)) {
                 if ($user_language != null) {
@@ -2871,7 +2875,7 @@ class UserapiControllerV15 extends Controller
             if (!$second) {
                 return response()->json(['status' => false, 'message' => "Not valid png"]);
             }
-            
+
             imagecopyresized($images, $second, 20, 20, 0, 0, 468, 356, 468, 356);
         }
 
@@ -3366,6 +3370,7 @@ class UserapiControllerV15 extends Controller
         }
 
         $limitData = Helper::getUserRemainingLimit($user_id, $category_type, $videoid);
+        $limitData['type'] = $category_type;
 
         $user_language = User::where('id', $user_id)->value('user_language');
         $user_selected_language = explode(",", $user_language);
@@ -3641,6 +3646,7 @@ class UserapiControllerV15 extends Controller
         $category_type = 7;
 
         $limitData = Helper::getUserRemainingLimit($user_id, $category_type, $catid);
+        $limitData['type'] = $category_type;
 
         $user_language = User::where('id', $user_id)->value('user_language');
         $user_selected_language = explode(",", $user_language);
@@ -3874,6 +3880,7 @@ class UserapiControllerV15 extends Controller
         }
 
         $limitData = Helper::getUserRemainingLimit($user_id, $category_type, $request->buss_cat_id);
+        $limitData['type'] = $category_type;
 
         $sub_category_id = $input['sub_category_id'];
         $categoriesIds = DB::table('business_category_post_data')->where('post_type', $type)->where('buss_cat_post_id', '=', $request->buss_cat_id)->where('is_deleted', '=', 0)->where('festival_id', 0)->groupBy('business_sub_category_id')->pluck('business_sub_category_id')->toArray();
@@ -4021,6 +4028,7 @@ class UserapiControllerV15 extends Controller
         }
 
         $limitData = Helper::getUserRemainingLimit($user_id, $category_type, $request->busi_id);
+        $limitData['type'] = $category_type;
 
         $isVideoAvailable = false;
         $videoPost = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type', 'video')->where('buss_cat_post_id', '=', $request->busi_id)->where('festival_id', 0)->where('is_deleted', '=', 0)->first();
@@ -4773,175 +4781,6 @@ class UserapiControllerV15 extends Controller
         }
         $data = array_merge($backgrounds->toArray(), $backgrounds1->toArray());
         return response()->json(['status' => true, 'data' => $data, 'message' => "Backgrounds fetched successfully"]);
-    }
-
-    public function getFrames(Request $request)
-    {
-        $input = $request->all();
-
-        $user_id = $this->get_userid($input['token']);
-        if ($user_id == 0) {
-            return response()->json(['status' => false, 'message' => 'user not valid']);
-        }
-        $user = User::find($user_id);
-        if ($request->frame_type == "Business") {
-            $business = Business::where('busi_id', $user->default_business_id)->first();
-            if (empty($business)) {
-                return response()->json(['status' => false, 'message' => 'Business not found']);
-            }
-        } else {
-            $business = PoliticalBusiness::where('pb_id', '=', $user->default_political_business_id)->where('pb_is_deleted', '=', 0)->first();
-            if (empty($business)) {
-                return response()->json(['status' => false, 'message' => 'Business not found']);
-            }
-        }
-
-        $postLimit = Helper::GetLimit();
-
-        $offset = 0;
-        if ($request->has('offset')) {
-            $offset = $request->offset;
-        }
-
-        $frame_type = 'Business';
-        if ($request->has('frame_type')) {
-            $frame_type = $request->frame_type;
-        }
-        $frame_data = array();
-
-        $business_type = 1;
-        $business_id = $user->default_business_id;
-        if ($request->has('frame_type')) {
-            if ($request->frame_type == "Photo") {
-                $business_type = 2;
-                $business_id = $user->default_political_business_id;
-            }
-        }
-
-        $frameLists = DB::table('user_frames')->where('user_id', $user_id)->where('business_id', $business_id)->where('business_type', $business_type)->where('is_deleted', 0)->orderBy('user_frames_id', 'DESC')->get();
-
-        foreach ($frameLists as &$frameList) {
-            $frame_image = Storage::url($frameList->frame_url);
-            $thumb_image = $frame_image;
-            $data = [
-                'frame_image' => $frame_image,
-                'thumbnail_image' => $thumb_image,
-                'civ_height' => "",
-                'civ_width' => "",
-                'custom_he' => "",
-                'custom_wi' => "",
-                'custom_x' => "",
-                'custom_y' => "",
-                'frame_name' => "",
-                'overlay_blur' => "",
-                'overlay_name' => "",
-                'overlay_opacity' => "",
-                'profile_type' => "",
-                'ration' => '',
-                'saveImageHeight' => "",
-                'saveImageWidth' => "",
-                'seek_value' => "",
-                'shap_name' => "",
-                'template_id' => "",
-                'tempcolor' => "",
-                'temp_path' => "",
-                'thumb_uri' => "",
-                'type' => "",
-                'componentInfoJsonArrayList' => array(),
-                'textInfoJsonArrayList' => array(),
-            ];
-            array_push($frame_data, $data);
-        }
-
-        $frames = Frame::where('frame_type', $frame_type)->where('is_active', 1)->orderBy('display_order', 'ASC')->skip($offset)->limit($postLimit)->get();
-        foreach ($frames as $frame) {
-            $frame_image = Storage::url($frame->frame_image);
-            $thumb_image = $frame_image;
-            if (!empty($frame->thumbnail_image)) {
-                $thumb_image = Storage::url($frame->thumbnail_image);
-            }
-            $data = [
-                'frame_image' => $frame_image,
-                'thumbnail_image' => $thumb_image,
-                'civ_height' => "675.0",
-                'civ_width' => "1280.0",
-                'custom_he' => "675.0",
-                'custom_wi' => "675.977600097656",
-                'custom_x' => "262.011169433594",
-                'custom_y' => "0.0",
-                'frame_name' => "frame",
-                'overlay_blur' => "0.0",
-                'overlay_name' => "",
-                'overlay_opacity' => "80",
-                'profile_type' => "Nature",
-                'ration' => '1:1',
-                'saveImageHeight' => "0",
-                'saveImageWidth' => "0",
-                'seek_value' => "378",
-                'shap_name' => "",
-                'template_id' => strval($frame->id),
-                'tempcolor' => "",
-                'temp_path' => "",
-                'thumb_uri' => "",
-                'type' => "user",
-                'componentInfoJsonArrayList' => array(),
-                'textInfoJsonArrayList' => array(),
-            ];
-            $images = FrameComponent::where('frame_id', $frame->id)->get();
-
-            $image_data = array();
-            foreach ($images as &$image) {
-                if ($image->image_for == 0) {
-                    if (!empty($image->stkr_path)) {
-                        $image->template_id = strval($frame->id);
-                        $image->stkr_path = Storage::url($image->stkr_path);
-                        $image->order = strval($image->order_);
-                        unset($image->order_);
-                        array_push($image_data, $image);
-                    }
-                } else {
-                    $business_field = BusinessField::where('id', $image->image_for)->first();
-                    if (!empty($business[$business_field->field_key])) {
-                        $image->template_id = strval($frame->id);
-                        $image->stkr_path = Storage::url($business[$business_field->field_key]);
-                        $image->order = strval($image->order_);
-                        unset($image->order_);
-                        array_push($image_data, $image);
-                    }
-                }
-            }
-
-            $texts = FrameText::where('frame_id', $frame->id)->get();
-            $textData = array();
-            foreach ($texts as &$text) {
-                $business_field = BusinessField::where('id', $text->text_for)->first();
-                if (!empty($business[$business_field->field_key])) {
-                    $text->template_id = strval($frame->id);
-                    $text->text = $business[$business_field->field_key];
-                    $text->order = strval($text->order_);
-                    unset($text->order_);
-                    array_push($textData, $text);
-                }
-            }
-            $data['componentInfoJsonArrayList'] = $image_data;
-            $data['textInfoJsonArrayList'] = $textData;
-            array_push($frame_data, $data);
-        }
-
-        $next = true;
-        $next_frame = Frame::where('frame_type', $frame_type)->where('is_active', 1)->orderBy('display_order', 'ASC')->skip($offset + count($frames))->limit(1)->get();
-        if (count($next_frame) == 0) {
-            $next = false;
-        }
-
-        $meta = array(
-            'offset' => $offset + count($frames),
-            'limit' => intval($postLimit),
-            'record' => count($frame_data),
-            'next' => $next
-        );
-
-        return response()->json(['status' => true, 'data' => $frame_data, 'meta' => $meta, 'message' => "Frames fetched successfully"]);
     }
 
     public function getGraphic(Request $request)
@@ -6184,6 +6023,204 @@ class UserapiControllerV15 extends Controller
 
     // -------------------- User Referral API End
 
+    public function getFrames(Request $request)
+    {
+        $input = $request->all();
+
+        $user_id = $this->get_userid($input['token']);
+        if ($user_id == 0) {
+            return response()->json(['status' => false, 'message' => 'user not valid']);
+        }
+        $user = User::find($user_id);
+        if ($request->frame_type == "Business") {
+            $business = Business::where('busi_id', $user->default_business_id)->first();
+            if (empty($business)) {
+                return response()->json(['status' => false, 'message' => 'Business not found']);
+            }
+        } else {
+            $business = PoliticalBusiness::where('pb_id', '=', $user->default_political_business_id)->where('pb_is_deleted', '=', 0)->first();
+            if (empty($business)) {
+                return response()->json(['status' => false, 'message' => 'Business not found']);
+            }
+        }
+
+
+        $frame_type = 'Business';
+        if ($request->has('frame_type')) {
+            $frame_type = $request->frame_type;
+        }
+
+        $business_type = 1;
+        $business_id = $user->default_business_id;
+        if ($request->has('frame_type')) {
+            if ($request->frame_type == "Photo") {
+                $business_type = 2;
+                $business_id = $user->default_political_business_id;
+            }
+        }
+
+
+        $light_frames = $this->getModeWiseFrame('light', $frame_type, $business, $user_id, $business_type, $business_id);
+
+        $dark_frames = $this->getModeWiseFrame('dark',  $frame_type, $business, $user_id, $business_type, $business_id);
+
+        return response()->json(['status' => true, 'light_frames' => $light_frames, 'dark_frames' => $dark_frames, 'message' => "Frames fetched successfully"]);
+    }
+
+    public function getModeWiseFrame($mode, $frame_type, $business, $user_id, $business_type, $business_id) {
+        $frame_data = array();
+
+        $frameLists = DB::table('user_frames')
+                        ->where('user_id', $user_id)
+                        ->where('business_id', $business_id)
+                        ->where('business_type', $business_type)
+                        ->where('is_deleted', 0)
+                        ->orderBy('user_frames_id', 'DESC')
+                        ->get();
+
+        foreach ($frameLists as &$frameList) {
+
+            $frame_image = Storage::url($frameList->frame_url);
+            $thumb_image = $frame_image;
+
+            $data = [
+                'frame_image' => $frame_image,
+                'thumbnail_image' => $thumb_image,
+                'civ_height' => "",
+                'civ_width' => "",
+                'custom_he' => "",
+                'custom_wi' => "",
+                'custom_x' => "",
+                'custom_y' => "",
+                'frame_name' => "",
+                'overlay_blur' => "",
+                'overlay_name' => "",
+                'overlay_opacity' => "",
+                'profile_type' => "",
+                'ration' => '',
+                'saveImageHeight' => "",
+                'saveImageWidth' => "",
+                'seek_value' => "",
+                'shap_name' => "",
+                'template_id' => "",
+                'tempcolor' => "",
+                'temp_path' => "",
+                'thumb_uri' => "",
+                'type' => "",
+                'componentInfoJsonArrayList' => array(),
+                'textInfoJsonArrayList' => array(),
+            ];
+            array_push($frame_data, $data);
+        }
+
+        $frames = Frame::where('frame_type', $frame_type)
+                        ->where('frame_mode', $mode)
+                        ->where('is_active', 1)
+                        ->orderBy('display_order', 'ASC')
+                        ->get();
+
+        foreach ($frames as $frame) {
+
+            $isFrameValid = true;
+            $fields = FrameField::where('frame_id', $frame->id)->get();
+
+            // if(count($fields) == 0) {
+            //     $isFrameValid = false;
+            // }
+
+            foreach($fields as $field){
+
+                $business_field = BusinessField::where('id', $field->field_id)->first();
+                if(empty($business_field)) {
+                    $isFrameValid = false;
+                }
+                else {
+                    $field_key = $business_field->field_key;
+                    if(empty($business[$field_key])) {
+                        $isFrameValid = false;
+                    }
+                }
+            }
+
+            if($isFrameValid) {
+                $frame_image = Storage::url($frame->frame_image);
+                $thumb_image = $frame_image;
+                if (!empty($frame->thumbnail_image)) {
+                    $thumb_image = Storage::url($frame->thumbnail_image);
+                }
+                $data = [
+                    'frame_image' => $frame_image,
+                    'thumbnail_image' => $thumb_image,
+                    'civ_height' => "675.0",
+                    'civ_width' => "1280.0",
+                    'custom_he' => "675.0",
+                    'custom_wi' => "675.977600097656",
+                    'custom_x' => "262.011169433594",
+                    'custom_y' => "0.0",
+                    'frame_name' => "frame",
+                    'overlay_blur' => "0.0",
+                    'overlay_name' => "",
+                    'overlay_opacity' => "80",
+                    'profile_type' => "Nature",
+                    'ration' => '1:1',
+                    'saveImageHeight' => "0",
+                    'saveImageWidth' => "0",
+                    'seek_value' => "378",
+                    'shap_name' => "",
+                    'template_id' => strval($frame->id),
+                    'tempcolor' => "",
+                    'temp_path' => "",
+                    'thumb_uri' => "",
+                    'type' => "user",
+                    'componentInfoJsonArrayList' => array(),
+                    'textInfoJsonArrayList' => array(),
+                ];
+                $images = FrameComponent::where('frame_id', $frame->id)->get();
+
+                $image_data = array();
+                foreach ($images as &$image) {
+                    if ($image->image_for == 0) {
+                        if (!empty($image->stkr_path)) {
+                            $image->template_id = strval($frame->id);
+                            $image->stkr_path = Storage::url($image->stkr_path);
+                            $image->order = strval($image->order_);
+                            unset($image->order_);
+                            array_push($image_data, $image);
+                        }
+                    } else {
+                        $business_field = BusinessField::where('id', $image->image_for)->first();
+                        if (!empty($business[$business_field->field_key])) {
+                            $image->template_id = strval($frame->id);
+                            $image->stkr_path = Storage::url($business[$business_field->field_key]);
+                            $image->order = strval($image->order_);
+                            unset($image->order_);
+                            array_push($image_data, $image);
+                        }
+                    }
+                }
+
+                $texts = FrameText::where('frame_id', $frame->id)->get();
+                $textData = array();
+                foreach ($texts as &$text) {
+                    $business_field = BusinessField::where('id', $text->text_for)->first();
+                    if (!empty($business[$business_field->field_key])) {
+                        $text->template_id = strval($frame->id);
+                        $text->text = $business[$business_field->field_key];
+                        $text->order = strval($text->order_);
+                        unset($text->order_);
+                        array_push($textData, $text);
+                    }
+                }
+                $data['componentInfoJsonArrayList'] = $image_data;
+                $data['textInfoJsonArrayList'] = $textData;
+                array_push($frame_data, $data);
+            }
+
+        }
+
+        return $frame_data;
+    }
+
     public function getMusicList(Request $request)
     {
         $token = $request->token;
@@ -6275,7 +6312,10 @@ class UserapiControllerV15 extends Controller
             $data['order_number'] = !empty($plan->order_number) ? $plan->order_number : 0;
             array_push($plan_data, $data);
         }
-        return response()->json(['status' => 'true', 'data' => $plan_data, 'message' => "Plan list fetched successfully"]);
+
+        $user = User::find($user_id);
+        $remaining_bg_credit = $user->bg_credit;
+        return response()->json(['status' => 'true', 'remaining_bg_credit' => $remaining_bg_credit, 'data' => $plan_data, 'message' => "Plan list fetched successfully"]);
     }
 
     public function purchaseBGRemovePlan(Request $request)
@@ -6287,6 +6327,7 @@ class UserapiControllerV15 extends Controller
         }
 
         $plan_id = $request->plan_id;
+        $payment_id = $request->payment_id;
         if (empty($plan_id)) {
             return response()->json(['status' => false, 'message' => 'Plan Id Required']);
         }
@@ -6299,11 +6340,16 @@ class UserapiControllerV15 extends Controller
             return response()->json(['status' => false, 'message' => 'Plan not available at the moment']);
         }
 
+        if (empty($payment_id)) {
+            return response()->json(['status' => false, 'message' => 'Payment Id is required']);
+        }
+
         $credit = !empty($plan->bg_credit) ? $plan->bg_credit : 0;
         $userData = User::find($user_id);
         $user_credit = $userData->bg_credit;
         $new_credit = $credit + $user_credit;
         $userData->bg_credit = $new_credit;
+        $userData->payment_id = $payment_id;
         $userData->save();
 
         $history = new BGCreditPlanHistory;
@@ -6332,10 +6378,12 @@ class UserapiControllerV15 extends Controller
         }
         $file = $request->image;
         $file_data = Helper::removeBackgroundImage($file);
-        return response()->json([
-            'status' => true,
-            'data' => $file_data
-        ]);
+
+        $userData->bg_credit = $userData->bg_credit - 1;
+        $userData->save();
+
+        return response($file_data->getBody())
+        ->withHeaders($file_data->getHeaders());
     }
 
     public function userDownloadPhoto(Request $request)
@@ -6468,6 +6516,7 @@ class UserapiControllerV15 extends Controller
         $category_id = $request->category_id;
 
         $data = Helper::getUserRemainingLimit($user_id, $type, $category_id);
+        $data['type'] = $type;
 
         return response()->json(['status' => true, 'data' => $data, 'message' => 'User Remaining Limits']);
     }

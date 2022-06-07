@@ -10,6 +10,10 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
+
 Route::prefix('user')->middleware('auth','adminauth')->group(function() {
   	Route::post('view-user-detail', 'UserDataController@viewUserDetail');
   	Route::post('addDesigner', 'UserDataController@addDesigner');
@@ -146,7 +150,6 @@ Route::prefix('user')->middleware('auth','adminauth')->group(function() {
   	Route::post('decline-business', 'UserDataController@declineBusiness');
 
   	Route::post('remove-user', 'UserDataController@removeUser');
-
 
   	//Route::post('view-user-detail', 'UserDataController@viewUserDetail');
 

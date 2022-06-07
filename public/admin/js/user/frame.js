@@ -12,6 +12,16 @@ $(document).ready(function() {
     if($('#text-table').length) {
         getTexts();
     }
+
+    $('#frame_fields').select2({
+        placeholder: "Select a field",
+        allowClear: true
+    });
+
+    $('#edit_frame_fields').select2({
+        placeholder: "Select a field",
+        allowClear: true
+    });
 })
 
 $('#image_for').on('change', function () {
@@ -32,6 +42,28 @@ $('#edit_image_for').on('change', function () {
     }
 });
 
+function getBusinessFields(ele) {
+    var type = $(ele).val();
+    if(type == "Business") {
+        var options = $('#normalFields').html();
+    }
+    else {
+        var options = $('#politicalFields').html();
+    }
+    $('#frame_fields').html(options);
+}
+
+function getBusinessFieldsEdit(ele) {
+    var type = $(ele).val();
+    if(type == "Business") {
+        var options = $('#normalFields').html();
+    }
+    else {
+        var options = $('#politicalFields').html();
+    }
+    $('#edit_frame_fields').html(options);
+}
+
 function getFrame() {
     table = $('#frame-table').DataTable({
         processing: true,
@@ -39,7 +71,9 @@ function getFrame() {
         ajax: APP_URL+'/frame/getFrame',
         columns: [
             {data: 'frame_image', name: 'frame_image'},
+            {data: 'thumbnail_image', name: 'thumbnail_image'},
             {data: 'frame_type', name: 'frame_type'},
+            {data: 'frame_mode', name: 'frame_mode'},
             {data: 'is_active', name: 'is_active'},
             {data: 'display_order', name: 'display_order'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
@@ -92,7 +126,12 @@ $('#add-frame').click(function() {
     $('#name').val('');
     $('#display_order').val('');
     $('#frame_image').val('');
+    $('#frame_type').val('Business');
+    $('#frame_mode').val('light');
     $('#thumbnail_image').val('');
+    var options = $('#normalFields').html();
+    $('#frame_fields').html(options);
+    $('#frame_fields').val([]).trigger('change');
 
 })
 
@@ -144,6 +183,7 @@ function addFrame() {
                 $('#name').val('');
                 $('#order_number').val(null);
                 $('#thumbnail_image').val('');
+                $('#frame_mode').val('light');
                 table.ajax.reload();
             }
         }
@@ -154,6 +194,9 @@ function editFrame(ele) {
     $('span.alerts').remove();
     $('#edit_display_order').val('');
     $('#edit_frame_image').val('');
+    $('#edit_frame_type').val('Business');
+    $('#edit_frame_fields').html("");
+    $('#edit_frame_mode').val('light');
     $('#edit_thumbnail_image').val('');
     var id = $(ele).data('id');
     $.ajaxSetup({
@@ -173,8 +216,19 @@ function editFrame(ele) {
                 $('#image_view').attr('src',data.data.frame_image);
                 $('#thumb_image_view').attr('src',data.data.thumbnail_image);
                 $('#edit_frame_type').val(data.data.frame_type);
+                $('#edit_frame_mode').val(data.data.frame_mode);
                 $('#edit_is_active').val(data.data.is_active);
                 $('#edit_display_order').val(data.data.display_order);
+
+                if(data.data.frame_type == "Business") {
+                    var options = $('#normalFields').html();
+                }
+                else {
+                    var options = $('#politicalFields').html();
+                }
+                $('#edit_frame_fields').html(options);
+
+                $('#edit_frame_fields').val(data.data.frame_fields).trigger('change');
                 $('#editFrameModal').modal('show');
             }
             else {

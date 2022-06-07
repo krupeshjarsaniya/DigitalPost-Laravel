@@ -597,17 +597,15 @@ class Helper extends Model
             'multipart' => [
                 [
                     'name' => 'source_image_file',
-                    'contents' => fopen('https://digitalpost365.sgp1.cdn.digitaloceanspaces.com/storage/music/image/2022/05/hJFY8fGwChCKV2ANoqKfTtMSLlA5gxU8YmkVA6zd.jpg', 'r')
+                    'contents' => fopen($file, 'r')
                 ]
             ],
             'headers' => [
                 'API-KEY' => getenv('SLAZZER_API_KEY')
             ]
         ]);
-        dd($response);
-        // dd($response->getBody());
 
-        return $response->getBody();
+        return $response;
     }
 
     public static function getUserRemainingLimit($user_id, $type, $category_id) {

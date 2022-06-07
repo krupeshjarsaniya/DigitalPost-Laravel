@@ -46,7 +46,9 @@
                     <thead>
                         <tr>
                             <th>Frame</th>
+                            <th>Thumbnail</th>
                             <th>Type</th>
+                            <th>Mode</th>
                             <th>Is Active</th>
                             <th>Order</th>
                             <th>Action</th>
@@ -59,6 +61,17 @@
         </div>
     </div>
 </div>
+
+<select class="d-none" id="normalFields">
+    <?php $__currentLoopData = $normalFields; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $field): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+        <option value="<?php echo e($field->id); ?>"><?php echo e($field->field_value); ?></option>
+    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+</select>
+<select class="d-none" id="politicalFields">
+    <?php $__currentLoopData = $politicalFields; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $field): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+        <option value="<?php echo e($field->id); ?>"><?php echo e($field->field_value); ?></option>
+    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+</select>
 
 <div class="modal fade" id="addFrameModal">
     <div class="modal-dialog modal-lg">
@@ -88,9 +101,28 @@
                         <div class="col-md-6">
                             <div class="form-group err_frame_type">
                                 <label for="frame_type">Frame Type</label>
-                                <select class="form-control" id="frame_type" name="frame_type" required>
+                                <select onchange="getBusinessFields(this)" class="form-control" id="frame_type" name="frame_type" required>
                                     <option value="Business">Business</option>
                                     <option value="Photo">Photo</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group err_frame_fields">
+                                <label for="frame_fields">Frame Fields</label>
+                                <select class="form-control" id="frame_fields" multiple name="frame_fields[]" required>
+                                    <?php $__currentLoopData = $normalFields; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $field): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($field->id); ?>"><?php echo e($field->field_value); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group err_frame_mode">
+                                <label for="frame_mode">Frame Mode</label>
+                                <select class="form-control" id="frame_mode" name="frame_mode" required>
+                                    <option value="light">Light</option>
+                                    <option value="dark">Dark</option>
                                 </select>
                             </div>
                         </div>
@@ -138,7 +170,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group err_edit_thumbnail_image">
-                                <label for="edit_thumbnail_image">Frame Image</label>
+                                <label for="edit_thumbnail_image">Thumbnail Frame Image</label>
                                 <input type="file" class="form-control" id="edit_thumbnail_image" name="edit_thumbnail_image">
                             </div>
                         </div>
@@ -148,9 +180,25 @@
                         <div class="col-md-6">
                             <div class="form-group err_edit_frame_type">
                                 <label for="edit_frame_type">Frame Type</label>
-                                <select class="form-control" id="edit_frame_type" name="edit_frame_type" required>
+                                <select onchange="getBusinessFieldsEdit(this)" class="form-control" id="edit_frame_type" name="edit_frame_type" required>
                                     <option value="Business">Business</option>
                                     <option value="Photo">Photo</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group err_edit_frame_fields">
+                                <label for="edit_frame_fields">Frame Fields</label>
+                                <select class="form-control" id="edit_frame_fields" multiple name="edit_frame_fields[]" required>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group err_edit_frame_mode">
+                                <label for="edit_frame_mode">Frame Mode</label>
+                                <select class="form-control" id="edit_frame_mode" name="edit_frame_mode" required>
+                                    <option value="light">Light</option>
+                                    <option value="dark">Dark</option>
                                 </select>
                             </div>
                         </div>
