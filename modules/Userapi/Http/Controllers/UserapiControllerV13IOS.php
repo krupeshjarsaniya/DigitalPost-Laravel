@@ -1779,7 +1779,7 @@ class UserapiControllerV13IOS extends Controller
             array_push($new_category_dataArray,$temp);
         }
 
-        $new_category_data_greetings = DB::table('custom_cateogry')->whereIn('highlight',array(1,3))->orderBy('slider_img_position','ASC')->get();
+        $new_category_data_greetings = DB::table('custom_cateogry')->where('is_active', 1)->whereIn('highlight',array(1,3))->orderBy('slider_img_position','ASC')->get();
         $new_category_data_greetingsArray = array();
         foreach ($new_category_data_greetings as $greeting) {
 
@@ -1821,7 +1821,7 @@ class UserapiControllerV13IOS extends Controller
         }*/
 
 
-        /*$cateogry_data = DB::table('custom_cateogry')->get();
+        /*$cateogry_data = DB::table('custom_cateogry')->where('is_active', 1)->get();
         $cateogry = array();
 
         foreach ($cateogry_data as $key => $value)
@@ -2452,7 +2452,7 @@ class UserapiControllerV13IOS extends Controller
 
     public function getCustomCategoryPost(){
 
-        $onlycat = DB::table('custom_cateogry')->orderBy('slider_img_position','ASC')->get();
+        $onlycat = DB::table('custom_cateogry')->where('is_active', 1)->orderBy('slider_img_position','ASC')->get();
 
         // $preference = DB::table('custom_cateogry_data')->join('custom_cateogry', 'custom_cateogry_data.custom_cateogry_id', '=', 'custom_cateogry.custom_cateogry_id')->get();
 
@@ -4206,7 +4206,7 @@ class UserapiControllerV13IOS extends Controller
             return response()->json(['status'=>false,'message'=>'user not valid']);
         }
 
-        $new_category_data_greetings = DB::table('custom_cateogry')->whereIn('highlight',array(2,3))->orderBy('slider_img_position','ASC')->get();
+        $new_category_data_greetings = DB::table('custom_cateogry')->where('is_active', 1)->whereIn('highlight',array(2,3))->orderBy('slider_img_position','ASC')->get();
         $new_category_data_greetingsArray = array();
         foreach ($new_category_data_greetings as $greeting) {
 
@@ -4235,7 +4235,7 @@ class UserapiControllerV13IOS extends Controller
             array_push($new_category_data_greetingsArray,$temp1);
         }
 
-        $onlycat = DB::table('custom_cateogry')->whereIn('highlight', array(2,3))->orderBy('slider_img_position','ASC')->get();
+        $onlycat = DB::table('custom_cateogry')->where('is_active', 1)->whereIn('highlight', array(2,3))->orderBy('slider_img_position','ASC')->get();
 
 
         $finalarry = array();
@@ -4258,7 +4258,7 @@ class UserapiControllerV13IOS extends Controller
 
         }
 
-        $onlycat = DB::table('custom_cateogry')->whereIn('highlight', array(0,1))->orderBy('slider_img_position','ASC')->get();
+        $onlycat = DB::table('custom_cateogry')->where('is_active', 1)->whereIn('highlight', array(0,1))->orderBy('slider_img_position','ASC')->get();
 
 
         foreach ($onlycat as $value) {
