@@ -60,22 +60,32 @@
                         <img id="logoimg" src="#" alt="your image" style="display: none;width: 100px;height:100px;"/>
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 form-group">
+                        <label for="logodark" class="form-label">Upload Dark Logo</label>
+                        <input type="file" name="logodark" id="logodark" class="form-control"><br>
+                        <img id="logodarkimg" src="#" alt="your image" style="display: none;width: 100px;height:100px;"/>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 form-group">
                         <label for="watermark" class="form-label">Upload Watermark</label>
                         <input type="file" name="watermark" id="watermark" class="form-control"><br>
                         <img id="watermarkimg" src="#" alt="your image" style="display: none;width: 100px;height:100px;"/>
                     </div>
-		    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 form-group">
+                        <label for="watermarkdark" class="form-label">Upload Dark Watermark</label>
+                        <input type="file" name="watermarkdark" id="watermarkdark" class="form-control"><br>
+                        <img id="watermarkdarkimg" src="#" alt="your image" style="display: none;width: 100px;height:100px;"/>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
                          <div class="form-group ">
                           <label for="sel1">Select Category:</label>
                           <select class="form-control" id="bcategory_list" name="business_category">
                             <option value="" selected="selected" disabled>Select Category</option>
                             @foreach($business_category as $value)
-                            
+
                                 <option value="{{$value->name}}">{{$value->name}}</option>
 
                             @endforeach
                           </select>
-                        </div>   
+                        </div>
                     </div>
                 </div>
             </div>
@@ -117,6 +127,8 @@
                                 <th>Address</th> --}}
                                 <th>Logo</th>
                                 <th>Watermark</th>
+                                <th>Logo Dark</th>
+                                <th>Watermark Dark</th>
                                 {{-- <th>Purchase Source</th> --}}
                                 <th>Purchase Date</th>
                                 <th>Purchase Plan</th>

@@ -26,6 +26,8 @@ function DataTable()
 			// {data: 'busi_address', name: 'busi_address'},
 			{data: 'busi_logo', name: 'busi_logo'},
 			{data: 'watermark_image', name: 'watermark_image'},
+			{data: 'busi_logo_dark', name: 'busi_logo_dark'},
+			{data: 'watermark_image_dark', name: 'watermark_image_dark'},
 			// {data: 'source', name: 'source'},
 			{data: 'PurchaseDate', name: 'PurchaseDate'},
 			{data: 'PurchasePlan', name: 'PurchasePlan'},
@@ -149,10 +151,10 @@ function declinebusiness(id){
 
 function viewDetail(){
 
-// 	$('#business-table').DataTable({
-//       "destroy": true, //use for reinitialize datatable
-//     });
-$('#business-table tbody').html('');
+    // 	$('#business-table').DataTable({
+    //       "destroy": true, //use for reinitialize datatable
+    //     });
+    $('#business-table tbody').html('');
 	$.ajaxSetup({
 	headers: {
 	    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -338,6 +340,11 @@ function cancelplan(id){
 
 function EditBusiness(id){
 
+    $('#logo').val("");
+    $('#logodark').val("");
+    $('#watermark').val("");
+    $('#watermarkdark').val("");
+
 	$.ajaxSetup({
 		headers: {
 			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -364,13 +371,17 @@ function EditBusiness(id){
 				$('#bcategory_list').val(business_detail.business_category);
 				$('#business_id').val(id);
 				$('#logoimg').attr('src',SPACE_STORE_URL+''+business_detail.busi_logo);
+				$('#logodarkimg').attr('src',SPACE_STORE_URL+''+business_detail.busi_logo_dark);
 				$('#watermarkimg').attr('src',SPACE_STORE_URL+''+business_detail.watermark_image);
+				$('#watermarkdarkimg').attr('src',SPACE_STORE_URL+''+business_detail.watermark_image_dark);
 
 				$('.loader-custom').css('display','none');
 				$('#viewDetail').css('display','none');
 				$('#editBusiness').css('display','block');
 				$('#logoimg').css('display','block');
+				$('#logodarkimg').css('display','block');
 				$('#watermarkimg').css('display','block');
+				$('#watermarkdarkimg').css('display','block');
 
 			}
 		});
@@ -380,8 +391,16 @@ $("#logo").change(function() {
 	readURL(this);
 });
 
+$("#logodark").change(function() {
+	readURLDark(this);
+});
+
 $("#watermark").change(function() {
 	readURLwatermark(this);
+});
+
+$("#watermarkdark").change(function() {
+	readURLwatermarkDark(this);
 });
 
 function readURL(input) {
@@ -399,6 +418,24 @@ function readURL(input) {
     }
     else {
 		$('#logoimg').css('display','none');
+    }
+}
+
+function readURLDark(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#logodarkimg')
+                .attr('src', e.target.result)
+                .width(150)
+                .height(200);
+        };
+		$('#logodarkimg').css('display','block');
+        reader.readAsDataURL(input.files[0]);
+    }
+    else {
+		$('#logodarkimg').css('display','none');
     }
 }
 
@@ -420,6 +457,24 @@ function readURLwatermark(input) {
     }
 }
 
+function readURLwatermarkDark(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#watermarkdarkimg')
+                .attr('src', e.target.result)
+                .width(150)
+                .height(200);
+        };
+		$('#watermarkdarkimg').css('display','block');
+        reader.readAsDataURL(input.files[0]);
+    }
+    else {
+		$('#watermarkdarkimg').css('display','none');
+    }
+}
+
 function back(){
 	$('#viewDetail').css('display','block');
 	$('#editBusiness').css('display','none');
@@ -427,10 +482,14 @@ function back(){
 
 function UpdateBusiness(){
 	$('.loader-custom').css('display','block');
-	var thumb = $('#logo')[0].files[0];
+	var logo = $('#logo')[0].files[0];
+	var logodark = $('#logodark')[0].files[0];
 	var watermark = $('#watermark')[0].files[0];
+	var watermarkdark = $('#watermarkdark')[0].files[0];
 	data = new FormData();
-        data.append('logo', thumb);
+        data.append('logo', logo);
+        data.append('logodark', logodark);
+        data.append('watermarkdark', watermarkdark);
         data.append('watermark', watermark);
 		data.append('business_id', $('#business_id').val());
 		data.append('business_name', $('#business_name').val());
@@ -439,7 +498,7 @@ function UpdateBusiness(){
 		data.append('business_mobile_second', $('#business_mobile_second').val());
 		data.append('business_website', $('#business_website').val());
 		data.append('business_address', $('#business_address').val());
-		data.append('business_category', $('#business_category').val());
+		data.append('business_category', $('#bcategory_list').val());
     	$.ajaxSetup({
     	headers: {
     	    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -453,8 +512,12 @@ function UpdateBusiness(){
     		processData : false,
     		success: function (data)
     		{
-				alert(data.message);
 				$('.loader-custom').css('display','none');
+                $('#logo').val("");
+                $('#logodark').val("");
+                $('#watermark').val("");
+                $('#watermarkdark').val("");
+				alert(data.message);
 				//location.reload();
     		}
     	});

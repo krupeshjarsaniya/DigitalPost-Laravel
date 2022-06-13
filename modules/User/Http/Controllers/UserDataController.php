@@ -2,15 +2,10 @@
 
 namespace Modules\User\Http\Controllers;
 
-use Validator;
-use DataTables;
 use App\User;
 use App\Business;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
-use DB;
-use Auth;
 use App\Purchase;
 use App\Plan;
 use App\Photos;
@@ -21,7 +16,11 @@ use App\PoliticalBusiness;
 use App\CustomFrame;
 use App\UserReferral;
 use App\PushNotification;
-use View;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\View;
+use Yajra\DataTables\Facades\DataTables;
 
 class UserDataController extends Controller
 {
@@ -443,13 +442,13 @@ class UserDataController extends Controller
             if($leftimage != 'undefined'){
                $leftimage_path = $this->uploadFile($request, null, 'leftimage', 'political-business-img');
                PoliticalBusiness::where('pb_id','=',$business_id)->update([
-                'pb_left_image' => $left_image_path,
+                'pb_left_image' => $leftimage_path,
                 ]);
             }
             if($rightimage != 'undefined'){
                $rightimage_path = $this->uploadFile($request, null, 'rightimage', 'political-business-img');
                PoliticalBusiness::where('pb_id','=',$business_id)->update([
-                'pb_right_image' => $right_image_path,
+                'pb_right_image' => $rightimage_path,
                 ]);
             }
         }
@@ -489,7 +488,7 @@ class UserDataController extends Controller
          $user_details->mobile = "<a target='_blank' href='https://api.whatsapp.com/send?phone=".$user_details->country_code.$user_details->mobile."'>" . $user_details->mobile.'</a>';
         //  $business_detail = Business::where('user_id','=',$user_id)->get();
 
-         $business_detail = DB::table('business')->where('busi_delete','=','0')->where('user_id','=',$user_id)->leftJoin('purchase_plan','business.busi_id','=','purchase_plan.purc_business_id')->join('plan','plan.plan_id','=','purchase_plan.purc_plan_id')->select('business.busi_id','business.busi_name','business.busi_email','business.busi_address','business.busi_mobile', 'business.busi_mobile_second','business.busi_logo','business.watermark_image','business.busi_website','purchase_plan.purc_plan_id','purchase_plan.purc_order_id','purchase_plan.purc_end_date','plan.plan_or_name')->get()->toArray();
+         $business_detail = DB::table('business')->where('busi_delete','=','0')->where('user_id','=',$user_id)->leftJoin('purchase_plan','business.busi_id','=','purchase_plan.purc_business_id')->join('plan','plan.plan_id','=','purchase_plan.purc_plan_id')->select('business.busi_id','business.busi_name','business.busi_email','business.busi_address','business.busi_mobile', 'business.busi_mobile_second','business.busi_logo','business.watermark_image','business.busi_logo_dark','business.watermark_image_dark','business.busi_website','purchase_plan.purc_plan_id','purchase_plan.purc_order_id','purchase_plan.purc_end_date','plan.plan_or_name')->get()->toArray();
          $business_data = array();
          foreach($business_detail as $business) {
             $checkDesigner = CustomFrame::where('business_id', $business->busi_id)->where('business_type', 1)->where('status', 'Pending')->first();
@@ -571,7 +570,12 @@ class UserDataController extends Controller
     public function ListofAllBusiness(Request $request){
         ini_set('memory_limit', -1);
 
-       $business_detail = DB::table('business')->where('busi_delete','=','0')->rightJoin('purchase_plan','business.busi_id','=','purchase_plan.purc_business_id')->join('users','users.id','=','business.user_id')->join('plan','plan.plan_id','=','purchase_plan.purc_plan_id')->select('business.busi_id','business.busi_name','business.busi_email','business.busi_mobile','business.busi_logo','business.watermark_image', 'business.busi_mobile_second','purchase_plan.purc_plan_id','purchase_plan.purc_order_id','purchase_plan.purc_start_date','plan.plan_or_name','users.mobile')->orderBy('purchase_plan.purc_start_date', 'DESC');
+       $business_detail = DB::table('business')
+                            ->where('busi_delete','=','0')
+                            ->rightJoin('purchase_plan','business.busi_id','=','purchase_plan.purc_business_id')
+                            ->join('users','users.id','=','business.user_id')
+                            ->join('plan','plan.plan_id','=','purchase_plan.purc_plan_id')
+                            ->select('business.busi_id','business.busi_name','business.busi_logo_dark','business.watermark_image_dark','business.busi_email','business.busi_mobile','business.busi_logo','business.watermark_image', 'business.busi_mobile_second','purchase_plan.purc_plan_id','purchase_plan.purc_order_id','purchase_plan.purc_start_date','plan.plan_or_name','users.mobile')->orderBy('purchase_plan.purc_start_date', 'DESC');
        //$business_detail = DB::table('business')->where('busi_delete','=','0')->rightJoin('purchase_plan','business.busi_id','=','purchase_plan.purc_business_id')->join('users','users.id','=','business.user_id')->join('plan','plan.plan_id','=','purchase_plan.purc_plan_id')->select('business.busi_id','business.busi_name','business.busi_email','business.busi_mobile','business.busi_logo', 'business.busi_mobile_second','purchase_plan.purc_plan_id','purchase_plan.purc_order_id','purchase_plan.purc_start_date','plan.plan_or_name','users.mobile')->orderBy('business.busi_id', 'DESC');
 
        if ($request->ajax())
@@ -667,6 +671,36 @@ class UserDataController extends Controller
                 }
                 return $img;
             })
+            ->addColumn('busi_logo_dark',function($row) {
+
+                $img = '';
+                //if($row->busi_logo_dark != '' || !is_null($row->busi_logo_dark))
+                if(!empty($row->busi_logo_dark))
+                {
+                    $imgurl_create = Storage::url('/');
+                    $imgurl = str_replace(".com/",".com/",$imgurl_create).''.$row->busi_logo_dark;
+
+
+                    //$img = '<img src="'.$row->busi_logo_dark.'" height="100" width="100">';
+                    $img = '<img src="'.$imgurl.'" height="100" width="100">';
+                }
+                return $img;
+            })
+            ->addColumn('watermark_image_dark',function($row) {
+
+                $img = '';
+                //if($row->watermark_image_dark != '' || !is_null($row->watermark_image_dark))
+                if(!empty($row->watermark_image_dark))
+                {
+                    $imgurl_create = Storage::url('/');
+                    $imgurl = str_replace(".com/",".com/",$imgurl_create).''.$row->watermark_image_dark;
+
+
+                    //$img = '<img src="'.$row->watermark_image_dark.'" height="100" width="100">';
+                    $img = '<img src="'.$imgurl.'" height="100" width="100">';
+                }
+                return $img;
+            })
             ->addColumn('PurchaseDate',function($row){
                 $date= "free";
                 if($row->purc_plan_id == 1 || $row->purc_plan_id == 3 || $row->purc_plan_id == 3 || $row->purc_plan_id == ""){
@@ -691,7 +725,6 @@ class UserDataController extends Controller
                     $source = '<br>By User';
                 }
 
-
                 if($row->purc_plan_id == 1 || $row->purc_plan_id == 3 || $row->purc_plan_id == 3)
                 {
 
@@ -711,36 +744,9 @@ class UserDataController extends Controller
                 $btn = '<button class="btn btn-primary" onclick="EditBusiness('.$row->busi_id.')"><i class="flaticon-pencil"></i></button>';
                 return $btn;
             })
-            ->rawColumns(['PurchasePlan','action','busi_logo', 'watermark_image','busi_mobile'])
+            ->rawColumns(['PurchasePlan','action','busi_logo', 'watermark_image','busi_mobile', 'busi_logo_dark', 'watermark_image_dark'])
             ->make(true);
         }
-
-       //->toArray()
-       // print_r($business_detail);
-       // echo '<br>shfs'.count($business_detail);die;
-       //return response()->json(['status'=>true,'business_detail'=>$business_detail]);
-        //    ->addColumn('source',function($row) {
-        //     $source = '';
-
-
-
-        //         if($row->purc_order_id == 'FromAdmin'){
-        //             $source = 'By Admin';
-        //         }
-        //         elseif($row->purc_order_id != '' && $row->purc_order_id != 'FromAdmin' && $row->purc_plan_id == 2){
-        //             $source = 'By User';
-        //         }
-        //         elseif($row->purc_plan_id == '3'){
-        //             $source = 'Not Purchase';
-        //         }
-        //         else
-        //         {
-        //             $source ='-';
-        //         }
-
-
-        //     return $source;
-        // })
 
     }
 
@@ -1079,6 +1085,8 @@ class UserDataController extends Controller
         $temp = $request->all();
         $image = (isset($temp['logo'])) ? $temp['logo'] : 'undefined';
         $watermark = (isset($temp['watermark'])) ? $temp['watermark'] : 'undefined';
+        $imagedark = (isset($temp['logodark'])) ? $temp['logodark'] : 'undefined';
+        $watermarkdark = (isset($temp['watermarkdark'])) ? $temp['watermarkdark'] : 'undefined';
 
         if ($temp['business_id'] != '')
         {
@@ -1094,6 +1102,18 @@ class UserDataController extends Controller
             else {
                 $watermark_path = '';
             }
+            if($imagedark != 'undefined'){
+                $pathdark = $this->uploadFile($request, null, 'logodark', 'business-img');
+             }
+             else {
+                $pathdark = '';
+             }
+             if($watermarkdark != 'undefined'){
+                $watermarkdark_path = $this->uploadFile($request, null, 'watermarkdark', 'business-img');
+             }
+             else {
+                $watermarkdark_path = '';
+             }
             Business::where('busi_id',$temp['business_id'])->update([
                 'busi_is_approved'=>1,
                 'busi_name' => $temp['business_name'],
@@ -1114,6 +1134,16 @@ class UserDataController extends Controller
                     'watermark_image' => $watermark_path,
                 ]);
             }
+            if($pathdark != '') {
+                Business::where('busi_id',$temp['business_id'])->update([
+                    'busi_logo_dark' => $pathdark,
+                ]);
+            }
+            if($watermarkdark_path != '') {
+                Business::where('busi_id',$temp['business_id'])->update([
+                    'watermark_image_dark' => $watermarkdark_path,
+                ]);
+            }
 
         }
         else
@@ -1132,6 +1162,19 @@ class UserDataController extends Controller
             else {
                 $watermark_path = '';
             }
+            if($imagedark != 'undefined'){
+                $pathdark = $this->uploadFile($request, null, 'logodark', 'business-img');
+             }
+             else {
+                $pathdark = '';
+             }
+             if($watermarkdark != 'undefined'){
+                $watermarkdark_path = $this->uploadFile($request, null, 'watermarkdark', 'business-img');
+             }
+             else {
+                $watermarkdark_path = '';
+             }
+
                 $user_id = $temp['user_id'];
                $business_id = Business::insertGetId([
                                 'busi_is_approved'=>1,
@@ -1145,6 +1188,8 @@ class UserDataController extends Controller
                                 'business_category' => $temp['business_category'],
                                 'busi_logo' => $path,
                                 'watermark_image' => $watermark_path,
+                                'busi_logo_dark' => $pathdark,
+                                'watermark_image_dark' => $watermarkdark_path,
                             ]);
 
 
@@ -1340,8 +1385,6 @@ class UserDataController extends Controller
         print_r($advetisement);
         echo "</pre>";
 
-        //echo "sdfsdfsdf";
-        die;
         $getallphotos = Photos::whereBetween('date_added', [date('Y-m-d',strtotime('08-08-2021'))." 00:00:00", date('Y-m-d',strtotime('09-08-2021'))." 23:59:59"])->get();
 
         //$getallphotos = Photos::where('photo_id', '35153')->get(); //storage date wise url
@@ -1513,7 +1556,11 @@ class UserDataController extends Controller
      public function ListofAllPoliticalBusiness(Request $request){
         ini_set('memory_limit', -1);
 
-       $business_detail = DB::table('political_business')->rightJoin('purchase_plan','political_business.pb_id','=','purchase_plan.purc_business_id')->join('users','users.id','=','political_business.user_id')->join('plan','plan.plan_id','=','purchase_plan.purc_plan_id')->select('political_business.pb_id','political_business.pb_name','political_business.pb_mobile','political_business.pb_designation','political_business.pb_party_logo','political_business.pb_watermark','political_business.pb_left_image','political_business.pb_right_image','purchase_plan.purc_plan_id','purchase_plan.purc_order_id','purchase_plan.purc_start_date','plan.plan_or_name','users.mobile')->where('political_business.pb_is_deleted','=','0')->where('purchase_plan.purc_business_type','=',2)->orderBy('purchase_plan.purc_start_date', 'DESC');
+       $business_detail = DB::table('political_business')
+                            ->rightJoin('purchase_plan','political_business.pb_id','=','purchase_plan.purc_business_id')
+                            ->join('users','users.id','=','political_business.user_id')
+                            ->join('plan','plan.plan_id','=','purchase_plan.purc_plan_id')
+                            ->select('political_business.pb_id','political_business.pb_name','political_business.pb_mobile','political_business.pb_designation','political_business.pb_party_logo','political_business.pb_watermark','political_business.pb_party_logo_dark','political_business.pb_watermark_dark','political_business.pb_left_image','political_business.pb_right_image','purchase_plan.purc_plan_id','purchase_plan.purc_order_id','purchase_plan.purc_start_date','plan.plan_or_name','users.mobile')->where('political_business.pb_is_deleted','=','0')->where('purchase_plan.purc_business_type','=',2)->orderBy('purchase_plan.purc_start_date', 'DESC');
 
        if ($request->ajax())
        {
@@ -1589,6 +1636,36 @@ class UserDataController extends Controller
 
 
                     //$img = '<img src="'.$row->busi_logo.'" height="100" width="100">';
+                    $img = '<img src="'.$imgurl.'" height="100" width="100">';
+                }
+                return $img;
+            })
+            ->addColumn('pb_party_logo_dark',function($row) {
+
+                $img = '';
+                //if($row->pb_party_logo_dark != '' || !is_null($row->pb_party_logo_dark))
+                if(!empty($row->pb_party_logo_dark))
+                {
+                    $imgurl_create = Storage::url('/');
+                    $imgurl = str_replace(".com/",".com/",$imgurl_create).''.$row->pb_party_logo_dark;
+
+
+                    //$img = '<img src="'.$row->pb_party_logo_dark.'" height="100" width="100">';
+                    $img = '<img src="'.$imgurl.'" height="100" width="100">';
+                }
+                return $img;
+            })
+            ->addColumn('pb_watermark_dark',function($row) {
+
+                $img = '';
+                //if($row->pb_watermark_dark != '' || !is_null($row->pb_watermark_dark))
+                if(!empty($row->pb_watermark_dark))
+                {
+                    $imgurl_create = Storage::url('/');
+                    $imgurl = str_replace(".com/",".com/",$imgurl_create).''.$row->pb_watermark_dark;
+
+
+                    //$img = '<img src="'.$row->pb_watermark_dark.'" height="100" width="100">';
                     $img = '<img src="'.$imgurl.'" height="100" width="100">';
                 }
                 return $img;
@@ -1667,7 +1744,7 @@ class UserDataController extends Controller
                 $btn = '<button class="btn btn-primary" onclick="EditBusinesspolitical('.$row->pb_id.')"><i class="flaticon-pencil"></i></button>';
                 return $btn;
             })
-            ->rawColumns(['PurchasePlan','action','pb_party_logo','pb_watermark','pb_left_image','pb_right_image'])
+            ->rawColumns(['PurchasePlan','action','pb_party_logo','pb_watermark','pb_left_image','pb_right_image', 'pb_party_logo_dark', 'pb_watermark_dark'])
             ->make(true);
         }
 
@@ -1677,7 +1754,7 @@ class UserDataController extends Controller
         ini_set('memory_limit', -1);
 
         $user_id = $request->user_id;
-       $business_detail = DB::table('political_business')->rightJoin('purchase_plan','political_business.pb_id','=','purchase_plan.purc_business_id')->join('users','users.id','=','political_business.user_id')->join('plan','plan.plan_id','=','purchase_plan.purc_plan_id')->select('political_business.pb_id','political_business.user_id','political_business.pb_name','political_business.pb_mobile','political_business.pb_designation','political_business.pb_party_logo','political_business.pb_watermark','political_business.pb_left_image','political_business.pb_right_image','purchase_plan.purc_plan_id','purchase_plan.purc_order_id','purchase_plan.purc_start_date','plan.plan_or_name','users.mobile','users.default_political_business_id')->where('political_business.user_id','=',$user_id)->where('political_business.pb_is_deleted','=','0')->where('purchase_plan.purc_business_type','=',2)->orderBy('purchase_plan.purc_start_date', 'DESC');
+       $business_detail = DB::table('political_business')->rightJoin('purchase_plan','political_business.pb_id','=','purchase_plan.purc_business_id')->join('users','users.id','=','political_business.user_id')->join('plan','plan.plan_id','=','purchase_plan.purc_plan_id')->select('political_business.pb_id','political_business.user_id','political_business.pb_name','political_business.pb_mobile','political_business.pb_designation','political_business.pb_party_logo','political_business.pb_watermark','political_business.pb_party_logo_dark','political_business.pb_watermark_dark','political_business.pb_left_image','political_business.pb_right_image','purchase_plan.purc_plan_id','purchase_plan.purc_order_id','purchase_plan.purc_start_date','plan.plan_or_name','users.mobile','users.default_political_business_id')->where('political_business.user_id','=',$user_id)->where('political_business.pb_is_deleted','=','0')->where('purchase_plan.purc_business_type','=',2)->orderBy('purchase_plan.purc_start_date', 'DESC');
 
 
        if ($request->ajax())
@@ -1754,6 +1831,36 @@ class UserDataController extends Controller
 
 
                     //$img = '<img src="'.$row->busi_logo.'" height="100" width="100">';
+                    $img = '<img src="'.$imgurl.'" height="100" width="100">';
+                }
+                return $img;
+            })
+            ->addColumn('pb_party_logo_dark',function($row) {
+
+                $img = '';
+                //if($row->pb_party_logo_dark != '' || !is_null($row->pb_party_logo_dark))
+                if(!empty($row->pb_party_logo_dark))
+                {
+                    $imgurl_create = Storage::url('/');
+                    $imgurl = str_replace(".com/",".com/",$imgurl_create).''.$row->pb_party_logo_dark;
+
+
+                    //$img = '<img src="'.$row->pb_party_logo_dark.'" height="100" width="100">';
+                    $img = '<img src="'.$imgurl.'" height="100" width="100">';
+                }
+                return $img;
+            })
+            ->addColumn('pb_watermark_dark',function($row) {
+
+                $img = '';
+                //if($row->pb_watermark_dark != '' || !is_null($row->pb_watermark_dark))
+                if(!empty($row->pb_watermark_dark))
+                {
+                    $imgurl_create = Storage::url('/');
+                    $imgurl = str_replace(".com/",".com/",$imgurl_create).''.$row->pb_watermark_dark;
+
+
+                    //$img = '<img src="'.$row->pb_watermark_dark.'" height="100" width="100">';
                     $img = '<img src="'.$imgurl.'" height="100" width="100">';
                 }
                 return $img;
@@ -1860,7 +1967,7 @@ class UserDataController extends Controller
                     return 'No Permission';
                 }
             })
-            ->rawColumns(['PurchasePlan','AssignDesigner','action','pb_party_logo','pb_watermark','pb_left_image','pb_right_image'])
+            ->rawColumns(['PurchasePlan','AssignDesigner','action','pb_party_logo', 'pb_party_logo_dark','pb_watermark','pb_watermark_dark','pb_left_image','pb_right_image'])
             ->make(true);
         }
     }
@@ -1894,6 +2001,8 @@ class UserDataController extends Controller
 
         $logo = $request->file('party_logo');
         $watermark = $request->file('watermark');
+        $logodark = $request->file('party_logodark');
+        $watermarkdark = $request->file('watermarkdark');
         $left_image = $request->file('left_image');
         $right_image = $request->file('right_image');
 
@@ -1905,6 +2014,8 @@ class UserDataController extends Controller
 
         $logo_path = '';
         $watermark_path = '';
+        $logodark_path = '';
+        $watermarkdark_path = '';
         $left_image_path = '';
         $right_image_path = '';
 
@@ -1915,11 +2026,22 @@ class UserDataController extends Controller
         } else {
             $watermark_path = (!empty($getBusiness)) ?  $getBusiness->pb_watermark : "";
         }
+        if($watermarkdark != null){
+            $watermarkdark_path  =  $this->uploadFile($request, null,"watermarkdark", 'political-business-img');
+        } else {
+            $watermarkdark_path = (!empty($getBusiness)) ?  $getBusiness->pb_watermark_dark : "";
+        }
 
         if($logo != null){
             $logo_path  =  $this->uploadFile($request, null,"party_logo", 'political-business-img');
         } else {
             $logo_path = (!empty($getBusiness)) ?  $getBusiness->pb_party_logo : "";
+        }
+
+        if($logodark != null){
+            $logodark_path  =  $this->uploadFile($request, null,"party_logodark", 'political-business-img');
+        } else {
+            $logodark_path = (!empty($getBusiness)) ?  $getBusiness->pb_party_logodark_dark : "";
         }
 
         if($left_image != null){
@@ -1942,6 +2064,8 @@ class UserDataController extends Controller
                 'pb_pc_id' => $party_id,
                 'pb_party_logo' => $logo_path,
                 'pb_watermark' => $watermark_path,
+                'pb_party_logo_dark' => $logodark_path,
+                'pb_watermark_dark' => $watermarkdark_path,
                 'pb_left_image' => $left_image_path,
                 'pb_right_image' => $right_image_path,
                 'pb_facebook' => $facebook,
@@ -1959,6 +2083,8 @@ class UserDataController extends Controller
                 'pb_pc_id' => $party_id,
                 'pb_party_logo' => $logo_path,
                 'pb_watermark' => $watermark_path,
+                'pb_party_logo_dark' => $logodark_path,
+                'pb_watermark_dark' => $watermarkdark_path,
                 'pb_left_image' => $left_image_path,
                 'pb_right_image' => $right_image_path,
                 'pb_facebook' => $facebook,

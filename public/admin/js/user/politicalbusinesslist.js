@@ -26,6 +26,8 @@ function DataTable()
 			// {data: 'busi_address', name: 'busi_address'},
 			{data: 'pb_party_logo', name: 'pb_party_logo'},
 			{data: 'pb_watermark', name: 'pb_watermark'},
+			{data: 'pb_party_logo_dark', name: 'pb_party_logo_dark'},
+			{data: 'pb_watermark_dark', name: 'pb_watermark_dark'},
 			{data: 'pb_left_image', name: 'pb_left_image'},
 			{data: 'pb_right_image', name: 'pb_right_image'},
 			// {data: 'source', name: 'source'},
@@ -92,8 +94,8 @@ function purchaseplanspolitical(id)
 
 function purchaseplanpolitical(){
 
-var id = $("#pur_id").val();
-var plan_id = $("#planlist").val();
+    var id = $("#pur_id").val();
+    var plan_id = $("#planlist").val();
 
 	swal({
 		title: 'Are you sure?',
@@ -188,6 +190,11 @@ function cancelplanpolitical(id){
 
 function EditBusinesspolitical(id){
 
+    $("#logo").val("");
+    $("#logodark").val("");
+    $("#watermark").val("");
+    $("#watermarkdark").val("");
+
 	$.ajaxSetup({
 		headers: {
 			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -219,7 +226,9 @@ function EditBusinesspolitical(id){
                 $('#fb_url').val(business_detail.pb_facebook);
 
                 $('#logoimg').attr('src', SPACE_STORE_URL + '' + business_detail.pb_party_logo);
+                $('#logodarkimg').attr('src', SPACE_STORE_URL + '' + business_detail.pb_party_logo_dark);
                 $('#watermarkimg').attr('src', SPACE_STORE_URL + '' + business_detail.pb_watermark);
+                $('#watermarkdarkimg').attr('src', SPACE_STORE_URL + '' + business_detail.pb_watermark_dark);
                 $('#leftimg').attr('src', SPACE_STORE_URL + '' + business_detail.pb_left_image);
                 $('#rightimg').attr('src', SPACE_STORE_URL + '' + business_detail.pb_right_image);
 
@@ -228,7 +237,9 @@ function EditBusinesspolitical(id){
 				$('#viewDetail').css('display','none');
 				$('#editBusiness').css('display','block');
 				$('#logoimg').css('display','block');
+				$('#logodarkimg').css('display','block');
 				$('#watermarkimg').css('display','block');
+				$('#watermarkdarkimg').css('display','block');
 				$('#leftimg').css('display','block');
 				$('#rightimg').css('display','block');
 
@@ -241,6 +252,12 @@ $("#logo").change(function() {
 });
 $("#watermark").change(function() {
 	readURL(this,'watermarkimg');
+});
+$("#logodark").change(function() {
+	readURL(this,'logodarkimg');
+});
+$("#watermarkdark").change(function() {
+	readURL(this,'watermarkdarkimg');
 });
 $("#left").change(function() {
 	readURL(this,'leftimg');
@@ -271,13 +288,17 @@ function back(){
 
 function UpdateBusiness(){
 	$('.loader-custom').css('display','block');
-	var thumb = $('#logo')[0].files[0];
+	var logo = $('#logo')[0].files[0];
+	var logodark = $('#logodark')[0].files[0];
 	var watermark = $('#watermark')[0].files[0];
+	var watermarkdark = $('#watermarkdark')[0].files[0];
 	var leftimage = $('#left')[0].files[0];
 	var rightimage = $('#right')[0].files[0];
 	data = new FormData();
-        data.append('party_logo', thumb);
+        data.append('party_logo', logo);
+        data.append('party_logodark', logodark);
         data.append('watermark', watermark);
+        data.append('watermarkdark', watermarkdark);
         data.append('left_image', leftimage);
         data.append('right_image', rightimage);
 		data.append('id', $('#business_id').val());
@@ -305,8 +326,12 @@ function UpdateBusiness(){
     		processData : false,
     		success: function (data)
     		{
-				alert(data.data);
 				$('.loader-custom').css('display','none');
+                $("#logo").val("");
+                $("#logodark").val("");
+                $("#watermark").val("");
+                $("#watermarkdark").val("");
+				alert(data.data);
 				//location.reload();
     		}
     	});

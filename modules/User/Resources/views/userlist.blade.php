@@ -62,9 +62,19 @@
                         <img id="logoimg" src="#" alt="your image" style="display: none;width: 100px;height:100px;"/>
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 form-group">
-                        <label for="logo" class="form-label">Upload Watermark</label>
+                        <label for="logodark" class="form-label">Upload Dark Logo</label>
+                        <input type="file" name="logodark" id="logodark" class="form-control"><br>
+                        <img id="logodarkimg" src="#" alt="your image" style="display: none;width: 100px;height:100px;"/>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 form-group">
+                        <label for="watermark" class="form-label">Upload Watermark</label>
                         <input type="file" name="watermark" id="watermark" class="form-control"><br>
                         <img id="watermarkimg" src="#" alt="your image" style="display: none;width: 100px;height:100px;"/>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 form-group">
+                        <label for="watermarkdark" class="form-label">Upload Dark Watermark</label>
+                        <input type="file" name="watermarkdark" id="watermarkdark" class="form-control"><br>
+                        <img id="watermarkdarkimg" src="#" alt="your image" style="display: none;width: 100px;height:100px;"/>
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 form-group">
                        <div class="form-group ">
@@ -140,9 +150,19 @@
                         <img id="political_logoimg" src="#" alt="your image" style="display: none;width: 100px;height:100px;"/>
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 form-group">
+                        <label for="logodark" class="form-label">Upload Dark Logo</label>
+                        <input type="file" name="logodark" id="political_logodark" class="form-control"><br>
+                        <img id="political_logodarkimg" src="#" alt="your image" style="display: none;width: 100px;height:100px;"/>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 form-group">
                         <label for="watermark" class="form-label">Upload Watermark</label>
                         <input type="file" name="logo" id="political_watermark" class="form-control"><br>
                         <img id="political_watermarkimg" src="#" alt="your image" style="display: none;width: 100px;height:100px;"/>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 form-group">
+                        <label for="watermarkdark" class="form-label">Upload Dark Watermark</label>
+                        <input type="file" name="logo" id="political_watermarkdark" class="form-control"><br>
+                        <img id="political_watermarkdarkimg" src="#" alt="your image" style="display: none;width: 100px;height:100px;"/>
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 form-group">
                         <label for="left" class="form-label">Upload Left Image</label>
@@ -226,6 +246,8 @@
                                     <th>Address</th>
                                     <th>Logo</th>
                                     <th>Watermark</th>
+                                    <th>Logo Dark</th>
+                                    <th>Watermark Dark</th>
                                     <th>Purchase Source</th>
                                     <th>Plan Name And End Date</th>
                                     <th>Purchase Plan</th>
@@ -255,6 +277,8 @@
                                     <th>Designation</th>
                                     <th>logo</th>
                                     <th>Watermark</th>
+                                    <th>logo Dark</th>
+                                    <th>Watermark Dark</th>
                                     <th>Left Image</th>
                                     <th>Right Image</th>
                                     <th>Purchase Date</th>

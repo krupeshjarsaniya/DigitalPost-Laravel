@@ -598,6 +598,10 @@ class Helper extends Model
                 [
                     'name' => 'source_image_file',
                     'contents' => fopen($file, 'r')
+                ],
+                [
+                    'name' => 'preview',
+                    'contents' => true
                 ]
             ],
             'headers' => [

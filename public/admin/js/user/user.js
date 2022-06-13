@@ -433,6 +433,8 @@ function viewDetail(id){
 	    					 '<td>'+business_detail[i].busi_address+'</td>'+
 							 '<td> <img src="'+SPACE_STORE_URL+''+business_detail[i].busi_logo+'" height="100" width="100"></td>'+
 							 '<td> <img src="'+SPACE_STORE_URL+''+business_detail[i].watermark_image+'" height="100" width="100"></td>'+
+							 '<td> <img src="'+SPACE_STORE_URL+''+business_detail[i].busi_logo_dark+'" height="100" width="100"></td>'+
+							 '<td> <img src="'+SPACE_STORE_URL+''+business_detail[i].watermark_image_dark+'" height="100" width="100"></td>'+
 							 '<td>'+source+'</td>'+
 							 '<td>'+plan_name_end_date+'</td>'+
 							'<td>'+purchaseornotstring+'</td>'+
@@ -452,6 +454,8 @@ function viewDetail(id){
 	    					 '<td>'+business_detail[i].busi_address+'</td>'+
 							 '<td> <img src="'+SPACE_STORE_URL+''+business_detail[i].busi_logo+'" height="100" width="100"></td>'+
 							 '<td> <img src="'+SPACE_STORE_URL+''+business_detail[i].watermark_image+'" height="100" width="100"></td>'+
+							 '<td> <img src="'+SPACE_STORE_URL+''+business_detail[i].busi_logo_dark+'" height="100" width="100"></td>'+
+							 '<td> <img src="'+SPACE_STORE_URL+''+business_detail[i].watermark_image_dark+'" height="100" width="100"></td>'+
 							 '<td>'+source+'</td>'+
 							 '<td>'+plan_name_end_date+'</td>'+
 							'<td>'+purchaseornotstring+'</td>'+
@@ -921,12 +925,16 @@ function EditBusiness(id){
                 $('#bcategory_list').val(business_detail.business_category);
                 $('#logoimg').attr('src',SPACE_STORE_URL+''+business_detail.busi_logo);
                 $('#watermarkimg').attr('src',SPACE_STORE_URL+''+business_detail.watermark_image);
+				$('#logodarkimg').attr('src',SPACE_STORE_URL+''+business_detail.busi_logo_dark);
+                $('#watermarkdarkimg').attr('src',SPACE_STORE_URL+''+business_detail.watermark_image_dark);
 
 				$('.loader-custom').css('display','none');
 				$('#viewDetail').css('display','none');
 				$('#editBusiness').css('display','block');
 				$('#logoimg').css('display','block');
 				$('#watermarkimg').css('display','block');
+				$('#logodarkimg').css('display','block');
+				$('#watermarkdarkimg').css('display','block');
 				$('#viewUserlist').hide();
 
 			}
@@ -939,6 +947,8 @@ function showBusiness()
 	$('#editBusiness').css('display','block');
 	$('#logoimg').css('display','block');
 	$('#watermarkimg').css('display','block');
+	$('#logodarkimg').css('display','block');
+	$('#watermarkdarkimg').css('display','block');
 	$('#editBusinessName').text('Add Business');
 	$('#viewUserlist').hide();
 }
@@ -947,8 +957,16 @@ $("#logo").change(function() {
 	readURL1(this);
 });
 
-$("#watermar").change(function() {
+$("#watermark").change(function() {
 	readURL1Watermark(this);
+});
+
+$("#logodark").change(function() {
+	readURL1Dark(this);
+});
+
+$("#watermarkdark").change(function() {
+	readURL1WatermarkDark(this);
 });
 
 function readURL1(input) {
@@ -981,6 +999,36 @@ function readURL1Watermark(input) {
     }
 }
 
+function readURL1Dark(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#logodarkimg')
+                .attr('src', e.target.result)
+                .width(150)
+                .height(200);
+        };
+		$('#logodarkimg').css('display','block');
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function readURL1WatermarkDark(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#watermarkdarkimg')
+                .attr('src', e.target.result)
+                .width(150)
+                .height(200);
+        };
+		$('#watermarkdarkimg').css('display','block');
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
 function back(){
 	$('#viewDetail').css('display','block');
 	$('#viewUserlist').css('display','none');
@@ -991,11 +1039,15 @@ function back(){
 
 function UpdateBusiness(){
     $('.loader-custom').css('display','block');
-    var thumb = $('#logo')[0].files[0];
+    var logo = $('#logo')[0].files[0];
     var watermark = $('#watermark')[0].files[0];
+	var logodark = $('#logodark')[0].files[0];
+    var watermarkdark = $('#watermarkdark')[0].files[0];
     data = new FormData();
-        data.append('logo', thumb);
+        data.append('logo', logo);
         data.append('watermark', watermark);
+		data.append('logodark', logodark);
+        data.append('watermarkdark', watermarkdark);
         data.append('business_id', $('#business_id').val());
         data.append('user_id', $('#user_id').val());
         data.append('business_name', $('#business_name').val());
@@ -1138,8 +1190,14 @@ function restBusinessForm()
     $('#business_mobile_second').val('');
     $('#business_website').val('');
     $('#business_address').val('');
-
+	$('#logo').val("");
+	$('#logodark').val("");
+	$('#watermark').val("");
+	$('#watermarkdark').val("");
     $("#logoimg").attr('src', '#');
+    $("#logodarkimg").attr('src', '#');
+	$("#watermarkimg").attr('src', '#');
+    $("#watermarkdarkimg").attr('src', '#');
 }
 
 function removeBusiness(id, userId)

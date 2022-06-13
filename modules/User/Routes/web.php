@@ -302,5 +302,8 @@ Route::prefix('download-limit')->middleware('adminauth')->group(function() {
 Route::prefix('bg-remove-request')->middleware('adminauth')->group(function() {
 	Route::get('/', 'BGRemoveRequestController@index')->name('bgRemoveRequest');
 	Route::get('/list', 'BGRemoveRequestController@list')->name('bg-request-list');
+	Route::post('/edit', 'BGRemoveRequestController@edit')->name('bg-request-edit');
+	Route::post('/updateNormalBusiness', 'BGRemoveRequestController@updateNormalBusiness')->name('bg-request-update-normal');
+	Route::post('/updatePoliticalBusiness', 'BGRemoveRequestController@updatePoliticalBusiness')->name('bg-request-update-political');
 	Route::post('/remove', 'BGRemoveRequestController@remove')->name('bg-request-remove');
 });
