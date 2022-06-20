@@ -24,10 +24,10 @@ class DashboardController extends Controller
       //dd($activeplan);
        //$activeplan = DB::table('users')->where('purchase_plan.purc_is_cencal','=',0)->Where('purchase_plan.purc_is_expire','=',0)->Join('purchase_plan','purchase_plan.purc_user_id','=','users.id')->join('business','purchase_plan.purc_business_id','=','business.busi_id')->join('plan','purchase_plan.purc_plan_id','=','plan.plan_id')->select('users.*','business.busi_name','plan.plan_name','purchase_plan.purc_start_date')->orderBy('purchase_plan.purc_id', 'DESC')->get();
        $activeplan = "";
-     
+
         //$users = User::where('id', '!=', 1)->get();
         // $users = User::all();
-        // $totalusers = $users->count(); 
+        // $totalusers = $users->count();
 
         $todayusers = User::whereDate('created_at', Carbon::now())->count();
         $totalusers = User::count();
@@ -92,13 +92,19 @@ class DashboardController extends Controller
     public function updateCredit(Request $request)
     {
         $id = $request->id;
-     
-       
+
+
         DB::table('setting')
           ->where('setting_id', 1)
           ->update(['credit' => $request->amount]);
 
         return response()->json(['status'=>true,'message'=>'Credit update successfully']);
+    }
+
+    public function registerCredit(Request $request) {
+        DB::table('setting')
+          ->update(['register_credit' => $request->amount]);
+        return response()->json(['status'=>true,'message'=>'Credit added successfully']);
     }
 
     public function updateDays(Request $request)

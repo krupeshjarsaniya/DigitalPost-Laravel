@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use App\User;
+use App\BGCreditPlan;
 
 class UserController extends Controller
 {
@@ -15,8 +16,9 @@ class UserController extends Controller
      */
     public function index()
     {
+        $bg_remove_plans = BGCreditPlan::where('status', 'UNBLOCK')->get();
         $designers = User::where('user_role', 4)->where('status', 0)->get();
-        return view('user::userlist')->with('designers', $designers);
+        return view('user::userlist')->with('designers', $designers)->with('bg_remove_plans', $bg_remove_plans);
     }
 
     /**

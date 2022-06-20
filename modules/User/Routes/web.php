@@ -155,6 +155,8 @@ Route::prefix('user')->middleware('auth','adminauth')->group(function() {
 
 	Route::post('purchase-plan', 'UserDataController@purchasePlan');
 
+	Route::post('purchase-bg-plan', 'UserDataController@purchaseBGPlan');
+
 	Route::post('cancel-plan', 'UserDataController@cencalPurchasedPlan');
 
 	Route::post('addframe', 'UserDataController@addFrame');

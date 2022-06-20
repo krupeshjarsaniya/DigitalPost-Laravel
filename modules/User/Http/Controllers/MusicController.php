@@ -61,6 +61,7 @@ class MusicController extends Controller
         $rules = [
             'category_id' => 'required',
             'name' => 'required',
+            'duration' => 'required',
             'language_id' => 'required',
             'image' => 'required|image',
             'audio' => 'required|mimes:application/octet-stream,audio/mpeg,mpga,mp3,wav',
@@ -68,6 +69,7 @@ class MusicController extends Controller
         $message = [
             'category_id.required' => 'Category ID Is Required',
             'name.required' => 'Name Is Required',
+            'duration.required' => "Duration Is Required",
             'language_id.required' => "Language Is Required",
             'image.required' => "Image Is Required",
             'image.image' => "Only Image Allowed",
@@ -91,6 +93,7 @@ class MusicController extends Controller
         $newMusic->category_id = $request->category_id;
         $newMusic->name = $request->name;
         $newMusic->language_id = $request->language_id;
+        $newMusic->duration = $request->duration;
         $newMusic->image = $image;
         $newMusic->audio = $audio;
         if(isset($request->order_number) && $request->order_number != '' && $request->order_number > 0) {
@@ -115,6 +118,7 @@ class MusicController extends Controller
         $rules = [
             'id' => 'required',
             'name' => 'required',
+            'duration' => 'required',
             'language_id' => 'required',
             'image' => 'image',
             'audio' => 'mimes:application/octet-stream,audio/mpeg,mpga,mp3,wav',
@@ -123,6 +127,7 @@ class MusicController extends Controller
         $messages = [
             'id.required' => 'ID Is Required',
             'name.required' => 'Name Is Required',
+            'duration.required' => 'Duration Is Required',
             'language.required' => 'Language Is Required',
             'image.image' => "Only Image Allowed",
             'audio.mimes' => 'Only Audio Allowed'
@@ -144,6 +149,7 @@ class MusicController extends Controller
 
         $music->name = $request->name;
         $music->language_id = $request->language_id;
+        $music->duration = $request->duration;
         if($request->hasFile('image')) {
             $image = $this->uploadFile($request, null, 'image', 'music/image');
             $music->image = $image;

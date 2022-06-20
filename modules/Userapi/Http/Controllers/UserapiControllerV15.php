@@ -124,6 +124,13 @@ class UserapiControllerV15 extends Controller
             }
             $referral_by = $checkReferralCode->id;
         }
+
+        $settingData = DB::table('setting')->first();
+        $register_credit = 0;
+        if (!empty($settingData)) {
+            $register_credit = $settingData->register_credit;
+        }
+
         $user = new User;
         $user->name = $name;
         $user->country_code = $country_code;
@@ -132,6 +139,7 @@ class UserapiControllerV15 extends Controller
         $user->used_referral_code = $referral_code;
         $user->referral_by = $referral_by;
         $user->password = bcrypt($name . '@123');
+        $user->bg_credit = $register_credit;
         $user->save();
         return response()->json(['status' => true, 'message' => 'OTP sent to you mobile']);
     }
@@ -464,7 +472,7 @@ class UserapiControllerV15 extends Controller
 
         $name = $input['name'];
         $email = $input['email'];
-        $mobile = $input['mobile'];
+        $mobile = isset($input['mobile']) ? $input['mobile'] : "";
         $mobile_second = (isset($input['mobile_second'])) ? $input['mobile_second'] : '';
         $hashtag = (isset($input['hashtag'])) ? $input['hashtag'] : '';
         $website = $input['website'];
@@ -731,7 +739,7 @@ class UserapiControllerV15 extends Controller
 
         $name = $input['name'];
         $email = $input['email'];
-        $mobile = $input['mobile'];
+        $mobile = isset($input['mobile']) ? $input['mobile'] : '';
         $website = $input['website'];
         $address = $input['address'];
         $mobile_second = (isset($input['mobile_second'])) ? $input['mobile_second'] : '';
@@ -2486,8 +2494,8 @@ class UserapiControllerV15 extends Controller
                 $business = new Business();
                 $business->busi_name = 'Business Name';
                 $business->user_id = $user_id;
-                $business->busi_email = 'writeyouremail@gmail.com';
-                $business->busi_mobile = '8888888888';
+                $business->busi_email = '';
+                $business->busi_mobile = '';
                 $business->save();
                 $business_id = $business->id;
 
@@ -2600,8 +2608,8 @@ class UserapiControllerV15 extends Controller
                 $business = new PoliticalBusiness();
                 $business->pb_name = 'Person name';
                 $business->user_id = $user_id;
-                $business->pb_designation = 'Designation Here';
-                $business->pb_mobile = '8888888888';
+                $business->pb_designation = '';
+                $business->pb_mobile = '';
                 $business->pb_pc_id = 1;
                 $business->save();
                 $business_id = $business->id;
@@ -4343,8 +4351,8 @@ class UserapiControllerV15 extends Controller
         }
 
         $name = $input['name'];
-        $designation = $input['designation'];
-        $mobile = $input['mobile'];
+        $designation = isset($input['designation']) ? $input['designation'] : "";
+        $mobile = isset($input['mobile']) ? $input['mobile'] : "";
         $pb_mobile_second = (isset($input['mobile_second'])) ? $input['mobile_second'] : '';
         $hashtag = (isset($input['hashtag'])) ? $input['hashtag'] : '';
         $party_id = $input['party_id'];
@@ -4502,8 +4510,8 @@ class UserapiControllerV15 extends Controller
         $business_id = $input['id'];
 
         $name = $input['name'];
-        $designation = $input['designation'];
-        $mobile = $input['mobile'];
+        $designation = isset($input['designation']) ? $input['designation'] : '';
+        $mobile = isset($input['mobile']) ? $input['mobile'] : '';
         $pb_mobile_second = (isset($input['mobile_second'])) ? $input['mobile_second'] : '';
         $hashtag = (isset($input['hashtag'])) ? $input['hashtag'] : '';
         $party_id = $input['party_id'];
@@ -6411,13 +6419,13 @@ class UserapiControllerV15 extends Controller
                         $business_field = BusinessField::where('id', $image->image_for)->first();
                         if($business_field->field_key == 'busi_logo' || $business_field->field_key == 'watermark_image' || $business_field->field_key == 'pb_party_logo' || $business_field->field_key == 'pb_watermark') {
                             $image_path = "";
-                            if($frame->frame_mode == 'light') {
+                            if($frame->frame_mode == 'dark') {
                                 $image_path = $business[$business_field->field_key];
                                 if(empty($image_path)) {
                                     $image_path = $business[$business_field->field_key . '_dark'];
                                 }
                             }
-                            if($frame->frame_mode == 'dark') {
+                            if($frame->frame_mode == 'light') {
                                 $image_path = $business[$business_field->field_key . '_dark'];
                                 if(empty($image_path)) {
                                     $image_path = $business[$business_field->field_key];
@@ -6720,12 +6728,6 @@ class UserapiControllerV15 extends Controller
             if (empty($business)) {
                 return response()->json(['status' => false, 'message' => 'Business not found']);
             }
-        }
-
-        $now = Carbon::now();
-        $oldData = UserDownloadHistory::where('user_id', $user_id)->whereDate('created_at', '<', $now)->count();
-        if ($oldData > 0) {
-            UserDownloadHistory::where('user_id', $user_id)->whereDate('created_at', '<', $now)->delete();
         }
 
         $limit = new UserDownloadHistory;

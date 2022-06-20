@@ -86,6 +86,36 @@
         </div>
     </div>
 
+    <div class="col-md-12" id="registerCreditDiv">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title" id="country-title">Update Register Credit</div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12 col-lg-12">
+                        <form id="registerCreditform" name="registerCreditform">
+                            @csrf
+                            <div class="row">
+                            	<div class="col-md-4">
+                        		  	<div class="form-group">
+		                            	<input type="hidden" name="creditid" id="creditid" value="{{ $credit->setting_id }}">
+		                                <label for="registerCredit">Credit Value</label>
+		                                <input type="text" class="form-control" id="registerCredit" placeholder="Enter Register Credit" value="<?php echo $credit->register_credit; ?>">
+		                            </div>
+
+                            	</div>
+                            	<div class="col-md-2 mt-1 form-group">
+                                    <button type="button" onclick="registerCreditupdate('{{ $credit->credit }}')" class="btn mt-4 btn-primary">Update</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="col-md-12" id="referral">
         <div class="card">
             <div class="card-header">
@@ -153,7 +183,7 @@
                                 </div>
                             </div>
                         </form>
-                        
+
                     </div>
                 </div>
             </div>
@@ -185,7 +215,7 @@
                                 </div>
                             </div>
                         </form>
-                        
+
                     </div>
                 </div>
             </div>
@@ -214,7 +244,7 @@
                                 </div>
                             </div>
                         </form>
-                        
+
                     </div>
                 </div>
             </div>

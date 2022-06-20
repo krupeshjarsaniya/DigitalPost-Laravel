@@ -2,6 +2,8 @@
 
 namespace Modules\User\Http\Controllers;
 
+use App\BGCreditPlan;
+use App\BGCreditPlanHistory;
 use App\User;
 use App\Business;
 use Illuminate\Http\Request;
@@ -503,10 +505,20 @@ class UserDataController extends Controller
         //     $frame->frame_url = $frame->frame_url;
         // }
 
+        $plan_history = BGCreditPlanHistory::where('user_id','=',$user_id)->with('plan')->orderBy('created_at','desc')->get();
+
         $business_category = DB::table('business_category')->where('is_delete',0)->get();
 
 
-        return response()->json(['status'=>true,'user_detail'=>$user_details,'business_detail'=>$business_data,'frameList' => $frameList, 'auth'=> Auth::user()->user_role, 'business_category'=>$business_category]);
+        return response()->json([
+            'status'=>true,
+            'user_detail'=>$user_details,
+            'business_detail'=>$business_data,
+            'frameList' => $frameList,
+            'auth'=> Auth::user()->user_role,
+            'business_category'=>$business_category,
+            'plan_history'=>$plan_history
+        ]);
     }
 
     function addDesigner(Request $request) {
@@ -921,36 +933,37 @@ class UserDataController extends Controller
         return response()->json(['status'=>true,'message'=>'Purchase Plan successfully Added']);
     }
 
+    public function purchaseBGPlan(Request $request){
+        $user_id = $request->user_id;
+        $plan_id = $request->plan_id;
+        $userData = User::find($user_id);
+        if(empty($userData)){
+            return response()->json(['status'=>false,'message'=>'User not found']);
+        }
+        $plan = BGCreditPlan::find($plan_id);
+        if(empty($plan)){
+            return response()->json(['status'=>false,'message'=>'Plan not found']);
+        }
+
+        $old_credit = $userData->bg_credit;
+        $new_credit = $old_credit + $plan->bg_credit;
+
+        $userData->bg_credit = $new_credit;
+        $userData->save();
+
+        $plan_price = $plan->price;
+        $plan_bg_credit = $plan->bg_credit;
+        $planHistory = new BGCreditPlanHistory;
+        $planHistory->user_id = $user_id;
+        $planHistory->plan_id = $plan_id;
+        $planHistory->plan_price = $plan_price;
+        $planHistory->plan_bg_credit = $plan_bg_credit;
+        $planHistory->save();
+        return response()->json(['status'=>true,'message'=>'Purchase Plan successfully Added']);
+
+    }
+
     public function cencalPurchasedPlan(Request $request){
-
-        // $user_id = Business::where('busi_id','=',$request->id)->select('user_id')->first();
-        // $lastInsertedId = DB::table('purchase_plan')->where('purc_user_id','=',$user_id->user_id)->where('purc_business_id','=',$request->id)->where('purc_business_type', 1)->select('purc_id')->first();
-        // $purchasebeforeedata = DB::table('purchase_plan')->where('purc_user_id','=',$user_id->user_id)->where('purc_business_id','=',$request->id)->where('purc_business_type', 1)->first();
-
-        // $fromuserOrAdmin = 'FromAdmin';
-        // $adminOruser = 'admin';
-
-        // if(isset($request->from) && $request->from == 'expire_plan_list'){
-        //     $fromuserOrAdmin = 'FromUser';
-        //     $adminOruser = 'user';
-        // }
-
-        // $values = array(
-        //     'pph_purc_id' => (is_null($purchasebeforeedata)) ? $lastInsertedId->purc_id : $purchasebeforeedata->purc_id,
-        //     'pph_purc_user_id' => $user_id->user_id,
-        //     'pph_purc_order_id'=>  $fromuserOrAdmin,
-        //     'pph_purc_business_id'=>(is_null($purchasebeforeedata)) ? $business_id : $purchasebeforeedata->purc_business_id,
-        //     'pph_purc_business_type'=> 1,
-        //     'pph_purc_plan_id'=> (is_null($purchasebeforeedata)) ? $request->plan_id : $purchasebeforeedata->purc_plan_id,
-        //     'pph_purc_start_date' => (is_null($purchasebeforeedata)) ? $start_date : $purchasebeforeedata->purc_start_date,
-        //     'pph_purc_end_date' => (is_null($purchasebeforeedata)) ? $end_date : $purchasebeforeedata->purc_end_date,
-        //     'pph_purc_is_cencal' => (is_null($purchasebeforeedata)) ? 1 : $purchasebeforeedata->purc_is_cencal,
-        //     'pph_purc_is_expire' => (is_null($purchasebeforeedata)) ? 1 : $purchasebeforeedata->purc_is_expire,
-        //     'pph_purchase_id' =>  $adminOruser,
-        //     'pph_device' =>  $adminOruser
-        // );
-
-        // DB::table('purchase_plan_history')->insert($values);
 
        Purchase::where('purc_business_id', $request->id)->where('purc_business_type', 1)->update(array(
            'purc_plan_id' => 3,
@@ -986,9 +999,6 @@ class UserDataController extends Controller
        $image = (isset($temp['frame'])) ? $temp['frame'] : 'undefined';
 
         if($image != 'undefined'){
-           /*$filename = Str::random(7).time().'.'.$image->getClientOriginalExtension();
-           $image->move(public_path('images/frames'), $filename);
-           $path = '/public/images/frames/'.$filename;*/
            $path = $this->uploadFile($request, null, 'frame', 'frame-img');
 
         } else {
@@ -999,7 +1009,6 @@ class UserDataController extends Controller
             ['frame_url' => $path, 'user_id' => $userid, 'business_id' => $business_id, 'business_type' => $business_type]
         );
 
-     // return view('festival::index'); //response()->json(['status'=>true,'message'=>'Festival successfully added']);
      return response()->json(['status' => true,'message'=>'Frame successfully added']);
     }
 

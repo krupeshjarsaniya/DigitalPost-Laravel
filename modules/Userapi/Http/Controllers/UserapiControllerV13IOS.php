@@ -1786,22 +1786,26 @@ class UserapiControllerV13IOS extends Controller
             $photo = DB::table('custom_cateogry_data')->where('custom_cateogry_id','=',$greeting->custom_cateogry_id)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderBy('custom_cateogry_data_id','DESC')->limit(10)->get();
 
             $temp1['id'] = $greeting->custom_cateogry_id;
-            $temp1['title'] = $greeting->name;
+            $temp1['fest_name'] = $greeting->name;
             // $temp1['type'] = $greeting[$i]['new_cat'];
 
             $temp1['img_url'] = array();
             foreach($photo as $ph_value)
             {
-                $data_ph1['custom_cateogry_id'] = !empty($ph_value->custom_cateogry_id) ? strval($ph_value->custom_cateogry_id) :0;
-                $data_ph1['banner_image'] = !empty($ph_value->banner_image) ?Storage::url($ph_value->banner_image) : "";
-                $data_ph1['image'] = !empty($ph_value->image_one) ?Storage::url($ph_value->image_one) : "";
-                $data_ph1['images']['image_one'] = !empty($ph_value->image_one) ?Storage::url($ph_value->image_one) : "";
-                $data_ph1['images']['position_x'] = $ph_value->position_x;
-                $data_ph1['images']['position_y'] = $ph_value->position_y;
-                $data_ph1['images']['img_position_x'] = $ph_value->img_position_x;
-                $data_ph1['images']['img_position_y'] = $ph_value->img_position_y;
-                $data_ph1['images']['img_height'] = $ph_value->img_height;
-                $data_ph1['images']['img_width'] = $ph_value->img_width;
+                // $data_ph1['custom_cateogry_id'] = !empty($ph_value->custom_cateogry_id) ? strval($ph_value->custom_cateogry_id) :0;
+                // $data_ph1['banner_image'] = !empty($ph_value->banner_image) ?Storage::url($ph_value->banner_image) : "";
+                $data_ph1['fest_image'] = !empty($ph_value->banner_image) ?Storage::url($ph_value->banner_image) : "";
+                $data_ph1['image_type'] = strval($ph_value->image_type);
+                $data_ph1['post_id'] = strval($ph_value->custom_cateogry_data_id);
+                $data_ph1['post_category_id'] = strval($ph_value->custom_cateogry_id);
+
+                // $data_ph1['images']['image_one'] = !empty($ph_value->image_one) ?Storage::url($ph_value->image_one) : "";
+                // $data_ph1['images']['position_x'] = $ph_value->position_x;
+                // $data_ph1['images']['position_y'] = $ph_value->position_y;
+                // $data_ph1['images']['img_position_x'] = $ph_value->img_position_x;
+                // $data_ph1['images']['img_position_y'] = $ph_value->img_position_y;
+                // $data_ph1['images']['img_height'] = $ph_value->img_height;
+                // $data_ph1['images']['img_width'] = $ph_value->img_width;
                 array_push($temp1['img_url'],$data_ph1);
             }
 
@@ -1833,7 +1837,6 @@ class UserapiControllerV13IOS extends Controller
         }*/
 
         $politicalCurrentBusinessDetails = $this->getPoliticalCurrentBusiness($userdata->default_political_business_id, $user_id);
-        $retrunData;
         if($politicalCurrentBusinessDetails[0]){
             $retrunData = $politicalCurrentBusinessDetails[0];
         } else {
@@ -1843,7 +1846,7 @@ class UserapiControllerV13IOS extends Controller
         if(!empty($festivals) || !empty($incedents)){
             return response()->json(['slider' => $advetisement, 'festival' => $festival,'cateogry'=>$incedent, 'business_category'=>$buss_category,'current_business'=>$updatedCurrentBusinessDetails,'premium' => $ispreminum,'current_date' => $currnt_date, 'logout' => $logout,'frameList' => $frameList,'share_message' => $sharemsg ,'currntbusiness_photos' => (object)$currntbusiness_photos,'new_category' => $new_category_dataArray, 'greetings' => $new_category_data_greetingsArray, 'status' => true,'user_language'=>$user_language_check,'message'=>'List of all festival','politicalCurrentBusinessDetails' => $retrunData,'isPoliticalPrimium'=>$politicalCurrentBusinessDetails[1], 'popup' => $popupData,'renewalPopup' => $renewalPopup, 'referral_code' => $referral_code]);
         } else {
-            return response()->json(['status' => fasle,'message'=>'There is no festival in this month','current_date' => $currnt_date]);
+            return response()->json(['status' => false,'message'=>'There is no festival in this month','current_date' => $currnt_date]);
         }
     }
 

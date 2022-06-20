@@ -20,6 +20,8 @@ Route::middleware('adminauth')->group(function() {
 Route::prefix('dashboard')->middleware('auth','adminauth')->group(function() {
     Route::get('/setting', 'DashboardController@Setting')->name('setting');
 
+    Route::POST('/register-credit', 'DashboardController@registerCredit');
+
     Route::POST('/update-credit', 'DashboardController@updateCredit');
 
     Route::POST('/update-days', 'DashboardController@updateDays');
@@ -27,9 +29,9 @@ Route::prefix('dashboard')->middleware('auth','adminauth')->group(function() {
     Route::POST('/update-referral-image', 'DashboardController@updateReferralImage');
 
     Route::POST('/saveprivacy', 'DashboardController@saveprivacy');
-    
+
     Route::POST('/saveterms', 'DashboardController@saveterms');
-    
+
     Route::POST('/savereferralpolicy', 'DashboardController@savereferralpolicy');
 
     Route::POST('/update-whatsapp', 'DashboardController@updateWhatapp');

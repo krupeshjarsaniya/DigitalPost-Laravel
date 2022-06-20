@@ -73,9 +73,41 @@ function getPurchaseTable() {
 			{data: 'busi_name', name: 'busi_name'},
 			{data: 'plan_name', name: 'plan_name'},
 			{data: 'purc_start_date', name: 'purc_start_date'},
-			
+
 	    ]
 	});
+}
+
+function registerCreditupdate() {
+
+        $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }});
+
+        var amount = $('#registerCredit').val();
+        if(amount != ''){
+            $('.loader-custom').css('display','block');
+            $.ajax({
+                type:'POST',
+                url:APP_URL+"/dashboard/register-credit",
+                data: {
+                    "amount":amount,
+                },
+                success: function (data)
+                {
+                    if (data.status)
+                    {
+                        location.reload();
+
+                    }
+                    $('.loader-custom').css('display','none');
+                }
+            });
+        } else {
+            alert('Fill the credit');
+        }
+
 }
 
 function creditupdate(id) {
@@ -100,7 +132,7 @@ function creditupdate(id) {
 				if (data.status)
 				{
 				    location.reload();
-				  
+
 				}
 				$('.loader-custom').css('display','none');
 			}
@@ -108,7 +140,7 @@ function creditupdate(id) {
 	} else {
 		alert('Fill the credit');
 	}
-	
+
 }
 
 function daysUpdate() {
@@ -138,7 +170,7 @@ function daysUpdate() {
 			if (data.status)
 			{
 				location.reload();
-				
+
 			}
 			$('.loader-custom').css('display','none');
 		}
@@ -167,12 +199,12 @@ function Whatsappupdate(id) {
 			if (data.status)
 			{
 				location.reload();
-				
+
 			}
 			$('.loader-custom').css('display','none');
 		}
 	});
-	
+
 }
 
 function saveprivacy() {
@@ -192,7 +224,7 @@ function saveprivacy() {
 
 			$('.loader-custom').css('display','none');
 			alert(response.message);
-			
+
 		}
 	});
 }
@@ -260,7 +292,7 @@ function referralUpdate() {
 			if (data.status)
 			{
 				location.reload();
-				
+
 			}
 			$('.loader-custom').css('display','none');
 		}
@@ -270,12 +302,12 @@ function referralUpdate() {
 // function viewprivacy() {
 
 // 	alert(document.location.origin);
-	
+
 // 	// window.location.href = document.location.origin+'/privacypolicy';
 // }
 
 // function viewtermconditions() {
-	
+
 
 // 	window.location.href = document.location.origin+'/termsandcondition';
 // }

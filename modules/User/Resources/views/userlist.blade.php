@@ -18,7 +18,7 @@
     </ul>
 </div>
 <div class="row">
-    
+
     <div class="col-md-12" id="editBusiness" style="display: none;">
         <div class="card">
             <div class="card-header">
@@ -80,7 +80,7 @@
                        <div class="form-group ">
                           <label for="sel1">Select Category:</label>
                           <select class="form-control" id="bcategory_list" name="business_category">
-                            
+
                           </select>
                         </div>
                     </div>
@@ -122,7 +122,7 @@
                           <select class="form-control" id="political_list" name="political_category">
                             <option value="" selected="selected" disabled>Select Category</option>
                           </select>
-                        </div>   
+                        </div>
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 form-group">
                         <lable for="fb_url">Facebook</lable>
@@ -174,7 +174,7 @@
                         <input type="file" name="logo" id="political_right" class="form-control"><br>
                         <img id="political_rightimg" src="#" alt="your image" style="display: none;width: 100px;height:100px;"/>
                     </div>
-		            
+
                 </div>
             </div>
             <div class="card-action">
@@ -293,7 +293,7 @@
                     </div>
                 </div>
             </div>
-            
+
         </div>
         <div class="card" id="frames-for-business">
             <div class="card-header">
@@ -323,7 +323,7 @@
                     <div class="col-md-3">
                         <label for="businessid" class="form-label">Select Business</label>
                         <select name="businessid" id="businessid" class="form-control">
-                        
+
                         </select>
                     </div>
                     <div class="col-md-4">
@@ -339,6 +339,52 @@
                                 <th>Business</th>
                                 <th>Frame</th>
                                 <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            <div class="card-action text-right">
+                <button class="btn btn-danger" type="button" onclick="backtolist()">Back</button>
+            </div>
+        </div>
+        <div class="card" id="frames-for-business">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card-title" id="country-title">BG Plans</div>
+                    </div>
+                    <div class="col-md-6">
+                        <button class="btn btn-danger float-right" type="button" onclick="backtolist()">Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center card-body mt-3 mt-2"></div>
+                <div class="row form-group">
+
+                    <div class="col-md-3">
+                        <label for="plan_id" class="form-label">Select Plan</label>
+                        <select name="plan_id" id="plan_id" class="form-control">
+                            <option value="">Select Plan</option>
+                            @foreach ($bg_remove_plans as $plan)
+                                <option value="{{ $plan->id }}">{{ $plan->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-primary" onclick="purchaseBGPlan()" style="margin-top: 5%;">Purchase</button>
+                    </div>
+                </div>
+                    <hr>
+                <div class="table-responsive">
+                    <table class="display table table-striped table-hover text-center" id="bg-plan-list">
+                        <thead>
+                            <tr>
+                                <th>Plan Name</th>
+                                <th>Pirce</th>
+                                <th>Credit</th>
+                                <th>Date</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -431,7 +477,7 @@
               <div class="form-group ">
                 <label for="sel1">Select Plan:</label>
                 <select class="form-control" id="planlist">
-                  
+
                 </select>
               </div>
           </div>
@@ -462,7 +508,7 @@
               <div class="form-group ">
                 <label for="sel1">Select Plan:</label>
                 <select class="form-control" id="politicalplanlist">
-                  
+
                 </select>
               </div>
           </div>

@@ -327,6 +327,7 @@ function viewDetail(id){
 	$('#business-table').DataTable().clear().destroy();
 	$("#political-business-table").dataTable().fnDestroy()
 	$('#frame-list').DataTable().clear().destroy();
+	$('#bg-plan-list').DataTable().clear().destroy();
 	$.ajaxSetup({
 	headers: {
 	    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -504,6 +505,19 @@ function viewDetail(id){
 					}
 				});
 			}
+
+            var plan_history_row = '';
+            respose.plan_history.forEach(element => {
+                var date = new Date(element.created_at).toLocaleDateString();
+                plan_history_row += `<tr>
+                    <td>${element.plan.name}</td>
+                    <td>${element.plan_price}</td>
+                    <td>${element.plan_bg_credit}</td>
+                    <td>${date}</td>
+                    </tr>`;
+            });
+            $('#bg-plan-list tbody').html(plan_history_row);
+			$('#bg-plan-list').DataTable();
 
 			$('.loader-custom').css('display','none');
 		//	$('#business-table').DataTable();
@@ -696,6 +710,49 @@ function purchaseplans(id)
     $('#myPlan').modal('show');
 }
 
+function purchaseBGPlan() {
+    var plan_id = $("#plan_id").val();
+    var user_id = current_userid;
+    swal({
+		title: 'Are you sure?',
+		text: "Purchase this plan",
+		type: 'warning',
+		buttons:{
+			confirm: {
+				text : 'Yes',
+				className : 'btn btn-success'
+			},
+			cancel: {
+				visible: true,
+				className: 'btn btn-danger'
+			}
+		}
+	}).then((result) => {
+		if (result)
+		{
+            $('.loader-custom').css('display','block');
+			$.ajaxSetup({
+			headers: {
+			    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			}});
+
+			$.ajax({
+				type:'POST',
+				url:APP_URL+"/user/purchase-bg-plan",
+				data: {"user_id":user_id,'plan_id':plan_id},
+				success: function (data)
+				{
+					if (data.status)
+					{
+                        viewDetail(current_userid)
+					}
+					$('.loader-custom').css('display','none');
+				}
+			});
+        }
+    });
+}
+
 function purchaseplan(){
 
 var id = $("#pur_id").val();
@@ -732,14 +789,8 @@ var plan_id = $("#planlist").val();
 				{
 					if (data.status)
 					{
-					    //location.reload();
 					    $('#myPlan').modal('hide');
-         //                $("#pr_"+id).attr('onclick', 'cancelplan(this,'+id+')');
-         //                $("#pr_"+id).text('cancel');
-         //                $("#pr_"+id).removeClass('btn-primary');
-         //                $("#pr_"+id).addClass('btn-danger');
-         					viewDetail(current_userid)
-
+                        viewDetail(current_userid)
 					}
 					$('.loader-custom').css('display','none');
 				}
