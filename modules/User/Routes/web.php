@@ -309,3 +309,29 @@ Route::prefix('bg-remove-request')->middleware('adminauth')->group(function() {
 	Route::post('/updatePoliticalBusiness', 'BGRemoveRequestController@updatePoliticalBusiness')->name('bg-request-update-political');
 	Route::post('/remove', 'BGRemoveRequestController@remove')->name('bg-request-remove');
 });
+
+Route::prefix('content-creator')->middleware('adminauth')->group(function() {
+	Route::get('/', 'ContentCreatorController@index')->name('contentCreator');
+	Route::get('/list', 'ContentCreatorController@list')->name('contentCreator.list');
+	Route::post('/approve', 'ContentCreatorController@approve')->name('contentCreator.approve');
+	Route::post('/reject', 'ContentCreatorController@reject')->name('contentCreator.reject');
+});
+
+Route::prefix('distributor')->middleware('adminauth')->group(function() {
+	Route::get('/', 'DistributorController@index')->name('distributor');
+	Route::get('/list', 'DistributorController@list')->name('distributor.list');
+	Route::post('/approve', 'DistributorController@approve')->name('distributor.approve');
+	Route::post('/reject', 'DistributorController@reject')->name('distributor.reject');
+});
+
+Route::prefix('distributor-channel')->middleware('adminauth')->group(function() {
+	Route::get('/', 'DistributorChannelController@index')->name('distributor_channel');
+	Route::post('/get', 'DistributorChannelController@get')->name('distributor_channel.get');
+	Route::get('/list', 'DistributorChannelController@list')->name('distributor_channel.list');
+	Route::post('/approve', 'DistributorChannelController@approve')->name('distributor_channel.approve');
+	Route::post('/reject', 'DistributorChannelController@reject')->name('distributor_channel.reject');
+	Route::get('/{id}', 'DistributorChannelController@view')->name('distributor_channel.view');
+	Route::get('/transaction/{id}', 'DistributorChannelController@transactionList')->name('distributor_channel.transactionList');
+	Route::post('/addTransaction/{id}', 'DistributorChannelController@addTransaction')->name('distributor_channel.addTransaction');
+	Route::post('/updateDistributor/{id}', 'DistributorChannelController@updateDistributor')->name('distributor_channel.updateDistributor');
+});

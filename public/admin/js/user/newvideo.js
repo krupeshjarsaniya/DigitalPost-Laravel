@@ -51,6 +51,10 @@ function search_video(){
 
 			$('#video-post-tables').DataTable();
 
+			$('#tranding-post-table tbody').html(response.trandings);
+
+			$('#tranding-post-table').DataTable();
+
 			$('.loader-custom').css('display','none');
 
 		}

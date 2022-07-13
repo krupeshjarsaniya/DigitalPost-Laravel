@@ -30,6 +30,6 @@ class MasterAuth
         }
         // return back();
         return redirect()->route('login');
-        
+
     }
 }

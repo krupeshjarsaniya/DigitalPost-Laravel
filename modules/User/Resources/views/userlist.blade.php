@@ -413,6 +413,7 @@
                                 <th>Email</th>
                                 <th>Mobile</th>
                                 <th>Credit</th>
+                                <th>BG Credit</th>
                                 <th>Remaining Referral Amount</th>
                                 <th>Action</th>
                             </tr>

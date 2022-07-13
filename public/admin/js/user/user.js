@@ -8,11 +8,12 @@ var table = $('#user-table').DataTable({
     ajax: APP_URL+'/user/view-user',
 	deferRender: false,
     columns: [
-        {data: 'DT_RowIndex', name: 'users.id'},
+        {data: 'id', name: 'id'},
 		{data: 'name', name: 'name'},
 		{data: 'email', name: 'email'},
 		{data: 'mobile', name: 'mobile'},
 		{data: 'user_credit', name: 'user_credit'},
+		{data: 'bg_credit', name: 'bg_credit'},
 		{data: 'remaining_referral_amount', name: 'remaining_referral_amount', orderable: false, searchable: false},
         {data: 'action', name: 'action', orderable: false, searchable: false},
     ]

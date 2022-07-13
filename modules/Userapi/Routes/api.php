@@ -1305,3 +1305,7 @@ Route::prefix('userapi/v14')->group(base_path('modules/Userapi/Routes/api14.php'
 //version v15 start
 Route::prefix('userapi/v15')->group(base_path('modules/Userapi/Routes/api15.php'));
 //version v15 end
+
+//version v16 start
+Route::prefix('userapi/v16')->group(base_path('modules/Userapi/Routes/api16.php'));
+//version v16 end

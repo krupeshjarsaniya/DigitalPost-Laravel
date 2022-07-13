@@ -1649,7 +1649,7 @@ class UserapiControllerV11 extends Controller
         
 
 
-        $new_category_data = Festival::where('fest_type','=','incident')->where('fest_is_delete','=',0)->where('new_cat','!=',0)->orderBy('position_no','ASC')->get();
+        $new_category_data = Festival::where('fest_is_delete','=',0)->where('new_cat','!=',0)->orderBy('position_no','ASC')->get();
         $new_category_dataArray = array();
         $user_language = User::where('id',$user_id)->value('user_language');
         for ($i=0; $i < sizeof($new_category_data); $i++) { 

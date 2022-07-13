@@ -43,13 +43,16 @@ class NewFestivalPostController extends Controller
         $date = $request->date;
         if ($date) {
             $festivals = Festival::where('fest_date', 'LIKE', $date . '%')->where('fest_type', '=', 'festival')->where('fest_is_delete', '=', 0)->orderBy('fest_date', 'DESC')->get();
+            $trandings = Festival::where('fest_date', 'LIKE', $date . '%')->where('fest_type', '=', 'tranding')->where('fest_is_delete', '=', 0)->orderBy('fest_date', 'DESC')->get();
             $incidents = Festival::where('fest_date', 'LIKE', $date . '%')->where('fest_type', '=', 'incident')->where('fest_is_delete', '=', 0)->orderBy('position_no', 'ASC')->get();
         } else {
             $festivals = Festival::where('fest_type', '=', 'festival')->where('fest_is_delete', '=', 0)->orderBy('fest_date', 'DESC')->get();
+            $trandings = Festival::where('fest_type', '=', 'tranding')->where('fest_is_delete', '=', 0)->orderBy('fest_date', 'DESC')->get();
             $incidents = Festival::where('fest_type', '=', 'incident')->where('fest_is_delete', '=', 0)->orderBy('position_no', 'ASC')->get();
         }
 
         $festivalsCount = count($festivals);
+        $trandingsCount = count($trandings);
         $incidentsCount = count($incidents);
 
         $data = '';
@@ -67,6 +70,21 @@ class NewFestivalPostController extends Controller
             }
         }
 
+        $trandingdata = '';
+        if ($trandingsCount != 0) {
+            $count = 1;
+            foreach ($trandings as $key => $tranding) {
+                $trandingdata .= '<tr>';
+                $trandingdata .= '<td>' . $count++ . '</td>';
+                $trandingdata .= '<td>' . $tranding->fest_name . '</td>';
+                $trandingdata .= '<td>' . $tranding->fest_date . '</td>';
+                $trandingdata .= '<td>Tranding</td>';
+                $trandingdata .= '<td>' . $tranding->fest_info . '</td>';
+                $trandingdata .= '<td><button onclick="addFestivalCategory(' . $tranding->fest_id . ')" class="btn btn-success">Sub Category</button><button onclick="editFestival(' . $tranding->fest_id . ')" class="btn btn-primary ml-1">Edit</button><button onclick="deleteFestival(' . $tranding->fest_id . ')" class="btn btn-danger ml-1">Delete</button></td>';
+                $trandingdata .= '</tr>';
+            }
+        }
+
         $incidentdata = '';
         if ($incidentsCount != 0) {
             $count = 1;
@@ -81,7 +99,7 @@ class NewFestivalPostController extends Controller
             }
         }
 
-        return response()->json(['status' => true, 'data' => $data, 'incidents' => $incidentdata]);
+        return response()->json(['status' => true, 'data' => $data, 'incidents' => $incidentdata, 'trandings' => $trandingdata]);
     }
 
     /**

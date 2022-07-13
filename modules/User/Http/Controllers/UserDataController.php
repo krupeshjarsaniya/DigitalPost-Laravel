@@ -31,7 +31,7 @@ class UserDataController extends Controller
     {
         ini_set('memory_limit', -1);
        // $user = User::all();
-        $user = User::where('id', '!=', auth()->id())->where('status','!=',2)->select('id', 'status','name','email','mobile','user_credit')->orderBy('id','ASC');
+        $user = User::where('id', '!=', auth()->id())->where('status','!=',2)->select('id', 'status','name','email','mobile','user_credit', 'bg_credit');
 
         if ($request->ajax())
         {
@@ -925,10 +925,10 @@ class UserDataController extends Controller
 
         $this->addPurchasePlanHistory($business_id, 1);
 
-        $bg_credit = !empty($userData->bg_credit) ? $userData->bg_credit : 0;
-        $plan_bg_credit = !empty($plantrial->bg_credit) ? $plantrial->bg_credit : 0;
-        $userData->bg_credit = $bg_credit + $plan_bg_credit;
-        $userData->save();
+        // $bg_credit = !empty($userData->bg_credit) ? $userData->bg_credit : 0;
+        // $plan_bg_credit = !empty($plantrial->bg_credit) ? $plantrial->bg_credit : 0;
+        // $userData->bg_credit = $bg_credit + $plan_bg_credit;
+        // $userData->save();
 
         return response()->json(['status'=>true,'message'=>'Purchase Plan successfully Added']);
     }
@@ -2219,10 +2219,10 @@ class UserDataController extends Controller
 
         $this->addPurchasePlanHistory($business_id, 2);
 
-        $bg_credit = !empty($userData->bg_credit) ? $userData->bg_credit : 0;
-        $plan_bg_credit = !empty($plantrial->bg_credit) ? $plantrial->bg_credit : 0;
-        $userData->bg_credit = $bg_credit + $plan_bg_credit;
-        $userData->save();
+        // $bg_credit = !empty($userData->bg_credit) ? $userData->bg_credit : 0;
+        // $plan_bg_credit = !empty($plantrial->bg_credit) ? $plantrial->bg_credit : 0;
+        // $userData->bg_credit = $bg_credit + $plan_bg_credit;
+        // $userData->save();
 
         return response()->json(['status'=>true,'message'=>'Purchase Plan successfully Added']);
     }

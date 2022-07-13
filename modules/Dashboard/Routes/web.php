@@ -26,6 +26,8 @@ Route::prefix('dashboard')->middleware('auth','adminauth')->group(function() {
 
     Route::POST('/update-days', 'DashboardController@updateDays');
 
+    Route::POST('/update-banner', 'DashboardController@updateBanner');
+
     Route::POST('/update-referral-image', 'DashboardController@updateReferralImage');
 
     Route::POST('/saveprivacy', 'DashboardController@saveprivacy');

@@ -127,6 +127,67 @@ class DashboardController extends Controller
       return response()->json(['status'=>true,'message'=>'Settings update successfully']);
     }
 
+    public function updateBanner(Request $request)
+    {
+        $setting = DB::table('setting')->first();
+
+        if($request->hasFile('partner_us_banner')) {
+            $file = $request->partner_us_banner;
+            $name = Str::random(7).time().'.'.$file->getClientOriginalExtension();
+            $file->move(public_path('images/banner'), $name);
+            $image_name = 'public/images/banner/'.$name;
+            DB::table('setting')
+            ->where('setting_id', 1)
+            ->update(['partner_us_banner' => $image_name]);
+            if(!empty($setting->partner_us_banner)) {
+                try {
+                    unlink(public_path('../' . $setting->partner_us_banner));
+                }
+                catch(\Exception $e) {
+                }
+            }
+
+        }
+
+        if($request->hasFile('creator_banner')) {
+            $file = $request->creator_banner;
+            $name = Str::random(7).time().'.'.$file->getClientOriginalExtension();
+            $file->move(public_path('images/banner'), $name);
+            $image_name = 'public/images/banner/'.$name;
+            DB::table('setting')
+            ->where('setting_id', 1)
+            ->update(['creator_banner' => $image_name]);
+
+            if(!empty($setting->creator_banner)) {
+                try {
+                    unlink(public_path('../' . $setting->creator_banner));
+                }
+                catch(\Exception $e) {
+                }
+            }
+        }
+
+        if($request->hasFile('distributor_banner')) {
+            $file = $request->distributor_banner;
+            $name = Str::random(7).time().'.'.$file->getClientOriginalExtension();
+            $file->move(public_path('images/banner'), $name);
+            $image_name = 'public/images/banner/'.$name;
+            DB::table('setting')
+            ->where('setting_id', 1)
+            ->update(['distributor_banner' => $image_name]);
+
+            if(!empty($setting->distributor_banner)) {
+                try {
+                    unlink(public_path('../' . $setting->distributor_banner));
+                }
+                catch(\Exception $e) {
+                }
+            }
+        }
+
+        return response()->json(['status'=>true,'message'=>'Banner update successfully']);
+    }
+
     public function saveprivacy(Request $request){
          DB::table('setting')
           ->where('setting_id', 1)

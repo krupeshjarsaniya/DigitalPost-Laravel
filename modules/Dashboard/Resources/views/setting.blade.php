@@ -86,6 +86,55 @@
         </div>
     </div>
 
+    <div class="col-md-12" id="bannerDiv">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title" id="country-title">Banners</div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12 col-lg-12">
+                        <form id="bannerForm" name="bannerForm" enctype="multipart/form-data">
+                            @csrf
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="partner_us_banner">Partner With Us Banner</label>
+                                        <input type="file" class="form-control" name="partner_us_banner" id="partner_us_banner">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <img data-old="{{ asset($credit->partner_us_banner)}}" id="view_partner_us_banner" style="width: 150px;height: 150px" src="{{asset($credit->partner_us_banner)}}" />
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="creator_banner">Content CreatorBanner</label>
+                                        <input type="file" class="form-control" name="creator_banner" id="creator_banner">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <img data-old="{{ asset($credit->creator_banner)}}" id="view_creator_banner" style="width: 150px;height: 150px" src="{{asset($credit->creator_banner)}}" />
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="distributor_banner">Distributor Banner</label>
+                                        <input type="file" class="form-control" name="distributor_banner" id="distributor_banner">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <img data-old="{{ asset($credit->distributor_banner)}}" id="view_distributor_banner" style="width: 150px;height: 150px" src="{{asset($credit->distributor_banner)}}" />
+                                </div>
+                                <div class="col-md-2 mt-1 form-group">
+                                    <button type="button" onclick="updateBanner()" class="btn mt-4 btn-primary">Update</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="col-md-12" id="registerCreditDiv">
         <div class="card">
             <div class="card-header">

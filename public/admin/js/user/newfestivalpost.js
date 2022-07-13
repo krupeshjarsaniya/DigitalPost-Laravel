@@ -68,6 +68,10 @@ function search_festival(){
 
 			$('#incident-table').DataTable();
 
+			$('#tranding-table tbody').html(response.trandings);
+
+			$('#tranding-table').DataTable();
+
 			$('.loader-custom').css('display','none');
 
 		}

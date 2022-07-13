@@ -99,6 +99,14 @@ class UserapiControllerV13IOS extends Controller
                 $checkUser->used_referral_code = $referral_code;
                 $checkUser->referral_by = $referral_by;
                 $checkUser->password = bcrypt($name.'@123');
+
+                $settingData = DB::table('setting')->first();
+                $register_credit = 0;
+                if (!empty($settingData)) {
+                    $register_credit = $settingData->register_credit;
+                }
+                $checkUser->bg_credit = $register_credit;
+
                 $checkUser->save();
                 return response()->json(['status'=>true,'message'=>'OTP sent to you mobile']);
             }
@@ -116,6 +124,13 @@ class UserapiControllerV13IOS extends Controller
             }
             $referral_by = $checkReferralCode->id;
         }
+
+        $settingData = DB::table('setting')->first();
+        $register_credit = 0;
+        if (!empty($settingData)) {
+            $register_credit = $settingData->register_credit;
+        }
+
         $user = new User;
         $user->name = $name;
         $user->country_code = $country_code;
@@ -124,6 +139,7 @@ class UserapiControllerV13IOS extends Controller
         $user->used_referral_code = $referral_code;
         $user->referral_by = $referral_by;
         $user->password = bcrypt($name.'@123');
+        $user->bg_credit = $register_credit;
         $user->save();
         return response()->json(['status'=>true,'message'=>'OTP sent to you mobile']);
     }
@@ -1704,7 +1720,7 @@ class UserapiControllerV13IOS extends Controller
 
 
 
-        $new_category_data = Festival::where('fest_type','=','incident')->where('fest_is_delete','=',0)->where('new_cat','!=',0)->orderBy('position_no','ASC')->get();
+        $new_category_data = Festival::where('fest_is_delete','=',0)->where('new_cat','!=',0)->orderBy('position_no','ASC')->get();
         $new_category_dataArray = array();
         $user_language = User::where('id',$user_id)->value('user_language');
         for ($i=0; $i < sizeof($new_category_data); $i++) {
@@ -2726,7 +2742,19 @@ class UserapiControllerV13IOS extends Controller
             $userdata = User::where('id','=',$user_id)->select(['default_business_id','default_political_business_id'])->first();
             $getPurchaseData = Purchase::where('purc_business_id', $business_id)->where('purc_business_type', $input['business_type'])->first();
             if($getPurchaseData->purc_business_type == 1) {
-                $this->addPoliticalBusinessWhilePlanIsThree($user_id,$plan_id, $userdata->default_political_business_id);
+                $checkPBusiness = PoliticalBusiness::where('pb_id', $userdata->default_political_business_id)->where('user_id', $user_id)->where('pb_is_deleted', 0)->first();
+                if(empty($checkPBusiness)) {
+                    $this->addPoliticalBusinessWhilePlanIsThree($user_id,$plan_id, 0);
+                }
+                else {
+                    $purchase = Purchase::where('purc_business_id', $userdata->default_political_business_id)->where('purc_business_type', 2)->first();
+                    if ($purchase->purc_plan_id == 3) {
+                        $this->addPoliticalBusinessWhilePlanIsThree($user_id,$plan_id, $userdata->default_political_business_id);
+                    }
+                    else {
+                        $this->addPoliticalBusinessWhilePlanIsThree($user_id,$plan_id, 0);
+                    }
+                }
                 // if($userdata->default_political_business_id == '' || empty($userdata->default_political_business_id) || $userdata->default_political_business_id == 0){
                 //     $this->addPoliticalBusinessWhilePlanIsThree($user_id,$plan_id);
                 // }
@@ -2744,7 +2772,13 @@ class UserapiControllerV13IOS extends Controller
                 // }
             }
             else {
-                $this->addSimpleBusinessWhilePlanIsThree($user_id,$plan_id, $userdata->default_business_id);
+                $purchase = Purchase::where('purc_business_id', $userdata->default_business_id)->where('purc_business_type', 1)->first();
+                if ($purchase->purc_plan_id == 3) {
+                    $this->addSimpleBusinessWhilePlanIsThree($user_id,$plan_id, $userdata->default_business_id);
+                }
+                else {
+                    $this->addSimpleBusinessWhilePlanIsThree($user_id,$plan_id, 0);
+                }
                 // if($userdata->default_business_id == '' || empty($userdata->default_business_id) || $userdata->default_business_id == 0){
                 //     $this->addSimpleBusinessWhilePlanIsThree($user_id,$plan_id);
                 // }
@@ -2771,16 +2805,17 @@ class UserapiControllerV13IOS extends Controller
 
     //  next two function use when user purchase plan type three and user have no any default business
 
-    function addSimpleBusinessWhilePlanIsThree($user_id, $plan_id, $business_id = 0){
-        if($business_id != 0) {
+    function addSimpleBusinessWhilePlanIsThree($user_id, $plan_id, $business_id = 0)
+    {
+        if ($business_id != 0) {
             $start_date = date('Y-m-d');
 
-            $plantrial = Plan::where('plan_id','=',$plan_id)->select('plan_validity')->first();
-            $end_date = date('Y-m-d', strtotime($start_date. ' + '.$plantrial->plan_validity.' days'));
+            $plantrial = Plan::where('plan_id', '=', $plan_id)->select('plan_validity')->first();
+            $end_date = date('Y-m-d', strtotime($start_date . ' + ' . $plantrial->plan_validity . ' days'));
             $purchase = Purchase::where('purc_business_id', $business_id)->where('purc_business_type', 1)->first();
             $new_start_date = "";
-                if($purchase->purc_plan_id == 3) {
-                    Purchase::where('purc_business_id', $business_id)->where('purc_business_type', 1)->update(array(
+            if ($purchase->purc_plan_id == 3) {
+                Purchase::where('purc_business_id', $business_id)->where('purc_business_type', 1)->update(array(
                     'purc_plan_id' => $plan_id,
                     'purc_start_date' => $start_date,
                     'purc_end_date' => $end_date,
@@ -2788,47 +2823,21 @@ class UserapiControllerV13IOS extends Controller
                     'purc_tel_status' => 7,
                     'purc_follow_up_date' => null,
                     'purc_is_expire' => 0,
-                    ));
-                }
-                else {
-                    if(!empty($purchase->purc_end_date)) {
-                        $tmp_end_date = Carbon::parse($purchase->purc_end_date);
-                        $tmp_start_date = Carbon::now();
-                        $diff = $tmp_end_date->diffInDays($tmp_start_date);
-                        $new_start_date = $tmp_start_date->addDays($diff);
-                        $end_date = $tmp_end_date->addDays($diff);
-                    }
-                    Purchase::where('purc_business_id', $business_id)->where('purc_business_type', 1)->update(array(
-                    'purc_start_date' => $start_date,
-                    'purc_end_date' => $end_date,
-                    'purc_is_cencal' => 0,
-                    'purc_tel_status' => 7,
-                    'purc_follow_up_date' => null,
-                    'purc_is_expire' => 0,
-                    ));
-                }
-                DB::table('user_business_comment')->where('business_id', $business_id)->where('business_type', 1)->delete();
-                $this->addPurchasePlanHistory($business_id, 1, $new_start_date);
+                ));
+            } else {
 
-        }
-        else {
-            $checkPurchase = Purchase::where('purchase_plan.purc_user_id', $user_id)->where('purchase_plan.purc_business_type',1)->join('business', 'business.busi_id', '=', 'purchase_plan.purc_business_id')->where('business.busi_delete', 0)->where(function ($query) {
-                        $query->where('purchase_plan.purc_plan_id',3)
-                        ->orWhere('purchase_plan.purc_is_expire', 1);
-                })->first();
-            if(empty($checkPurchase)) {
                 $business = new Business();
                 $business->busi_name = 'Business Name';
                 $business->user_id = $user_id;
-                $business->busi_email = 'writeyouremail@gmail.com';
-                $business->busi_mobile = '8888888888';
+                $business->busi_email = '';
+                $business->busi_mobile = '';
                 $business->save();
                 $business_id = $business->id;
 
                 $start_date = date('Y-m-d');
 
-                $plantrial = Plan::where('plan_id','=',$plan_id)->select('plan_validity')->first();
-                $end_date = date('Y-m-d', strtotime($start_date. ' + '.$plantrial->plan_validity.' days'));
+                $plantrial = Plan::where('plan_id', '=', $plan_id)->select('plan_validity')->first();
+                $end_date = date('Y-m-d', strtotime($start_date . ' + ' . $plantrial->plan_validity . ' days'));
 
                 $purchase = new Purchase();
                 $purchase->purc_user_id = $user_id;
@@ -2841,26 +2850,73 @@ class UserapiControllerV13IOS extends Controller
                 $purchase->purc_follow_up_date = null;
                 $purchase->save();
                 $this->addPurchasePlanHistory($business_id, 1);
+
+                // if (!empty($purchase->purc_end_date)) {
+                //     $tmp_end_date = Carbon::parse($purchase->purc_end_date);
+                //     $tmp_start_date = Carbon::now();
+                //     $diff = $tmp_end_date->diffInDays($tmp_start_date);
+                //     $new_start_date = $tmp_start_date->addDays($diff);
+                //     $end_date = $tmp_end_date->addDays($diff);
+                // }
+                // Purchase::where('purc_business_id', $business_id)->where('purc_business_type', 1)->update(array(
+                //     'purc_start_date' => $start_date,
+                //     'purc_end_date' => $end_date,
+                //     'purc_is_cencal' => 0,
+                //     'purc_tel_status' => 7,
+                //     'purc_follow_up_date' => null,
+                //     'purc_is_expire' => 0,
+                // ));
             }
-            else {
+            DB::table('user_business_comment')->where('business_id', $business_id)->where('business_type', 1)->delete();
+            $this->addPurchasePlanHistory($business_id, 1, $new_start_date);
+        } else {
+            $checkPurchase = Purchase::where('purchase_plan.purc_user_id', $user_id)->where('purchase_plan.purc_business_type', 1)->join('business', 'business.busi_id', '=', 'purchase_plan.purc_business_id')->where('business.busi_delete', 0)->where(function ($query) {
+                $query->where('purchase_plan.purc_plan_id', 3)
+                    ->orWhere('purchase_plan.purc_is_expire', 1);
+            })->first();
+            if (empty($checkPurchase)) {
+                $business = new Business();
+                $business->busi_name = 'Business Name';
+                $business->user_id = $user_id;
+                $business->busi_email = '';
+                $business->busi_mobile = '';
+                $business->save();
+                $business_id = $business->id;
+
                 $start_date = date('Y-m-d');
-                $plantrial = Plan::where('plan_id','=',$plan_id)->select('plan_validity')->first();
-                $end_date = date('Y-m-d', strtotime($start_date. ' + '.$plantrial->plan_validity.' days'));
+
+                $plantrial = Plan::where('plan_id', '=', $plan_id)->select('plan_validity')->first();
+                $end_date = date('Y-m-d', strtotime($start_date . ' + ' . $plantrial->plan_validity . ' days'));
+
+                $purchase = new Purchase();
+                $purchase->purc_user_id = $user_id;
+                $purchase->purc_business_id = $business_id;
+                $purchase->purc_plan_id = $plan_id;
+                $purchase->purc_start_date = $start_date;
+                $purchase->purc_end_date = $end_date;
+                $purchase->purc_business_type = 1;
+                $purchase->purc_tel_status = 7;
+                $purchase->purc_follow_up_date = null;
+                $purchase->save();
+                $this->addPurchasePlanHistory($business_id, 1);
+            } else {
+                $start_date = date('Y-m-d');
+                $plantrial = Plan::where('plan_id', '=', $plan_id)->select('plan_validity')->first();
+                $end_date = date('Y-m-d', strtotime($start_date . ' + ' . $plantrial->plan_validity . ' days'));
                 $purchase = Purchase::where('purc_id', $checkPurchase->purc_id)->first();
                 $new_start_date = "";
-                if($purchase->purc_plan_id == 3) {
+                if ($purchase->purc_plan_id == 3) {
                     Purchase::where('purc_id', $checkPurchase->purc_id)->update(array(
-                    'purc_plan_id' => $plan_id,
-                    'purc_start_date' => $start_date,
-                    'purc_end_date' => $end_date,
-                    'purc_is_cencal' => 0,
-                    'purc_tel_status' => 7,
-                    'purc_follow_up_date' => null,
-                    'purc_is_expire' => 0,
+                        'purc_plan_id' => $plan_id,
+                        'purc_start_date' => $start_date,
+                        'purc_end_date' => $end_date,
+                        'purc_is_cencal' => 0,
+                        'purc_tel_status' => 7,
+                        'purc_follow_up_date' => null,
+                        'purc_is_expire' => 0,
                     ));
-                }
-                else {
-                    if(!empty($purchase->purc_end_date)) {
+                } else {
+                    if (!empty($purchase->purc_end_date)) {
                         $tmp_end_date = Carbon::parse($purchase->purc_end_date);
                         $tmp_start_date = Carbon::now();
                         $diff = $tmp_end_date->diffInDays($tmp_start_date);
@@ -2868,12 +2924,12 @@ class UserapiControllerV13IOS extends Controller
                         $end_date = $tmp_end_date->addDays($diff);
                     }
                     Purchase::where('purc_id', $checkPurchase->purc_id)->update(array(
-                    'purc_start_date' => $start_date,
-                    'purc_end_date' => $end_date,
-                    'purc_is_cencal' => 0,
-                    'purc_tel_status' => 7,
-                    'purc_follow_up_date' => null,
-                    'purc_is_expire' => 0,
+                        'purc_start_date' => $start_date,
+                        'purc_end_date' => $end_date,
+                        'purc_is_cencal' => 0,
+                        'purc_tel_status' => 7,
+                        'purc_follow_up_date' => null,
+                        'purc_is_expire' => 0,
                     ));
                 }
                 DB::table('user_business_comment')->where('business_id', $business_id)->where('business_type', 1)->delete();
@@ -2881,7 +2937,7 @@ class UserapiControllerV13IOS extends Controller
             }
 
             $user_data = User::find($user_id);
-            if($user_data->default_business_id == '' || empty($user_data->default_business_id) || $user_data->default_business_id == 0) {
+            if ($user_data->default_business_id == '' || empty($user_data->default_business_id) || $user_data->default_business_id == 0) {
                 User::where('id', $user_id)->update(array(
                     'default_business_id' => $business_id,
                 ));
@@ -2889,16 +2945,17 @@ class UserapiControllerV13IOS extends Controller
         }
     }
 
-    function addPoliticalBusinessWhilePlanIsThree($user_id, $plan_id, $business_id = 0){
-        if($business_id != 0) {
+    function addPoliticalBusinessWhilePlanIsThree($user_id, $plan_id, $business_id = 0)
+    {
+        if ($business_id != 0) {
             $start_date = date('Y-m-d');
 
-            $plantrial = Plan::where('plan_id','=',$plan_id)->select('plan_validity')->first();
-            $end_date = date('Y-m-d', strtotime($start_date. ' + '.$plantrial->plan_validity.' days'));
+            $plantrial = Plan::where('plan_id', '=', $plan_id)->select('plan_validity')->first();
+            $end_date = date('Y-m-d', strtotime($start_date . ' + ' . $plantrial->plan_validity . ' days'));
             $purchase = Purchase::where('purc_business_id', $business_id)->where('purc_business_type', 2)->first();
             $new_start_date = "";
-                if($purchase->purc_plan_id == 3) {
-                    Purchase::where('purc_business_id', $business_id)->where('purc_business_type', 2)->update(array(
+            if ($purchase->purc_plan_id == 3) {
+                Purchase::where('purc_business_id', $business_id)->where('purc_business_type', 2)->update(array(
                     'purc_plan_id' => $plan_id,
                     'purc_start_date' => $start_date,
                     'purc_end_date' => $end_date,
@@ -2906,47 +2963,22 @@ class UserapiControllerV13IOS extends Controller
                     'purc_tel_status' => 7,
                     'purc_follow_up_date' => null,
                     'purc_is_expire' => 0,
-                    ));
-                }
-                else {
-                    if(!empty($purchase->purc_end_date)) {
-                        $tmp_end_date = Carbon::parse($purchase->purc_end_date);
-                        $tmp_start_date = Carbon::now();
-                        $diff = $tmp_end_date->diffInDays($tmp_start_date);
-                        $new_start_date = $tmp_start_date->addDays($diff);
-                        $end_date = $tmp_end_date->addDays($diff);
-                    }
-                    Purchase::where('purc_business_id', $business_id)->where('purc_business_type', 2)->update(array(
-                    'purc_start_date' => $start_date,
-                    'purc_end_date' => $end_date,
-                    'purc_is_cencal' => 0,
-                    'purc_tel_status' => 7,
-                    'purc_follow_up_date' => null,
-                    'purc_is_expire' => 0,
-                    ));
-                }
-                DB::table('user_business_comment')->where('business_id', $business_id)->where('business_type', 2)->delete();
-                $this->addPurchasePlanHistory($business_id, 2, $new_start_date);
-        }
-        else {
-            $checkPurchase = Purchase::where('purchase_plan.purc_user_id', $user_id)->where('purchase_plan.purc_business_type',2)->join('political_business', 'political_business.pb_id', '=', 'purchase_plan.purc_business_id')->where('political_business.pb_is_deleted', 0)->where(function ($query) {
-                        $query->where('purchase_plan.purc_plan_id',3)
-                        ->orWhere('purchase_plan.purc_is_expire', 1);
-                })->first();
-            if(empty($checkPurchase)) {
+                ));
+            } else {
+
                 $business = new PoliticalBusiness();
                 $business->pb_name = 'Person name';
                 $business->user_id = $user_id;
-                $business->pb_designation = 'Designation Here';
-                $business->pb_mobile = '8888888888';
+                $business->pb_designation = '';
+                $business->pb_mobile = '';
                 $business->pb_pc_id = 1;
                 $business->save();
                 $business_id = $business->id;
 
                 $start_date = date('Y-m-d');
 
-                $plantrial = Plan::where('plan_id','=',$plan_id)->select('plan_validity')->first();
-                $end_date = date('Y-m-d', strtotime($start_date. ' + '.$plantrial->plan_validity.' days'));
+                $plantrial = Plan::where('plan_id', '=', $plan_id)->select('plan_validity')->first();
+                $end_date = date('Y-m-d', strtotime($start_date . ' + ' . $plantrial->plan_validity . ' days'));
 
                 $purchase = new Purchase();
                 $purchase->purc_user_id = $user_id;
@@ -2959,26 +2991,74 @@ class UserapiControllerV13IOS extends Controller
                 $purchase->purc_follow_up_date = null;
                 $purchase->save();
                 $this->addPurchasePlanHistory($business_id, 2);
+
+                // if (!empty($purchase->purc_end_date)) {
+                //     $tmp_end_date = Carbon::parse($purchase->purc_end_date);
+                //     $tmp_start_date = Carbon::now();
+                //     $diff = $tmp_end_date->diffInDays($tmp_start_date);
+                //     $new_start_date = $tmp_start_date->addDays($diff);
+                //     $end_date = $tmp_end_date->addDays($diff);
+                // }
+                // Purchase::where('purc_business_id', $business_id)->where('purc_business_type', 2)->update(array(
+                //     'purc_start_date' => $start_date,
+                //     'purc_end_date' => $end_date,
+                //     'purc_is_cencal' => 0,
+                //     'purc_tel_status' => 7,
+                //     'purc_follow_up_date' => null,
+                //     'purc_is_expire' => 0,
+                // ));
             }
-            else {
+            DB::table('user_business_comment')->where('business_id', $business_id)->where('business_type', 2)->delete();
+            $this->addPurchasePlanHistory($business_id, 2, $new_start_date);
+        } else {
+            $checkPurchase = Purchase::where('purchase_plan.purc_user_id', $user_id)->where('purchase_plan.purc_business_type', 2)->join('political_business', 'political_business.pb_id', '=', 'purchase_plan.purc_business_id')->where('political_business.pb_is_deleted', 0)->where(function ($query) {
+                $query->where('purchase_plan.purc_plan_id', 3)
+                    ->orWhere('purchase_plan.purc_is_expire', 1);
+            })->first();
+            if (empty($checkPurchase)) {
+                $business = new PoliticalBusiness();
+                $business->pb_name = 'Person name';
+                $business->user_id = $user_id;
+                $business->pb_designation = '';
+                $business->pb_mobile = '';
+                $business->pb_pc_id = 1;
+                $business->save();
+                $business_id = $business->id;
+
                 $start_date = date('Y-m-d');
-                $plantrial = Plan::where('plan_id','=',$plan_id)->select('plan_validity')->first();
-                $end_date = date('Y-m-d', strtotime($start_date. ' + '.$plantrial->plan_validity.' days'));
+
+                $plantrial = Plan::where('plan_id', '=', $plan_id)->select('plan_validity')->first();
+                $end_date = date('Y-m-d', strtotime($start_date . ' + ' . $plantrial->plan_validity . ' days'));
+
+                $purchase = new Purchase();
+                $purchase->purc_user_id = $user_id;
+                $purchase->purc_business_id = $business_id;
+                $purchase->purc_plan_id = $plan_id;
+                $purchase->purc_start_date = $start_date;
+                $purchase->purc_end_date = $end_date;
+                $purchase->purc_business_type = 2;
+                $purchase->purc_tel_status = 7;
+                $purchase->purc_follow_up_date = null;
+                $purchase->save();
+                $this->addPurchasePlanHistory($business_id, 2);
+            } else {
+                $start_date = date('Y-m-d');
+                $plantrial = Plan::where('plan_id', '=', $plan_id)->select('plan_validity')->first();
+                $end_date = date('Y-m-d', strtotime($start_date . ' + ' . $plantrial->plan_validity . ' days'));
                 $purchase = Purchase::where('purc_id', $checkPurchase->purc_id)->first();
                 $new_start_date = "";
-                if($purchase->purc_plan_id == 3) {
+                if ($purchase->purc_plan_id == 3) {
                     Purchase::where('purc_id', $checkPurchase->purc_id)->update(array(
-                    'purc_plan_id' => $plan_id,
-                    'purc_start_date' => $start_date,
-                    'purc_end_date' => $end_date,
-                    'purc_is_cencal' => 0,
-                    'purc_tel_status' => 7,
-                    'purc_follow_up_date' => null,
-                    'purc_is_expire' => 0,
+                        'purc_plan_id' => $plan_id,
+                        'purc_start_date' => $start_date,
+                        'purc_end_date' => $end_date,
+                        'purc_is_cencal' => 0,
+                        'purc_tel_status' => 7,
+                        'purc_follow_up_date' => null,
+                        'purc_is_expire' => 0,
                     ));
-                }
-                else {
-                    if(!empty($purchase->purc_end_date)) {
+                } else {
+                    if (!empty($purchase->purc_end_date)) {
                         $tmp_end_date = Carbon::parse($purchase->purc_end_date);
                         $tmp_start_date = Carbon::now();
                         $diff = $tmp_end_date->diffInDays($tmp_start_date);
@@ -2986,26 +3066,24 @@ class UserapiControllerV13IOS extends Controller
                         $end_date = $tmp_end_date->addDays($diff);
                     }
                     Purchase::where('purc_id', $checkPurchase->purc_id)->update(array(
-                    'purc_start_date' => $start_date,
-                    'purc_end_date' => $end_date,
-                    'purc_is_cencal' => 0,
-                    'purc_tel_status' => 7,
-                    'purc_follow_up_date' => null,
-                    'purc_is_expire' => 0,
+                        'purc_start_date' => $start_date,
+                        'purc_end_date' => $end_date,
+                        'purc_is_cencal' => 0,
+                        'purc_tel_status' => 7,
+                        'purc_follow_up_date' => null,
+                        'purc_is_expire' => 0,
                     ));
                 }
                 DB::table('user_business_comment')->where('business_id', $business_id)->where('business_type', 2)->delete();
                 $this->addPurchasePlanHistory($business_id, 2, $new_start_date);
-
             }
             $user_data = User::find($user_id);
-            if($user_data->default_political_business_id == '' || empty($user_data->default_political_business_id) || $user_data->default_political_business_id == 0) {
+            if ($user_data->default_political_business_id == '' || empty($user_data->default_political_business_id) || $user_data->default_political_business_id == 0) {
                 User::where('id', $user_id)->update(array(
                     'default_political_business_id' => $business_id,
                 ));
             }
         }
-
     }
 
 
@@ -5349,15 +5427,15 @@ class UserapiControllerV13IOS extends Controller
             }
         }
         if($user_data->default_political_business_id == $input['id']) {
-            $currntbusiness = Business::where('user_id','=',$user_id)->where('busi_delete','=',0)->select('busi_id')->first();
+            $currntbusiness = PoliticalBusiness::where('user_id','=',$user_id)->where('pb_is_deleted','=',0)->select('pb_id')->first();
 
             if(!empty($currntbusiness) || !is_null($currntbusiness)){
                 User::where('id', $user_id)->update(array(
-                    'default_business_id' => $currntbusiness->busi_id,
+                    'default_political_business_id' => $currntbusiness->pb_id,
                 ));
             } else {
                 User::where('id', $user_id)->update(array(
-                    'default_business_id' => 0,
+                    'default_political_business_id' => 0,
                 ));
             }
         }

@@ -8,6 +8,7 @@ use App\BackgroundRemoveRequest;
 use DataTables;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use App\PushNotification;
 
 class BGRemoveRequestController extends Controller
 {
@@ -19,28 +20,51 @@ class BGRemoveRequestController extends Controller
         $bgRemoveRequest = BackgroundRemoveRequest::select('background_remove_request.*');
         return DataTables::of($bgRemoveRequest)
             ->editColumn('user_id', function($bgRemoveRequest) {
-                return $bgRemoveRequest->user->name;
+                $name = "";
+                if($bgRemoveRequest->user) {
+                    $name = $bgRemoveRequest->user->name;
+                }
+                return $name;
             })
             ->editColumn('business_type', function ($bgRemoveRequest) {
                 return $bgRemoveRequest->business_type == 1 ? 'Normal Business' : 'Political Business';
             })
             ->editColumn('business_id', function ($bgRemoveRequest) {
-                return $bgRemoveRequest->business_type == 1 ? $bgRemoveRequest->business->busi_name : $bgRemoveRequest->political_business->pb_name;
+                $name = "";
+                if($bgRemoveRequest->business_type == 1) {
+                    if($bgRemoveRequest->business) {
+                        $name = $bgRemoveRequest->business->busi_name;
+                    }
+                }
+                else {
+                    if($bgRemoveRequest->political_business) {
+                        $name = $bgRemoveRequest->political_business->pb_name;
+                    }
+                }
+                return $name;
             })
             ->editColumn('mobile', function ($bgRemoveRequest) {
                 $mobile = "";
                 if($bgRemoveRequest->business_type == 1) {
-                    $mobile .= $bgRemoveRequest->user->mobile;
-                    $mobile .= "<br>" . $bgRemoveRequest->business->busi_mobile;
-                    if(!empty($bgRemoveRequest->business->busi_mobile_second)) {
-                        $mobile .= "<br>" . $bgRemoveRequest->business->busi_mobile_second;
+                    if($bgRemoveRequest->user) {
+                        $mobile .= $bgRemoveRequest->user->mobile;
+                    }
+                    if($bgRemoveRequest->business) {
+                        $mobile .= "<br>" . $bgRemoveRequest->business->busi_mobile;
+                        if(!empty($bgRemoveRequest->business->busi_mobile_second)) {
+                            $mobile .= "<br>" . $bgRemoveRequest->business->busi_mobile_second;
+                        }
                     }
                 }
                 else {
-                    $mobile .= $bgRemoveRequest->user->mobile;
-                    $mobile .= "<br>" . $bgRemoveRequest->political_business->pb_mobile;
-                    if(!empty($bgRemoveRequest->political_business->pb_mobile_second)) {
-                        $mobile .= "<br>" . $bgRemoveRequest->political_business->pb_mobile_second;
+                    if($bgRemoveRequest->user) {
+                        $mobile .= $bgRemoveRequest->user->mobile;
+                    }
+                    if($bgRemoveRequest->political_business) {
+                        $mobile .= "<br>" . $bgRemoveRequest->political_business->pb_mobile;
+                        if(!empty($bgRemoveRequest->political_business->pb_mobile_second)) {
+                            $mobile .= "<br>" . $bgRemoveRequest->political_business->pb_mobile_second;
+                        }
                     }
                 }
                 return $mobile;
@@ -51,10 +75,14 @@ class BGRemoveRequestController extends Controller
                 }
                 $image = "";
                 if($bgRemoveRequest->business_type == 1) {
-                    $image = Storage::url($bgRemoveRequest->business->busi_logo);
+                    if($bgRemoveRequest->business) {
+                        $image = Storage::url($bgRemoveRequest->business->busi_logo);
+                    }
                 }
                 else {
-                    $image = Storage::url($bgRemoveRequest->political_business->pb_party_logo);
+                    if($bgRemoveRequest->political_business) {
+                        $image = Storage::url($bgRemoveRequest->political_business->pb_party_logo);
+                    }
                 }
                 $img = '<img src="'.$image.'" height="100" width="100">';
                 return $img;
@@ -65,10 +93,14 @@ class BGRemoveRequestController extends Controller
                 }
                 $image = "";
                 if($bgRemoveRequest->business_type == 1) {
-                    $image = Storage::url($bgRemoveRequest->business->watermark_image);
+                    if($bgRemoveRequest->business) {
+                        $image = Storage::url($bgRemoveRequest->business->watermark_image);
+                    }
                 }
                 else {
-                    $image = Storage::url($bgRemoveRequest->political_business->pb_watermark);
+                    if($bgRemoveRequest->political_business) {
+                        $image = Storage::url($bgRemoveRequest->political_business->pb_watermark);
+                    }
                 }
                 $img = '<img src="'.$image.'" height="100" width="100">';
                 return $img;
@@ -79,10 +111,14 @@ class BGRemoveRequestController extends Controller
                 }
                 $image = "";
                 if($bgRemoveRequest->business_type == 1) {
-                    $image = Storage::url($bgRemoveRequest->business->busi_logo_dark);
+                    if($bgRemoveRequest->business) {
+                        $image = Storage::url($bgRemoveRequest->business->busi_logo_dark);
+                    }
                 }
                 else {
-                    $image = Storage::url($bgRemoveRequest->political_business->pb_party_logo_dark);
+                    if($bgRemoveRequest->political_business) {
+                        $image = Storage::url($bgRemoveRequest->political_business->pb_party_logo_dark);
+                    }
                 }
                 $img = '<img src="'.$image.'" height="100" width="100">';
                 return $img;
@@ -93,10 +129,14 @@ class BGRemoveRequestController extends Controller
                 }
                 $image = "";
                 if($bgRemoveRequest->business_type == 1) {
-                    $image = Storage::url($bgRemoveRequest->business->watermark_image_dark);
+                    if($bgRemoveRequest->business) {
+                        $image = Storage::url($bgRemoveRequest->business->watermark_image_dark);
+                    }
                 }
                 else {
-                    $image = Storage::url($bgRemoveRequest->political_business->pb_watermark_dark);
+                    if($bgRemoveRequest->political_business) {
+                        $image = Storage::url($bgRemoveRequest->political_business->pb_watermark_dark);
+                    }
                 }
                 $img = '<img src="'.$image.'" height="100" width="100">';
                 return $img;
@@ -106,7 +146,9 @@ class BGRemoveRequestController extends Controller
                     return "";
                 }
                 $image = "";
-                $image = Storage::url($bgRemoveRequest->political_business->pb_left_image);
+                if($bgRemoveRequest->political_business) {
+                    $image = Storage::url($bgRemoveRequest->political_business->pb_left_image);
+                }
                 $img = '<img src="'.$image.'" height="100" width="100">';
                 return $img;
             })
@@ -115,7 +157,9 @@ class BGRemoveRequestController extends Controller
                     return "";
                 }
                 $image = "";
-                $image = Storage::url($bgRemoveRequest->political_business->pb_right_image);
+                if($bgRemoveRequest->political_business) {
+                    $image = Storage::url($bgRemoveRequest->political_business->pb_right_image);
+                }
                 $img = '<img src="'.$image.'" height="100" width="100">';
                 return $img;
             })
@@ -187,6 +231,29 @@ class BGRemoveRequestController extends Controller
             DB::table('business')->where('busi_id', $id)->update($updateData);
         }
 
+        $business = DB::table('business')->where('busi_id', $id)->first();
+
+        $data = array(
+            'route' => 'business_approval',
+            'id' => $business->busi_id,
+            'name' => $business->busi_name,
+            'click_action' => "com.app.activity.RegisterActivity",
+        );
+
+        $title = 'Background Remove Request';
+        $message = 'Your Background Remove Request Is Approved';
+        $type = 'general';
+
+
+        $message_payload = array (
+            'message' => $message,
+            'type' => $type,
+            'title' => $title,
+            'data' => $data,
+        );
+
+        PushNotification::sendPushNotification($business->user_id,$message_payload);
+
         return response()->json([
             'status' => true,
             'message' => "Data updated successfully"
@@ -222,8 +289,31 @@ class BGRemoveRequestController extends Controller
         }
 
         if(!empty($updateData)) {
-            DB::table('business')->where('busi_id', $id)->update($updateData);
+            DB::table('political_business')->where('pb_id', $id)->update($updateData);
         }
+
+        $business = DB::table('political_business')->where('pb_id', $id)->first();
+
+        $data = array(
+            'route' => 'political_business_approval',
+            'id' => $business->pb_id,
+            'name' => $business->pb_name,
+            'click_action' => "com.app.activity.RegisterActivity",
+        );
+
+        $title = 'Background Remove Request';
+        $message = 'Your Background Remove Request Is Approved';
+        $type = 'general';
+
+
+        $message_payload = array (
+            'message' => $message,
+            'type' => $type,
+            'title' => $title,
+            'data' => $data,
+        );
+
+        PushNotification::sendPushNotification($business->user_id,$message_payload);
 
         return response()->json([
             'status' => true,

@@ -122,6 +122,7 @@
                                 <select class="form-control" id="frame_mode" name="frame_mode" required>
                                     <option value="light">Light</option>
                                     <option value="dark">Dark</option>
+                                    <option value="both">Both</option>
                                 </select>
                             </div>
                         </div>
@@ -198,6 +199,7 @@
                                 <select class="form-control" id="edit_frame_mode" name="edit_frame_mode" required>
                                     <option value="light">Light</option>
                                     <option value="dark">Dark</option>
+                                    <option value="both">Both</option>
                                 </select>
                             </div>
                         </div>

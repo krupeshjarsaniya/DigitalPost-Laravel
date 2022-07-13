@@ -22,7 +22,7 @@ class AdminAuth
         {
             if(Auth::user()->user_role == 1)
             {
-       
+
                 return $next($request);
             }
             else {
@@ -37,10 +37,10 @@ class AdminAuth
                 }
                 return $next($request);
             }
-            
+
         }
         // return back();
         return redirect()->route('login');
-        
+
     }
 }

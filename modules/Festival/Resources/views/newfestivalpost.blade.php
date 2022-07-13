@@ -74,6 +74,7 @@
 		                               	<select name="ftype" id="ftype" class="form-control">
 		                               		<option value="festival">Festival</option>
 		                               		<option value="incident">Incident</option>
+		                               		<option value="tranding">Tranding</option>
 		                               	</select>
 		                            </div>
                             	</div>
@@ -307,6 +308,32 @@
                 </div>
             </div>
         </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Tranding List</h4>
+            </div>
+            <div class="card-body">
+
+                <div class="table-responsive">
+                    <table class="display table table-striped table-hover text-center" id="tranding-table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Name</th>
+                                <th>Date</th>
+                                <th>type</th>
+                                <th>Information</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -392,7 +419,7 @@
 		});
 
 		$('#ftype').change(function(){
-		    if($(this).val() == 'festival'){
+		    if($(this).val() == 'festival' || $(this).val() == 'tranding' ){
 		        $('.festdatediv').show();
 		    } else {
 		         $('.festdatediv').hide();

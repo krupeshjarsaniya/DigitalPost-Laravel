@@ -168,3 +168,9 @@ Route::post('removeBackground', 'UserapiControllerV15@removeBackground');
 Route::post('userDownloadPhoto', 'UserapiControllerV15@userDownloadPhoto');
 
 Route::post('checkUserRemainingLimit', 'UserapiControllerV15@checkUserRemainingLimit');
+
+Route::post('addContentCreater', 'UserapiControllerV15@addContentCreater');
+
+Route::post('addDistributor', 'UserapiControllerV15@addDistributor');
+
+Route::post('getBanners', 'UserapiControllerV15@getBanners');

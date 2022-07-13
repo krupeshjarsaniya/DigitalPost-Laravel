@@ -47,6 +47,7 @@
                             <th>Name</th>
                             <th>Image</th>
                             <th>Audio</th>
+                            <th>Duration</th>
                             <th>Language</th>
                             <th>Order</th>
                             <th>Action</th>
@@ -93,6 +94,10 @@
                         <div class="col-6 form-group err_audio">
                             <label for="audio">Audio</label>
                             <input type="file" id="audio" name="audio" class="form-control" accept="audio/*" />
+                        </div>
+                        <div class="col-6 form-group err_duration">
+                            <label for="duration">Duration</label>
+                            <input type"text" name="duration" id="duration" class="form-control" placeholder="Enter Music Duration" />
                         </div>
                         <div class="col-6 form-group err_order_number">
                             <label for="order_number">Order</label>
@@ -142,6 +147,10 @@
                         <div class="col-6 form-group err_audio">
                             <label for="edit_audio">Audio</label>
                             <input type="file" name="audio" id="edit_audio" class="form-control" accept="audio/*" />
+                        </div>
+                        <div class="col-6 form-group err_duration">
+                            <label for="duration">Duration</label>
+                            <input type"text" name="duration" id="edit_duration" class="form-control" placeholder="Enter Music Duration" />
                         </div>
                         <div class="col-6 form-group err_order_number">
                             <label for="edit_order_number">Order</label>

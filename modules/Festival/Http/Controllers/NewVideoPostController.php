@@ -26,12 +26,20 @@ class NewVideoPostController extends Controller
             ->where('video_is_delete', '=', 0)
             ->orderBy('video_date', 'DESC')
             ->get();
+
+        $trandings = DB::table('video_data')
+            ->where('video_type', '=', 'tranding')
+            ->where('video_is_delete', '=', 0)
+            ->orderBy('video_date', 'DESC')
+            ->get();
+        
         $incidents = DB::table('video_data')
             ->where('video_type', '=', 'incident')
             ->where('video_is_delete', '=', 0)
             ->get();
 
         $festivalsCount = count($festivals);
+        $trandingsCount = count($trandings);
         $incidentsCount = count($incidents);
 
         $data = '';
@@ -46,6 +54,21 @@ class NewVideoPostController extends Controller
                 $data .= '<td>' . $festival->video_info . '</td>';
                 $data .= '<td><button onclick="addFestivalCategory(' . $festival->video_id . ')" class="btn btn-success">Sub Category</button><button onclick="editVideoPost(' . $festival->video_id . ')" class="btn btn-primary ml-1">Edit</button><button onclick="removeVideo(' . $festival->video_id . ')" class="btn btn-danger ml-1">Delete</button></td>';
                 $data .= '</tr>';
+            }
+        }
+
+        $trandingdata = '';
+        if ($trandingsCount != 0) {
+            $count = 1;
+            foreach ($trandings as $key => $tranding) {
+                $trandingdata .= '<tr>';
+                $trandingdata .= '<td>' . $count++ . '</td>';
+                $trandingdata .= '<td>' . $tranding->video_name . '</td>';
+                $trandingdata .= '<td>' . $tranding->video_date . '</td>';
+                $trandingdata .= '<td>Tranding</td>';
+                $trandingdata .= '<td>' . $tranding->video_info . '</td>';
+                $trandingdata .= '<td><button onclick="addFestivalCategory(' . $tranding->video_id . ')" class="btn btn-success">Sub Category</button><button onclick="editVideoPost(' . $tranding->video_id . ')" class="btn btn-primary ml-1">Edit</button><button onclick="removeVideo(' . $tranding->video_id . ')" class="btn btn-danger ml-1">Delete</button></td>';
+                $trandingdata .= '</tr>';
             }
         }
 
@@ -65,7 +88,7 @@ class NewVideoPostController extends Controller
             }
         }
 
-        return response()->json(['status' => true, 'data' => $data, 'incidents' => $incidentdata]);
+        return response()->json(['status' => true, 'data' => $data, 'incidents' => $incidentdata, 'trandings' => $trandingdata]);
     }
 
     /**

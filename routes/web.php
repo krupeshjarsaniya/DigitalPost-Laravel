@@ -41,17 +41,17 @@ Route::get('facebook/access_token', 'HomeController@facebookAccessToken')->name(
 
 Route::group(['middleware' => 'auth'], function()
 {
-    
+
 	// Route::get('/', function () {
 	// 	return redirect()->route('dashboard');
  //        //return redirect()->url('login');
 	// });
-	
+
 	// Route::get('/home', function () {
 	// 	return redirect()->route('dashboard');
 	// });
-		// Route::redirect('/','/admin/dashboard',301);	
-		// Route::redirect('/home','/admin/dashboard',301);	
+		// Route::redirect('/','/admin/dashboard',301);
+		// Route::redirect('/home','/admin/dashboard',301);
 
 });
 
@@ -67,3 +67,5 @@ Route::get('logout', 'Auth\LoginController@logout');
 // Route::group(['middleware' => 'auth'], function(){
 //  	Route::get('/home', 'HomeController@index')->name('home');
 // });
+
+Route::prefix('distributor_channel')->group(base_path('routes/distributor.php'));

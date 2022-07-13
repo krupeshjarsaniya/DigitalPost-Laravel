@@ -177,6 +177,37 @@ function daysUpdate() {
 	});
 }
 
+function updateBanner() {
+	$.ajaxSetup({
+	headers: {
+	    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+	}});
+
+	var form = document.bannerForm;
+
+    var formData = new FormData(form);
+
+	$('.loader-custom').css('display','block');
+	$.ajax({
+		type:'POST',
+		url:APP_URL+"/dashboard/update-banner",
+		processData: false,
+        contentType: false,
+        dataType: 'json',
+        data: formData,
+        dataSrc: "",
+		success: function (data)
+		{
+			if (data.status)
+			{
+				location.reload();
+
+			}
+			$('.loader-custom').css('display','none');
+		}
+	});
+}
+
 function Whatsappupdate(id) {
 
 	$.ajaxSetup({

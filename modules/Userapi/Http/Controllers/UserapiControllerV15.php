@@ -55,6 +55,8 @@ use App\BGCreditPlan;
 use App\BGCreditPlanHistory;
 use App\UserDownloadHistory;
 use App\BackgroundRemoveRequest;
+use App\ContentCreator;
+use App\Distributor;
 
 class UserapiControllerV15 extends Controller
 {
@@ -107,6 +109,14 @@ class UserapiControllerV15 extends Controller
                 $checkUser->used_referral_code = $referral_code;
                 $checkUser->referral_by = $referral_by;
                 $checkUser->password = bcrypt($name . '@123');
+
+                $settingData = DB::table('setting')->first();
+                $register_credit = 0;
+                if (!empty($settingData)) {
+                    $register_credit = $settingData->register_credit;
+                }
+                $checkUser->bg_credit = $register_credit;
+
                 $checkUser->save();
                 return response()->json(['status' => true, 'message' => 'OTP sent to you mobile']);
             }
@@ -1281,6 +1291,68 @@ class UserapiControllerV15 extends Controller
             array_push($advetisement, $data);
         }
 
+        $trandings = Festival::whereDate('fest_date', $currnt_date)->whereIn('fest_type', array('tranding', 'festival'))->where('fest_is_delete', 0)->orderBy('fest_date', 'ASC')->get();
+        $tranding = array();
+        for ($i = 0; $i < sizeof($trandings); $i++) {
+            $trandings[$i]['fest_day'] = date_parse_from_format('Y-m-d', $trandings[$i]['fest_date'])['day'];
+            $trandings[$i]['fest_date'] = date("d-m-Y", strtotime($trandings[$i]['fest_date']));
+            $data_tranding['fest_id'] = strval($trandings[$i]['fest_id']);
+            $data_tranding['fest_name'] = !empty($trandings[$i]['fest_name']) ? $trandings[$i]['fest_name'] : "";
+            $data_tranding['fest_info'] = !empty($trandings[$i]['fest_info']) ? $trandings[$i]['fest_info'] : "";
+            $data_tranding['fest_image'] = !empty($trandings[$i]['fest_image']) ? Storage::url($trandings[$i]['fest_image']) : "";
+            $data_tranding['fest_type'] = !empty($trandings[$i]['fest_type']) ? $trandings[$i]['fest_type'] : "";
+            $data_tranding['fest_date'] = $trandings[$i]['fest_date'];
+            $data_tranding['fest_day'] = strval($trandings[$i]['fest_day']);
+            $data_tranding['fest_is_delete'] = strval($trandings[$i]['fest_is_delete']);
+            $data_tranding['img_url'] = array();
+
+            if($trandings[$i]['fest_type'] == 'tranding') {
+
+                $photo = Post::where('post_category_id', '=', $trandings[$i]['fest_id'])->where('post_is_deleted', '=', 0)->select('post_content', 'post_id', 'image_type', 'post_category_id', 'post_mode')->orderBy('image_type', 'ASC')->orderBy('post_id', 'DESC')->get();
+
+                foreach ($photo as $ph_value) {
+                    $data_ph['post_content'] = !empty($ph_value->post_thumb) ? Storage::url($ph_value->post_thumb) : Storage::url($ph_value->post_content);
+                    $data_ph['post_id'] = !empty($ph_value->post_id) ? strval($ph_value->post_id) : "0";
+                    $data_ph['image_type'] = !empty($ph_value->image_type) ? strval($ph_value->image_type) : "0";
+                    $data_ph['post_category_id'] = !empty($ph_value->post_category_id) ? strval($ph_value->post_category_id) : "0";
+                    $data_ph['post_mode'] = !empty($ph_value->post_mode) ? strval($ph_value->post_mode) : "light";
+                    $data_ph['post_type'] = "image";
+                    array_push($data_tranding['img_url'], $data_ph);
+                }
+
+                $videoPostCategory = DB::table('video_data')->where('video_name', $trandings[$i]['fest_name'])->where('video_is_delete', 0)->first();
+                if(!empty($videoPostCategory)) {
+
+                    $video = DB::table('video_post_data')
+                    ->where('video_post_id', '=', $videoPostCategory->video_id)
+                    ->where('is_deleted', '=', 0)
+                    ->orderBy('image_type', 'ASC')
+                    ->orderBy('id', 'DESC')
+                    ->get();
+
+                    foreach ($video as $key => $value) {
+                        $data = array();
+
+                        $data['id'] = strval($value->id);
+                        $data['image'] = !empty($value->thumbnail) ? Storage::url($value->thumbnail) : "";
+                        if ($value->video_store == "LOCAL") {
+                            $data['video'] = !empty($value->video_url) ? url('/') . '/' . $value->video_url : "";
+                        } else {
+                            $data['video'] = !empty($value->video_url) ? Storage::url($value->video_url) : "";
+                        }
+                        $data['image_type'] = strval($value->image_type);
+                        $data['color'] = !empty($value->color) ? $value->color : "";
+                        $data['post_mode'] = !empty($value->post_mode) ? $value->post_mode : "light";
+                        $data['post_type'] = "video";
+                        array_push($data_tranding['img_url'], $data);
+                    }
+                }
+            }
+
+
+            array_push($tranding, $data_tranding);
+        }
+
         $festivals = Festival::whereDate('fest_date', '>=', $currnt_date)->where('fest_type', 'festival')->where('fest_is_delete', 0)->orderBy('fest_date', 'asc')->offset(0)->limit(10)->get();
         $festival = array();
         $data_festival = array();
@@ -1340,8 +1412,14 @@ class UserapiControllerV15 extends Controller
         $userdata = User::where('id', '=', $user_id)->select(['default_business_id', 'user_language', 'default_political_business_id'])->first();
         $user_language_check = $userdata->user_language != NULL ? true : false;
         $currntbusiness = Business::where('busi_id', '=', $userdata->default_business_id)->where('busi_delete', '=', 0)->first();
+        $political_category_name = "";
         $currntbusinessPolitical = PoliticalBusiness::where('pb_id', '=', $userdata->default_political_business_id)->where('pb_is_deleted', '=', 0)->first();
-
+        if(!empty($currntbusinessPolitical)) {
+            $partyData = DB::table('political_category')->where('pc_id', '=', $currntbusinessPolitical->pb_pc_id)->first();
+            if(!empty($partyData)) {
+                $political_category_name = $partyData->pc_name;
+            }
+        }
         $updatedCurrentBusinessDetails = array();
         $preference = DB::table('user_preference')->where('user_id', '=', $user_id)->get();
 
@@ -1568,20 +1646,41 @@ class UserapiControllerV15 extends Controller
 
             if (!empty($currntbusiness_photo_id)) {
                 $currntbusiness_photo = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type', 'image')->where('buss_cat_post_id', '=', $currntbusiness_photo_id->id)->where('is_deleted', '=', 0)->where('festival_id', 0)->orderBy('image_type', 'ASC')->orderBy('id', 'DESC')->limit(10)->get();
-                if (!empty($currntbusiness)) {
-                    $currntbusiness_photos['id'] =  $currntbusiness_photo_id->id;
-                    $currntbusiness_photos['cat_name'] =  $currntbusiness->business_category;
-                    $currntbusiness_photos['images'] =  [];
+                $currntbusiness_photos['id'] =  $currntbusiness_photo_id->id;
+                $currntbusiness_photos['cat_name'] =  $currntbusiness->business_category;
+                $currntbusiness_photos['images'] =  [];
 
-                    foreach ($currntbusiness_photo as $img_key => $img_value) {
+                foreach ($currntbusiness_photo as $img_key => $img_value) {
 
-                        $img_data['image_id'] = strval($img_value->id);
-                        $img_data['image_url'] = !empty($img_value->post_thumb) ? Storage::url($img_value->post_thumb) : Storage::url($img_value->thumbnail);
-                        $img_data['image_type'] = strval($img_value->image_type);
-                        $img_data['image_language_id'] = !empty($img_value->language_id) ? strval($img_value->language_id) : "";
+                    $img_data['image_id'] = strval($img_value->id);
+                    $img_data['image_url'] = !empty($img_value->post_thumb) ? Storage::url($img_value->post_thumb) : Storage::url($img_value->thumbnail);
+                    $img_data['image_type'] = strval($img_value->image_type);
+                    $img_data['image_language_id'] = !empty($img_value->language_id) ? strval($img_value->language_id) : "";
 
-                        array_push($currntbusiness_photos['images'], $img_data);
-                    }
+                    array_push($currntbusiness_photos['images'], $img_data);
+                }
+            }
+        }
+
+        $currntpoliticalbusiness_photos = array();
+        if(!empty($currntbusinessPolitical)) {
+
+            $currntPoliticalbusiness_photo_id = DB::table('business_category')->where('name', $political_category_name)->where('is_delete', 0)->first();
+            $currntpoliticalbusiness_photos = array();
+            if (!empty($currntPoliticalbusiness_photo_id)) {
+                $currntpoliticalbusiness_photoData = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type', 'image')->where('buss_cat_post_id', '=', $currntPoliticalbusiness_photo_id->id)->where('is_deleted', '=', 0)->where('festival_id', 0)->orderBy('image_type', 'ASC')->orderBy('id', 'DESC')->limit(10)->get();
+                $currntpoliticalbusiness_photos['id'] =  $currntPoliticalbusiness_photo_id->id;
+                $currntpoliticalbusiness_photos['cat_name'] =  $political_category_name;
+                $currntpoliticalbusiness_photos['images'] =  [];
+
+                foreach ($currntpoliticalbusiness_photoData as $img_key => $img_value) {
+
+                    $img_data['image_id'] = strval($img_value->id);
+                    $img_data['image_url'] = !empty($img_value->post_thumb) ? Storage::url($img_value->post_thumb) : Storage::url($img_value->thumbnail);
+                    $img_data['image_type'] = strval($img_value->image_type);
+                    $img_data['image_language_id'] = !empty($img_value->language_id) ? strval($img_value->language_id) : "";
+
+                    array_push($currntpoliticalbusiness_photos['images'], $img_data);
                 }
             }
         }
@@ -1590,7 +1689,7 @@ class UserapiControllerV15 extends Controller
 
 
 
-        $new_category_data = Festival::where('fest_type', '=', 'incident')->where('fest_is_delete', '=', 0)->where('new_cat', '!=', 0)->orderBy('position_no', 'ASC')->get();
+        $new_category_data = Festival::where('fest_is_delete', '=', 0)->where('new_cat', '!=', 0)->orderBy('position_no', 'ASC')->get();
         $new_category_dataArray = array();
         $user_language = User::where('id', $user_id)->value('user_language');
         for ($i = 0; $i < sizeof($new_category_data); $i++) {
@@ -1702,7 +1801,7 @@ class UserapiControllerV15 extends Controller
         $remaining_bg_credit = $checkReferralCode->bg_credit;
 
         if (!empty($festivals) || !empty($incedents)) {
-            return response()->json(['remaining_bg_credit' => $remaining_bg_credit, 'slider' => $advetisement, 'festival' => $festival, 'cateogry' => $incedent, 'business_category' => $buss_category, 'current_business' => $updatedCurrentBusinessDetails, 'premium' => $ispreminum, 'current_date' => $currnt_date, 'logout' => $logout, 'frameList' => $frameList, 'share_message' => $sharemsg, 'currntbusiness_photos' => (object)$currntbusiness_photos, 'new_category' => $new_category_dataArray, 'greetings' => $new_category_data_greetingsArray, 'status' => true, 'user_language' => $user_language_check, 'message' => 'List of all festival', 'politicalCurrentBusinessDetails' => $retrunData, 'isPoliticalPrimium' => $politicalCurrentBusinessDetails[1], 'popup' => $popupData, 'renewalPopup' => $renewalPopup, 'referral_code' => $referral_code]);
+            return response()->json(['remaining_bg_credit' => $remaining_bg_credit, 'slider' => $advetisement, 'festival' => $festival, 'cateogry' => $incedent, 'business_category' => $buss_category, 'current_business' => $updatedCurrentBusinessDetails, 'premium' => $ispreminum, 'current_date' => $currnt_date, 'logout' => $logout, 'frameList' => $frameList, 'share_message' => $sharemsg, 'currntbusiness_photos' => (object)$currntbusiness_photos, 'currntpoliticalbusiness_photos' => (object)$currntpoliticalbusiness_photos, 'new_category' => $new_category_dataArray, 'greetings' => $new_category_data_greetingsArray, 'status' => true, 'user_language' => $user_language_check, 'message' => 'List of all festival', 'politicalCurrentBusinessDetails' => $retrunData, 'isPoliticalPrimium' => $politicalCurrentBusinessDetails[1], 'popup' => $popupData, 'renewalPopup' => $renewalPopup, 'referral_code' => $referral_code, 'trandings' => $tranding]);
         } else {
             return response()->json(['remaining_bg_credit' => $remaining_bg_credit, 'status' => false, 'message' => 'There is no festival in this month', 'current_date' => $currnt_date]);
         }
@@ -1729,6 +1828,7 @@ class UserapiControllerV15 extends Controller
                 $isVideoAvailable = true;
             }
         }
+        $category_id = $input['postcategoryid'];
 
         $category_type = 0;
         if ($type == 'image') {
@@ -1738,14 +1838,15 @@ class UserapiControllerV15 extends Controller
                 $category_type = 5;
             }
         } else {
-            if ($festival_data->fest_type == 'festival') {
+            $category_id = $videoFestival->video_id;
+            if ($videoFestival->fest_type == 'festival') {
                 $category_type = 4;
             } else {
                 $category_type = 6;
             }
         }
 
-        $limitData = Helper::getUserRemainingLimit($user_id, $category_type, $input['postcategoryid']);
+        $limitData = Helper::getUserRemainingLimit($user_id, $category_type, $category_id);
         $limitData['type'] = $category_type;
 
         $sub_category_id = $input['sub_category_id'];
@@ -2429,9 +2530,35 @@ class UserapiControllerV15 extends Controller
             $userdata = User::where('id', '=', $user_id)->select(['default_business_id', 'default_political_business_id'])->first();
             $getPurchaseData = Purchase::where('purc_business_id', $business_id)->where('purc_business_type', $input['business_type'])->first();
             if ($getPurchaseData->purc_business_type == 1) {
-                $this->addPoliticalBusinessWhilePlanIsThree($user_id, $plan_id, $userdata->default_political_business_id);
+
+                $checkPBusiness = PoliticalBusiness::where('pb_id', $userdata->default_political_business_id)->where('user_id', $user_id)->where('pb_is_deleted', 0)->first();
+                if(empty($checkPBusiness)) {
+                    $this->addPoliticalBusinessWhilePlanIsThree($user_id,$plan_id, 0);
+                }
+                else {
+                    $purchase = Purchase::where('purc_business_id', $userdata->default_political_business_id)->where('purc_business_type', 2)->first();
+                    if ($purchase->purc_plan_id == 3) {
+                        $this->addPoliticalBusinessWhilePlanIsThree($user_id,$plan_id, $userdata->default_political_business_id);
+                    }
+                    else {
+                        $this->addPoliticalBusinessWhilePlanIsThree($user_id,$plan_id, 0);
+                    }
+                }
+
+                // $this->addPoliticalBusinessWhilePlanIsThree($user_id, $plan_id, $userdata->default_political_business_id);
+
             } else {
-                $this->addSimpleBusinessWhilePlanIsThree($user_id, $plan_id, $userdata->default_business_id);
+
+                $purchase = Purchase::where('purc_business_id', $userdata->default_business_id)->where('purc_business_type', 1)->first();
+                if ($purchase->purc_plan_id == 3) {
+                    $this->addSimpleBusinessWhilePlanIsThree($user_id,$plan_id, $userdata->default_business_id);
+                }
+                else {
+                    $this->addSimpleBusinessWhilePlanIsThree($user_id,$plan_id, 0);
+                }
+
+                // $this->addSimpleBusinessWhilePlanIsThree($user_id, $plan_id, $userdata->default_business_id);
+
             }
         }
 
@@ -2467,21 +2594,47 @@ class UserapiControllerV15 extends Controller
                     'purc_is_expire' => 0,
                 ));
             } else {
-                if (!empty($purchase->purc_end_date)) {
-                    $tmp_end_date = Carbon::parse($purchase->purc_end_date);
-                    $tmp_start_date = Carbon::now();
-                    $diff = $tmp_end_date->diffInDays($tmp_start_date);
-                    $new_start_date = $tmp_start_date->addDays($diff);
-                    $end_date = $tmp_end_date->addDays($diff);
-                }
-                Purchase::where('purc_business_id', $business_id)->where('purc_business_type', 1)->update(array(
-                    'purc_start_date' => $start_date,
-                    'purc_end_date' => $end_date,
-                    'purc_is_cencal' => 0,
-                    'purc_tel_status' => 7,
-                    'purc_follow_up_date' => null,
-                    'purc_is_expire' => 0,
-                ));
+
+                $business = new Business();
+                $business->busi_name = 'Business Name';
+                $business->user_id = $user_id;
+                $business->busi_email = '';
+                $business->busi_mobile = '';
+                $business->save();
+                $business_id = $business->id;
+
+                $start_date = date('Y-m-d');
+
+                $plantrial = Plan::where('plan_id', '=', $plan_id)->select('plan_validity')->first();
+                $end_date = date('Y-m-d', strtotime($start_date . ' + ' . $plantrial->plan_validity . ' days'));
+
+                $purchase = new Purchase();
+                $purchase->purc_user_id = $user_id;
+                $purchase->purc_business_id = $business_id;
+                $purchase->purc_plan_id = $plan_id;
+                $purchase->purc_start_date = $start_date;
+                $purchase->purc_end_date = $end_date;
+                $purchase->purc_business_type = 1;
+                $purchase->purc_tel_status = 7;
+                $purchase->purc_follow_up_date = null;
+                $purchase->save();
+                $this->addPurchasePlanHistory($business_id, 1);
+
+                // if (!empty($purchase->purc_end_date)) {
+                //     $tmp_end_date = Carbon::parse($purchase->purc_end_date);
+                //     $tmp_start_date = Carbon::now();
+                //     $diff = $tmp_end_date->diffInDays($tmp_start_date);
+                //     $new_start_date = $tmp_start_date->addDays($diff);
+                //     $end_date = $tmp_end_date->addDays($diff);
+                // }
+                // Purchase::where('purc_business_id', $business_id)->where('purc_business_type', 1)->update(array(
+                //     'purc_start_date' => $start_date,
+                //     'purc_end_date' => $end_date,
+                //     'purc_is_cencal' => 0,
+                //     'purc_tel_status' => 7,
+                //     'purc_follow_up_date' => null,
+                //     'purc_is_expire' => 0,
+                // ));
             }
             DB::table('user_business_comment')->where('business_id', $business_id)->where('business_type', 1)->delete();
             $this->addPurchasePlanHistory($business_id, 1, $new_start_date);
@@ -2581,21 +2734,48 @@ class UserapiControllerV15 extends Controller
                     'purc_is_expire' => 0,
                 ));
             } else {
-                if (!empty($purchase->purc_end_date)) {
-                    $tmp_end_date = Carbon::parse($purchase->purc_end_date);
-                    $tmp_start_date = Carbon::now();
-                    $diff = $tmp_end_date->diffInDays($tmp_start_date);
-                    $new_start_date = $tmp_start_date->addDays($diff);
-                    $end_date = $tmp_end_date->addDays($diff);
-                }
-                Purchase::where('purc_business_id', $business_id)->where('purc_business_type', 2)->update(array(
-                    'purc_start_date' => $start_date,
-                    'purc_end_date' => $end_date,
-                    'purc_is_cencal' => 0,
-                    'purc_tel_status' => 7,
-                    'purc_follow_up_date' => null,
-                    'purc_is_expire' => 0,
-                ));
+
+                $business = new PoliticalBusiness();
+                $business->pb_name = 'Person name';
+                $business->user_id = $user_id;
+                $business->pb_designation = '';
+                $business->pb_mobile = '';
+                $business->pb_pc_id = 1;
+                $business->save();
+                $business_id = $business->id;
+
+                $start_date = date('Y-m-d');
+
+                $plantrial = Plan::where('plan_id', '=', $plan_id)->select('plan_validity')->first();
+                $end_date = date('Y-m-d', strtotime($start_date . ' + ' . $plantrial->plan_validity . ' days'));
+
+                $purchase = new Purchase();
+                $purchase->purc_user_id = $user_id;
+                $purchase->purc_business_id = $business_id;
+                $purchase->purc_plan_id = $plan_id;
+                $purchase->purc_start_date = $start_date;
+                $purchase->purc_end_date = $end_date;
+                $purchase->purc_business_type = 2;
+                $purchase->purc_tel_status = 7;
+                $purchase->purc_follow_up_date = null;
+                $purchase->save();
+                $this->addPurchasePlanHistory($business_id, 2);
+
+                // if (!empty($purchase->purc_end_date)) {
+                //     $tmp_end_date = Carbon::parse($purchase->purc_end_date);
+                //     $tmp_start_date = Carbon::now();
+                //     $diff = $tmp_end_date->diffInDays($tmp_start_date);
+                //     $new_start_date = $tmp_start_date->addDays($diff);
+                //     $end_date = $tmp_end_date->addDays($diff);
+                // }
+                // Purchase::where('purc_business_id', $business_id)->where('purc_business_type', 2)->update(array(
+                //     'purc_start_date' => $start_date,
+                //     'purc_end_date' => $end_date,
+                //     'purc_is_cencal' => 0,
+                //     'purc_tel_status' => 7,
+                //     'purc_follow_up_date' => null,
+                //     'purc_is_expire' => 0,
+                // ));
             }
             DB::table('user_business_comment')->where('business_id', $business_id)->where('business_type', 2)->delete();
             $this->addPurchasePlanHistory($business_id, 2, $new_start_date);
@@ -4770,15 +4950,15 @@ class UserapiControllerV15 extends Controller
             }
         }
         if ($user_data->default_political_business_id == $input['id']) {
-            $currntbusiness = Business::where('user_id', '=', $user_id)->where('busi_delete', '=', 0)->select('busi_id')->first();
+            $currntbusiness = PoliticalBusiness::where('user_id','=',$user_id)->where('pb_is_deleted','=',0)->select('pb_id')->first();
 
-            if (!empty($currntbusiness) || !is_null($currntbusiness)) {
+            if(!empty($currntbusiness) || !is_null($currntbusiness)){
                 User::where('id', $user_id)->update(array(
-                    'default_business_id' => $currntbusiness->busi_id,
+                    'default_political_business_id' => $currntbusiness->pb_id,
                 ));
             } else {
                 User::where('id', $user_id)->update(array(
-                    'default_business_id' => 0,
+                    'default_political_business_id' => 0,
                 ));
             }
         }
@@ -6342,7 +6522,7 @@ class UserapiControllerV15 extends Controller
         }
 
         $frames = Frame::where('frame_type', $frame_type)
-                        ->where('frame_mode', $mode)
+                        ->whereIn('frame_mode', array($mode, 'both'))
                         ->where('is_active', 1)
                         ->orderBy('display_order', 'ASC')
                         ->get();
@@ -6419,13 +6599,13 @@ class UserapiControllerV15 extends Controller
                         $business_field = BusinessField::where('id', $image->image_for)->first();
                         if($business_field->field_key == 'busi_logo' || $business_field->field_key == 'watermark_image' || $business_field->field_key == 'pb_party_logo' || $business_field->field_key == 'pb_watermark') {
                             $image_path = "";
-                            if($frame->frame_mode == 'dark') {
+                            if($mode == 'dark') {
                                 $image_path = $business[$business_field->field_key];
                                 if(empty($image_path)) {
                                     $image_path = $business[$business_field->field_key . '_dark'];
                                 }
                             }
-                            if($frame->frame_mode == 'light') {
+                            if($mode == 'light') {
                                 $image_path = $business[$business_field->field_key . '_dark'];
                                 if(empty($image_path)) {
                                     $image_path = $business[$business_field->field_key];
@@ -6673,10 +6853,16 @@ class UserapiControllerV15 extends Controller
             }
         }
         if ($type == 4) {
-            $category = VideoData::where('video_id', $category_id)->where('video_type', 'festival')->where('video_is_delete', 0)->first();
+            $category = Festival::where('fest_id', $category_id)->where('fest_type', 'festival')->where('fest_is_delete', 0)->first();
             if (empty($category)) {
                 return response()->json(['status' => false, 'message' => 'Category not found']);
             }
+            $videoFestival = VideoData::where('video_name', $category->fest_name)->where('video_is_delete', 0)->first();
+            $category = VideoData::where('video_id', $videoFestival->video_id)->where('video_type', 'festival')->where('video_is_delete', 0)->first();
+            if (empty($category)) {
+                return response()->json(['status' => false, 'message' => 'Category not found']);
+            }
+            $category_id = $videoFestival->video_id;
         }
 
         if ($type == 5) {
@@ -6687,10 +6873,16 @@ class UserapiControllerV15 extends Controller
         }
 
         if ($type == 6) {
-            $category = VideoData::where('video_id', $category_id)->where('video_type', 'incident')->where('video_is_delete', 0)->first();
+            $category = Festival::where('fest_id', $category_id)->where('fest_type', 'incident')->where('fest_is_delete', 0)->first();
             if (empty($category)) {
                 return response()->json(['status' => false, 'message' => 'Category not found']);
             }
+            $videoFestival = VideoData::where('video_name', $category->fest_name)->where('video_is_delete', 0)->first();
+            $category = VideoData::where('video_id', $videoFestival->video_id)->where('video_type', 'incident')->where('video_is_delete', 0)->first();
+            if (empty($category)) {
+                return response()->json(['status' => false, 'message' => 'Category not found']);
+            }
+            $category_id = $videoFestival->video_id;
         }
 
         if ($type == 7) {
@@ -6732,9 +6924,9 @@ class UserapiControllerV15 extends Controller
 
         $limit = new UserDownloadHistory;
         $limit->user_id = $user_id;
-        $limit->type = $request->type;
-        $limit->category_id = $request->category_id;
-        $limit->business_type = $request->business_type;
+        $limit->type = $type;
+        $limit->category_id = $category_id;
+        $limit->business_type = $business_type;
         $limit->business_id = $business_id;
         $limit->save();
 
@@ -6765,5 +6957,107 @@ class UserapiControllerV15 extends Controller
         $data['type'] = $type;
 
         return response()->json(['status' => true, 'data' => $data, 'message' => 'User Remaining Limits']);
+    }
+
+    public function addContentCreater(Request $request) {
+        $token = $request->token;
+        $user_id = $this->get_userid($token);
+        if ($user_id == 0) {
+            return response()->json(['status' => false, 'message' => 'user not valid']);
+        }
+
+        $creator = ContentCreator::where('user_id', $user_id)->first();
+        if(!empty($creator)) {
+            return response()->json(['status' => false, 'message' => 'Your request is ' . strtolower($creator->status)]);
+        }
+
+        if (empty($request->name) || empty($request->city) || empty($request->work_experience) || empty($request->skills) || empty($request->current_work) || empty($request->contact_no) || empty($request->email)) {
+            return response()->json(['status' => false, 'message' => 'Please fill all required fields']);
+        }
+
+        $creator = new ContentCreator;
+        $creator->user_id = $user_id;
+        $creator->name = $request->name;
+        $creator->city = $request->city;
+        $creator->work_experience = $request->work_experience;
+        $creator->skills = $request->skills;
+        $creator->current_work = $request->current_work;
+        $creator->contact_no = $request->contact_no;
+        $creator->email = $request->email;
+        $creator->save();
+
+        return response()->json(['status' => true, 'data' => $creator, 'message' => 'Content creator request added sucessfully']);
+    }
+    public function addDistributor(Request $request) {
+        $token = $request->token;
+        $user_id = $this->get_userid($token);
+        if ($user_id == 0) {
+            return response()->json(['status' => false, 'message' => 'user not valid']);
+        }
+
+        $distributor = Distributor::where('user_id', $user_id)->first();
+        if(!empty($distributor)) {
+            return response()->json(['status' => false, 'message' => 'Your request is ' . strtolower($distributor->status)]);
+        }
+
+        if (empty($request->name) || empty($request->city) || empty($request->current_work) || empty($request->contact_no) || empty($request->email)) {
+            return response()->json(['status' => false, 'message' => 'Please fill all required fields']);
+        }
+
+        $distributor = new Distributor;
+        $distributor->user_id = $user_id;
+        $distributor->name = $request->name;
+        $distributor->city = $request->city;
+        $distributor->current_work = $request->current_work;
+        $distributor->contact_no = $request->contact_no;
+        $distributor->email = $request->email;
+        $distributor->save();
+
+        return response()->json(['status' => true, 'data' => $distributor, 'message' => 'Content distributor request added sucessfully']);
+    }
+
+    public function getBanners(Request $request) {
+        $token = $request->token;
+        $user_id = $this->get_userid($token);
+        if ($user_id == 0) {
+            return response()->json(['status' => false, 'message' => 'user not valid']);
+        }
+
+        $settingData = DB::table('setting')->first();
+
+        $creator_banner = "";
+        if(!empty($settingData->creator_banner)) {
+            $creator_banner = url($settingData->creator_banner);
+        }
+
+        $distributor_banner = "";
+        if(!empty($settingData->distributor_banner)) {
+            $distributor_banner = url($settingData->distributor_banner);
+        }
+
+        $partner_us_banner = "";
+        if(!empty($settingData->partner_us_banner)) {
+            $partner_us_banner = url($settingData->partner_us_banner);
+        }
+        $is_content_creator = false;
+        $is_distributor = false;
+        $checkCreator = ContentCreator::where('user_id', $user_id)->first();
+        if(!empty($checkCreator)) {
+            $is_content_creator = true;
+        }
+        $distributor = Distributor::where('user_id', $user_id)->first();
+        if(!empty($distributor)) {
+            $is_distributor = true;
+        }
+
+        $banner = [
+            'creator_banner' => $creator_banner,
+            'distributor_banner' => $distributor_banner,
+            'partner_us_banner' => $partner_us_banner,
+            'is_content_creator' => $is_content_creator,
+            'is_distributor' => $is_distributor,
+        ];
+
+        return response()->json(['status' => true, 'data' => $banner, 'message' => 'Banner fetched sucessfully']);
     }
 }
