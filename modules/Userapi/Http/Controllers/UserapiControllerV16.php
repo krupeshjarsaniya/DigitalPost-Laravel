@@ -7300,6 +7300,7 @@ class UserapiControllerV16 extends Controller
             $festival_data['id'] = strval($festivals[$i]['fest_id']);
             $festival_data['name'] = !empty($festivals[$i]['fest_name']) ? $festivals[$i]['fest_name'] : "";
             $festival_data['image'] = !empty($festivals[$i]['fest_image']) ? Storage::url($festivals[$i]['fest_image']) : "";
+            $festival_data['date'] = date("d-m-Y", strtotime($festivals[$i]['fest_date']));
             array_push($festivals_data, $festival_data);
         }
 
@@ -7341,3 +7342,5 @@ class UserapiControllerV16 extends Controller
 
     }
 }
+
+
