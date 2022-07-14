@@ -179,3 +179,6 @@ Route::post('testFramejson', 'UserapiControllerV16@testFramejson');
 Route::post('search', 'UserapiControllerV16@search');
 
 Route::post('getBusinessCategoryData', 'UserapiControllerV16@getBusinessCategoryData');
+
+Route::post('getPoliticalLogo', 'UserapiControllerV16@getPoliticalLogo');
+

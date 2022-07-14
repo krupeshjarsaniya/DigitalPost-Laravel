@@ -24,7 +24,6 @@ function addPoliticalLogo() {
     $('span.alerts').remove();
 
     var form = document.addPoliticalLogoForm;
-
     var formData = new FormData(form);
 
     $.ajaxSetup({
@@ -34,7 +33,7 @@ function addPoliticalLogo() {
 
     $.ajax({
         type: 'POST',
-        url: APP_URL + '/political-logo/addPoliticalLogo',
+        url: APP_URL + '/political-logo/add',
         processData: false,
         contentType: false,
         dataType: 'json',

@@ -54,7 +54,7 @@
 <div class="modal fade" id="addPoliticalLogoModal">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form name="addPoliticalLogoForm" id="addPoliticalLogoForm">
+            <form name="addPoliticalLogoForm" id="addPoliticalLogoForm" enctype="multipart/form-data">
                 <!-- Modal Header -->
                 <div class="modal-header">
                     <h4 class="modal-title">Add Category</h4>
@@ -65,6 +65,7 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-12">
+                            <input type="file" name="image[]" multiple>
                         </div>
                     </div>
                 </div>

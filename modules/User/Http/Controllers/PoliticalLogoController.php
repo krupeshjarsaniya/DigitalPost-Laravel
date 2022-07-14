@@ -47,46 +47,37 @@ class PoliticalLogoController extends Controller
     }
 
     public function add(Request $request) {
+       
         $validator = Validator::make($request->all(), [
-                'name' => 'required',
+                'image' => 'required',
             ],
             [
-                'name.required' => 'Name Is Required',
+                'image.required' => 'Name Is Required',
             ]
         );
 
         if ($validator->fails())
         {
             $error=json_decode($validator->errors());
-
             return response()->json(['status' => 401,'error1' => $error]);
             exit();
         }
 
-        $checkCategory = BackgroundCategory::where('name', $request->name)->where('is_delete',0)->first();
-        if($checkCategory) {
-            $error=['name' => 'Category already exists'];
-            return response()->json(['status' => 401,'error1' => $error]);
-            exit();
+        foreach ($request->file('image') as $key => $image) {
+            $path = $this->multipleUploadFile($image,'Political-logo');
+            $graphic = new PoliticalLogo();
+            $graphic->image = $path;
+            $graphic->save();
         }
-
-        $category = new BackgroundCategory();
-        $category->name = $request->name;
-        if(!empty($request->order_number)) {
-            $category->order_number = $request->order_number;
-        }
-        $category->save();
-
-        return response()->json(['status' => 1,'data' => "", 'message' => 'Category created' ]);
+        return response()->json(['status' => 1,'data' => "", 'message' => 'Political Logo added' ]);
     }
 
     public function delete(Request $request) {
         $id = $request->id;
-        $category = BackgroundCategory::find($id);
-        if($category) {
-            $category->is_delete = 1;
-            $category->save();
+        $logo = PoliticalLogo::find($id);
+        if($logo) {
+            $logo->delete();
         }
-        return response()->json(['status' => true,'data' => "", 'message' => 'Category Deleted' ]);
+        return response()->json(['status' => true,'data' => "", 'message' => 'Political Logo Deleted' ]);
     }
 }

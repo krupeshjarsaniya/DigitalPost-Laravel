@@ -156,20 +156,31 @@ class BusinessCategory extends Controller
             # code...
             return DataTables::of($stickers)
                 ->editColumn('name', function ($row) {
+                    $image = Storage::url($row->image);
                     $name = "<div class='row' >";
+
                     $name .= "<div class='col-9' >";
                     $name .= "<input class='form-control' type='text' id='name_" . $row->id . "' value='" . $row->name . "' />";
+                    $name .= "<input class='form-control' type='file' id='image_" . $row->id . "' />";
                     $name .= "</div>";
+
                     $name .= "<div class='col-3' >";
                     $name .= "<button class='btn btn-primary' data-business-category-id='" . $row->business_category_id . "' data-sub-category-id='" . $row->id . "' onclick='editSubCategory(this)'>Update</button>";
                     $name .= "</div>";
                     return $name;
                 })
+                ->editColumn('image', function ($row) {
+                    $image = Storage::url($row->image);
+                    $name= '<img src="'.$image.'" height="100" width="100">';
+                    return $name;
+                })
+
+
                 ->addColumn('action', function ($row) {
                     $btn = '<button class="btn btn-danger btn-sm mb-2" data-id="' . $row->id . '" onclick="deleteSubCategory(this)"><i class="fa fa-trash" aria-hidden="true"></i></button>';
                     return $btn;
                 })
-                ->rawColumns(['action', 'name'])
+                ->rawColumns(['action', 'name','image'])
                 ->make(true);
         }
     }
@@ -181,10 +192,12 @@ class BusinessCategory extends Controller
             [
                 'business_category_id' => 'required',
                 'sub_category_name' => 'required',
+                'sub_category_image' => 'required',
             ],
             [
                 'business_category_id.required' => 'Select Festival',
                 'sub_category_name.required' => 'Name is Required',
+                'sub_category_image.required' => 'Image is Required',
             ]
         );
 
@@ -201,9 +214,11 @@ class BusinessCategory extends Controller
             return response()->json(['status' => 401, 'error1' => $error]);
             exit();
         }
-
+        
+        $image = $this->uploadFile($request, null, 'sub_category_image', 'bussness-post');
         $category = new BusinessSubCategory;
         $category->name = $request->sub_category_name;
+        $category->image = $image;
         $category->business_category_id = $request->business_category_id;
         $category->save();
 
@@ -212,6 +227,8 @@ class BusinessCategory extends Controller
 
     public function editSubCategory(Request $request)
     {
+      
+       
         $validator = Validator::make(
             $request->all(),
             [
@@ -233,14 +250,21 @@ class BusinessCategory extends Controller
             exit();
         }
 
-        $checkCategory = BusinessSubCategory::where('name', $request->sub_category_name)->where('id', $request->sub_category_id)->where('business_category_id', $request->business_category_id)->where('is_delete', 0)->first();
+        $checkCategory = BusinessSubCategory::where('name', $request->sub_category_name)->where('id','!=',$request->sub_category_id)->where('business_category_id', $request->business_category_id)->where('is_delete', 0)->first();
         if ($checkCategory) {
             return response()->json(['status' => false, 'message' => "Sub Category already exists"]);
             exit();
         }
 
+        
         $category = BusinessSubCategory::find($request->sub_category_id);
         $category->name = $request->sub_category_name;
+
+        if($request->hasFile('sub_category_image'))
+        {
+            $image = $this->uploadFile($request, null, 'sub_category_image', 'bussness-post');
+            $category->image =$image;
+        }
         $category->save();
 
         return response()->json(['status' => true, 'message' => 'Category updated']);

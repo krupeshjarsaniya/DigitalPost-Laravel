@@ -545,6 +545,7 @@ function addSubCategory(id) {
             data: { id }
         },
         columns: [
+            { data: 'image', name: 'image' },
             { data: 'name', name: 'name' },
             { data: 'action', name: 'action', orderable: false, searchable: false },
         ]
@@ -630,6 +631,17 @@ function editSubCategory(ele) {
     var business_category_id = $(ele).data('business-category-id');
     var sub_category_id = $(ele).data('sub-category-id');
     var sub_category_name = $("#name_" + sub_category_id).val();
+    var sub_category_image = $("#image_" + sub_category_id)[0].files;
+
+    
+    var formData = new FormData();
+    formData.append('business_category_id',business_category_id);
+    formData.append('sub_category_id',sub_category_id);
+    formData.append('sub_category_name',sub_category_name);
+    if(sub_category_image.length) {
+        formData.append('sub_category_image',sub_category_image[0]);
+    }
+
     $('.loader-custom').css('display', 'block');
     $.ajaxSetup({
         headers: {
@@ -639,12 +651,17 @@ function editSubCategory(ele) {
 
     $.ajax({
         type: 'POST',
+        processData: false,
+        contentType: false,
+        dataType: 'json',
+        dataSrc: "",
         url: APP_URL + "/businesscategory/editSubCategory",
-        data: { business_category_id, sub_category_id, sub_category_name },
+        data: formData,
         success: function(data) {
             if (!data.status) {
                 alert(data.message);
             }
+            subcategorytable.ajax.reload();
             $('.loader-custom').css('display', 'none');
         }
     });

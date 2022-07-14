@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Storage;
 use App\LinkedIn;
 use App\Twitter;
 use App\PoliticalCategory;
+use App\PoliticalLogo;
 use App\PoliticalBusiness;
 use App\PoliticalBusinessApprovalList;
 use App\Popup;
@@ -7368,6 +7369,7 @@ class UserapiControllerV16 extends Controller
         $currntbusiness_photos = array();
         $sub_categories = array();
         $sub_categories_post = array();
+        $sub_categories_post_data = array();
 
         if($request->type == 1) {
 
@@ -7420,11 +7422,14 @@ class UserapiControllerV16 extends Controller
 
                     $categoriesIds = DB::table('business_category_post_data')->where('buss_cat_post_id', '=', $currntbusiness_photo_id->id)->where('is_deleted', '=', 0)->where('festival_id', 0)->groupBy('business_sub_category_id')->pluck('business_sub_category_id')->toArray();
                     $sub_categories = BusinessSubCategory::whereIn('id', $categoriesIds)->where('business_category_id', $currntbusiness_photo_id->id)->where('is_delete', 0)->get();
+
+
                 }
             }
         }
 
         foreach($sub_categories as $categories) {
+            $categories->image = Storage::url($categories->image);
             $currntpoliticalbusiness_photoData = DB::table('business_category_post_data')
             ->whereIn('language_id', $user_selected_language)
             ->where('post_type', 'image')
@@ -7451,8 +7456,9 @@ class UserapiControllerV16 extends Controller
 
                 array_push($sub_categories_post['images'], $img_data);
             }
+            array_push($sub_categories_post_data, $sub_categories_post);
         }
-
+        
         $onlycat = DB::table('custom_cateogry')->where('type', $request->type)->where('is_active', 1)->whereIn('highlight', array(0, 1, 2, 3))->orderBy('slider_img_position', 'ASC')->get();
 
 
@@ -7471,11 +7477,21 @@ class UserapiControllerV16 extends Controller
         $data = [
             'business_photo' => $currntbusiness_photos,
             'sub_categories' => $sub_categories,
-            'sub_categories_post' => $sub_categories_post,
+            'sub_categories_post' => $sub_categories_post_data,
             'greetings' => $greetings,
 
         ];
         return response()->json(['status' => true, 'data' => $data, 'message' => 'Search complete']);
+    }
+
+    public function getPoliticalLogo(Request $request){
+
+        $logo = PoliticalLogo::all();
+        foreach($logo as $logos)
+            {
+                $logos->image = Storage::url($logos->image);
+            }
+        return response()->json(['status' => true,'message' => 'Political Logo List' ,'data' => $logo]);
     }
 }
 

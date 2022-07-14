@@ -271,6 +271,20 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="col-6">
+                            <div class="form-group err_status">
+                                <label for="status">Adhar Card</label>
+                                <input type="file" id="adhar_card_photo" name="adhar_card_photo" class="form-control">
+                                
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group err_status">
+                                <label for="status">User Photo</label>
+                                <input type="file" id="user_photo" name="user_photo" class="form-control">
+                                
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>

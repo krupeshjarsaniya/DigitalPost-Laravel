@@ -211,6 +211,10 @@
                                 <label>Sub Category</label>
                                 <input type="text" id="sub_category_name" multiple name="sub_category_name" class="form-control">
                             </div>
+                            <div class="form-group sub_category_image err_business_category_id">
+                                <label>Image</label>
+                                <input type="file" id="sub_category_image" name="sub_category_image" class="form-control">
+                            </div>
                         </div>
                         <div class="col-2">
                             <div class="form-group">
@@ -224,6 +228,7 @@
                     <table class="display table table-striped table-hover text-center w-100" id="sub-category-table">
                         <thead>
                             <tr>
+                                <th>Image</th>
                                 <th>Name</th>
                                 <th>Action</th>
                             </tr>

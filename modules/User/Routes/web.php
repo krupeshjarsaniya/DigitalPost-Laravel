@@ -339,6 +339,6 @@ Route::prefix('distributor-channel')->middleware('adminauth')->group(function() 
 Route::prefix('political-logo')->middleware('auth','adminauth')->group(function() {
     Route::get('/', 'PoliticalLogoController@index')->name('politicalLogo');
     Route::get('/list', 'PoliticalLogoController@list');
-    Route::post('/add', 'PoliticalLogoController@ad');
+    Route::post('/add', 'PoliticalLogoController@add');
     Route::post('/delete', 'PoliticalLogoController@delete');
 });
