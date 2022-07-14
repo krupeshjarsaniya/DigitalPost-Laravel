@@ -335,3 +335,10 @@ Route::prefix('distributor-channel')->middleware('adminauth')->group(function() 
 	Route::post('/addTransaction/{id}', 'DistributorChannelController@addTransaction')->name('distributor_channel.addTransaction');
 	Route::post('/updateDistributor/{id}', 'DistributorChannelController@updateDistributor')->name('distributor_channel.updateDistributor');
 });
+
+Route::prefix('political-logo')->middleware('auth','adminauth')->group(function() {
+    Route::get('/', 'PoliticalLogoController@index')->name('politicalLogo');
+    Route::get('/list', 'PoliticalLogoController@list');
+    Route::post('/add', 'PoliticalLogoController@ad');
+    Route::post('/delete', 'PoliticalLogoController@delete');
+});

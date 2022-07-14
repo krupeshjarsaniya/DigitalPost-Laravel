@@ -29,7 +29,7 @@ class FestivalController extends Controller
     public function addFestival(Request $request)
     {
         $temp = $request->all();
-  
+
         $name = $temp['festivalname'];
         $date = (isset($temp['festivaldate'])) ? $temp['festivaldate'] : '';
         $info = $temp['information'];
@@ -54,7 +54,7 @@ class FestivalController extends Controller
 
         $festival->save();
         $festid = $festival->id;
-        
+
         // print_r($temp);die;
         if (isset($temp['files'])) {
             foreach ($request->file('files') as $image) {
@@ -62,20 +62,20 @@ class FestivalController extends Controller
                 $image->move(public_path('images'), $filename);
                 $path = url('/').'/public/images/'.$filename;
 
-                
+
                 $post = new Post();
                 $post->post_category_id = $festid;
                 $post->post_content = $path;
                 $post->save();
             }
         }
-      // return view('festival::index'); //response()->json(['status'=>true,'message'=>'Festival successfully added']); 
+      // return view('festival::index'); //response()->json(['status'=>true,'message'=>'Festival successfully added']);
             return redirect('festival');
     }
 
     public function getSubCategory(Request $request) {
         $stickers = CustomSubCategory::where('is_delete', 0)->where('custom_category_id', $request->id);
-        
+
         if ($request->ajax())
         {
             # code...
@@ -101,7 +101,7 @@ class FestivalController extends Controller
 
     public function getSubCategoryTest(Request $request) {
         $stickers = CustomSubCategory::where('is_delete', 0)->where('custom_category_id', $request->id);
-        
+
         if ($request->ajax())
         {
             # code...
@@ -128,8 +128,8 @@ class FestivalController extends Controller
 
     public function addSubCategory(Request $request) {
         $validator = Validator::make($request->all(), [
-                'custom_category_id' => 'required',      
-                'sub_category_name' => 'required',      
+                'custom_category_id' => 'required',
+                'sub_category_name' => 'required',
             ],
             [
                 'custom_category_id.required' => 'Select Category',
@@ -137,9 +137,9 @@ class FestivalController extends Controller
             ]
         );
 
-        if ($validator->fails()) 
-        {  
-            $error=json_decode($validator->errors());          
+        if ($validator->fails())
+        {
+            $error=json_decode($validator->errors());
 
             return response()->json(['status' => 401,'error1' => $error]);
             exit();
@@ -162,8 +162,8 @@ class FestivalController extends Controller
 
     public function addSubCategoryTest(Request $request) {
         $validator = Validator::make($request->all(), [
-                'custom_category_id' => 'required',      
-                'sub_category_name' => 'required',      
+                'custom_category_id' => 'required',
+                'sub_category_name' => 'required',
             ],
             [
                 'custom_category_id.required' => 'Select Category',
@@ -171,9 +171,9 @@ class FestivalController extends Controller
             ]
         );
 
-        if ($validator->fails()) 
-        {  
-            $error=json_decode($validator->errors());          
+        if ($validator->fails())
+        {
+            $error=json_decode($validator->errors());
 
             return response()->json(['status' => 401,'error1' => $error]);
             exit();
@@ -196,9 +196,9 @@ class FestivalController extends Controller
 
     public function editSubCategory(Request $request) {
         $validator = Validator::make($request->all(), [
-                'custom_category_id' => 'required',      
-                'sub_category_id' => 'required',      
-                'sub_category_name' => 'required',      
+                'custom_category_id' => 'required',
+                'sub_category_id' => 'required',
+                'sub_category_name' => 'required',
             ],
             [
                 'sub_category_id.required' => 'Select Festival',
@@ -207,9 +207,9 @@ class FestivalController extends Controller
             ]
         );
 
-        if ($validator->fails()) 
-        {  
-            $error=json_decode($validator->errors());          
+        if ($validator->fails())
+        {
+            $error=json_decode($validator->errors());
 
             return response()->json(['status' => 401,'error1' => $error]);
             exit();
@@ -230,9 +230,9 @@ class FestivalController extends Controller
 
     public function editSubCategoryTest(Request $request) {
         $validator = Validator::make($request->all(), [
-                'custom_category_id' => 'required',      
-                'sub_category_id' => 'required',      
-                'sub_category_name' => 'required',      
+                'custom_category_id' => 'required',
+                'sub_category_id' => 'required',
+                'sub_category_name' => 'required',
             ],
             [
                 'sub_category_id.required' => 'Select Festival',
@@ -241,9 +241,9 @@ class FestivalController extends Controller
             ]
         );
 
-        if ($validator->fails()) 
-        {  
-            $error=json_decode($validator->errors());          
+        if ($validator->fails())
+        {
+            $error=json_decode($validator->errors());
 
             return response()->json(['status' => 401,'error1' => $error]);
             exit();
@@ -307,9 +307,9 @@ class FestivalController extends Controller
 
         $festivalsCount = count($festivals);
         $incidentsCount = count($incidents);
-        
+
         // dd($festivalsCount,$incidentsCount);
-        
+
         $data = '';
         if($festivalsCount!=0)
         {
@@ -324,7 +324,7 @@ class FestivalController extends Controller
                 $data .= '<td>'.$festival->fest_info.'</td>';
                 $data .= '<td><button onclick="editFestival('.$festival->fest_id.')" class="btn btn-primary">Edit</button><button onclick="deleteFestival('.$festival->fest_id.')" class="btn btn-danger ml-1">Delete</button></td>';
                 $data .= '</tr>';
-            }    
+            }
         }
         // else
         // {
@@ -332,7 +332,7 @@ class FestivalController extends Controller
         //     $data .= '<td colspan="6" align="center">No data found</td>';
         //     $data .= '</tr>';
         // }
-        
+
         $incidentdata = '';
         if($incidentsCount!=0)
         {
@@ -358,19 +358,19 @@ class FestivalController extends Controller
 
         // if(!empty($festivals))
         // {
-            return response()->json(['status'=>true,'data'=>$data,'incidents'=>$incidentdata]); 
+            return response()->json(['status'=>true,'data'=>$data,'incidents'=>$incidentdata]);
 
         // } else {
-        //     return response()->json(['status'=>false,'data'=>'No festival found']); 
+        //     return response()->json(['status'=>false,'data'=>'No festival found']);
         // }
 
     }
-    
+
     public function getFestivalforedit(Request $request){
         $id = $request->id;
         $data = Festival::where('fest_id', $id)->first();
         $posts = Post::where('post_category_id','=',$id)->where('post_is_deleted','=',0)->get();
-        // return $data; 
+        // return $data;
 
         return response()->json(['status'=>true,'data'=>$data,'images'=>$posts]);
 
@@ -403,7 +403,7 @@ class FestivalController extends Controller
         $type = $temp['ftype'];
         $image = (isset($temp['thumnail'])) ? $temp['thumnail'] : 'undefined';
         $id = $temp['festivalid'];
-     
+
          if($image != 'undefined'){
             $filename = Str::random(7).time().'.'.$image->getClientOriginalExtension();
             $image->move(public_path('images'), $filename);
@@ -438,7 +438,7 @@ class FestivalController extends Controller
                 $post->save();
             }
         }
-        
+
          return redirect('festival');
 
     }
@@ -450,6 +450,7 @@ class FestivalController extends Controller
         $categoryname = $temp['categoryname'];
         $categoryid = $temp['categoryid'];
         $imgposition = $temp['imgposition'];
+        $type = $temp['type'];
         $highlight = $temp['highlight'] ? $temp['highlight'] : 0;
 
         if ($request->hasFile('cat_slider_img')) {
@@ -467,21 +468,21 @@ class FestivalController extends Controller
 
         if($categoryid == ''){
             DB::table('custom_cateogry')->insert(
-                ['name' => $categoryname, 'slider_img' => $cat_slider_imgpath, 'slider_img_position' => $imgposition]
+                ['name' => $categoryname, 'slider_img' => $cat_slider_imgpath, 'slider_img_position' => $imgposition, 'type' => $type]
             );
         } else {
             if($cat_slider_imgpath != ''){
                 DB::table('custom_cateogry')
                 ->where('custom_cateogry_id', $categoryid)
-                ->update(['name' => $categoryname, 'slider_img' => $cat_slider_imgpath, 'slider_img_position' => $imgposition, 'highlight' => $highlight]);
+                ->update(['name' => $categoryname, 'slider_img' => $cat_slider_imgpath, 'slider_img_position' => $imgposition, 'highlight' => $highlight, 'type' => $type]);
             } else {
                 DB::table('custom_cateogry')
                 ->where('custom_cateogry_id', $categoryid)
-                ->update(['name' => $categoryname, 'slider_img_position' => $imgposition, 'highlight' => $highlight]);
+                ->update(['name' => $categoryname, 'slider_img_position' => $imgposition, 'highlight' => $highlight, 'type' => $type]);
             }
-            
+
         }
-       
+
 
         return redirect('festival/custom');
     }
@@ -513,7 +514,7 @@ class FestivalController extends Controller
 
         $temp = $request->all();
         $id = $temp['id'];
-       
+
         DB::table('custom_cateogry')->where('custom_cateogry_id', '=', $id)->delete();
 
         return response()->json(['status'=>true]);
@@ -525,23 +526,23 @@ class FestivalController extends Controller
         $id = $request->id;
 
         $posts =  DB::table('custom_cateogry')->where('custom_cateogry_id','=',$id)->first();
-        // return $data; 
+        // return $data;
 
         return response()->json(['status'=>true,'data'=>$posts]);
 
     }
 
     public function getcatlist(){
-     
+
         $posts =  DB::table('custom_cateogry')->get();
-        // return $data; 
+        // return $data;
 
         return response()->json(['status'=>true,'data'=>$posts]);
     }
 
     public function addCatPost(Request $request){
         $temp = $request->all();
-  
+
         $name = $temp['customcatid'];
 
         $position_x = $temp['position_x'];
@@ -620,7 +621,7 @@ class FestivalController extends Controller
     }
 
     public function getAllCategoryPost(){
-  
+
         $customcat = DB::table('custom_cateogry_data')->join('custom_cateogry', 'custom_cateogry_data.custom_cateogry_id', '=', 'custom_cateogry.custom_cateogry_id')->get();
 
 
@@ -639,7 +640,7 @@ class FestivalController extends Controller
 
         $temp = $request->all();
         $id = $temp['id'];
-       
+
         DB::table('custom_cateogry_data')->where('custom_cateogry_data_id', '=', $id)->delete();
 
         return response()->json(['status'=>true]);
@@ -651,12 +652,12 @@ class FestivalController extends Controller
         $id = $request->id;
 
         $posts =  DB::table('custom_cateogry_data')->where('custom_cateogry_data_id','=',$id)->first();
-        // return $data; 
+        // return $data;
 
 
         $posts->banner_image = url('/').$posts->banner_image;
         $posts->image_one = url('/').$posts->image_one;
- 
+
 
         return response()->json(['status'=>true,'data'=>$posts]);
     }
@@ -691,7 +692,7 @@ class FestivalController extends Controller
         $festivaldate = $temp['festivaldate'];
         $video_post_id = $temp['video_post_id'];
         $color = $temp['color'];
-        
+
         if ($request->hasFile('video_thumbnail')) {
             $image = $request->file('video_thumbnail');
             $name = time().'.'.$image->getClientOriginalExtension();
@@ -700,7 +701,7 @@ class FestivalController extends Controller
         } else {
             $video_thumbnail = '';
         }
-        
+
         if ($request->hasFile('video_file')) {
             $image = $request->file('video_file');
             $name = time().'.'.$image->getClientOriginalExtension();
@@ -709,8 +710,8 @@ class FestivalController extends Controller
         } else {
             $video_file = '';
         }
-        
- 
+
+
         if($video_post_id == ''){
             DB::table('video_post')->insert(
                 ['thumbnail' => $video_thumbnail, 'video_url' => $video_file, 'date' => $festivaldate, 'color' => $color]
@@ -720,9 +721,9 @@ class FestivalController extends Controller
                 DB::table('video_post')
                 ->where('video_post_id', $video_post_id)
                 ->update(['thumbnail' => $video_thumbnail, 'date' => $festivaldate, 'color' => $color]);
-            } 
-            
-            if($video_thumbnail == '' && $video_file != ''){ 
+            }
+
+            if($video_thumbnail == '' && $video_file != ''){
                 DB::table('video_post')
                 ->where('video_post_id', $video_post_id)
                 ->update(['video_url' => $video_file, 'date' => $festivaldate, 'color' => $color]);
@@ -739,9 +740,9 @@ class FestivalController extends Controller
                 ->where('video_post_id', $video_post_id)
                 ->update(['date' => $festivaldate, 'color' => $color]);
             }
-            
+
         }
-       
+
 
         return redirect('festival/videopost');
     }

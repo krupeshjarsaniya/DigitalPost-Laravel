@@ -5,7 +5,7 @@ $(document).ready(function() {
 		e.preventDefault();
 	 });
     getallcat();
-    
+
 
 });
 var table;
@@ -68,7 +68,7 @@ function removeCat(id){
 }
 
 function editCat(id) {
-    
+
     $('.loader-custom').css('display','block');
 	$.ajaxSetup({
 	headers: {
@@ -82,13 +82,14 @@ function editCat(id) {
 			"id":id,
 		},
 		success: function (response)
-		{	
+		{
             $('#categoryname').val(response.data['name']);
 			$('#categoryid').val(id);
 
 			$('#blah').attr('src', SPACE_STORE_URL+''+response.data['slider_img']);
 			$('#blah').css('display','block');
 			$('#imgposition').val(response.data['slider_img_position']);
+			$('#type').val(response.data['type']);
 			if(response.data['highlight'] == 0) {
 				$('#no_highlight').attr('checked', 'checked');
 			}
@@ -111,12 +112,12 @@ function editCat(id) {
 function readURL(input) {
 	if (input.files && input.files[0]) {
 	  var reader = new FileReader();
-	  
+
 	  reader.onload = function(e) {
 		$('#blah').attr('src', e.target.result);
 		$('#blah').css('display','block');
 	  }
-	  
+
 	  reader.readAsDataURL(input.files[0]); // convert to base64 string
 	}
 }
@@ -146,7 +147,7 @@ function addCustomSubCategory(id) {
         ]
     });
 }
- 
+
 function insertSubCategory() {
 	$('span.alerts').remove();
 
@@ -207,7 +208,7 @@ function deleteSubCategory(ele) {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-    
+
             $.ajax({
                 type:'POST',
                 url:APP_URL+"/festival/deleteSubCategoryTest",

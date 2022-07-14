@@ -3846,7 +3846,7 @@ class UserapiControllerV16 extends Controller
         $user_selected_language = explode(",", $user->user_language);
         array_push($user_selected_language, '2', '4');
 
-        $new_category_data_greetings = DB::table('custom_cateogry')->where('is_active', 1)->whereIn('highlight', array(2, 3))->orderBy('slider_img_position', 'ASC')->get();
+        $new_category_data_greetings = DB::table('custom_cateogry')->where('type', 0)->where('is_active', 1)->whereIn('highlight', array(2, 3))->orderBy('slider_img_position', 'ASC')->get();
         $new_category_data_greetingsArray = array();
         foreach ($new_category_data_greetings as $greeting) {
 
@@ -3873,7 +3873,7 @@ class UserapiControllerV16 extends Controller
             array_push($new_category_data_greetingsArray, $temp1);
         }
 
-        $onlycat = DB::table('custom_cateogry')->where('is_active', 1)->where('is_active', 1)->where('is_active', 1)->whereIn('highlight', array(2, 3))->orderBy('slider_img_position', 'ASC')->get();
+        $onlycat = DB::table('custom_cateogry')->where('type', 0)->where('is_active', 1)->whereIn('highlight', array(2, 3))->orderBy('slider_img_position', 'ASC')->get();
 
 
         $finalarry = array();
@@ -3894,7 +3894,7 @@ class UserapiControllerV16 extends Controller
             array_push($slider, $slide);
         }
 
-        $onlycat = DB::table('custom_cateogry')->where('is_active', 1)->whereIn('highlight', array(0, 1))->orderBy('slider_img_position', 'ASC')->get();
+        $onlycat = DB::table('custom_cateogry')->where('type', 0)->where('is_active', 1)->whereIn('highlight', array(0, 1))->orderBy('slider_img_position', 'ASC')->get();
 
 
         foreach ($onlycat as $value) {
@@ -7227,7 +7227,7 @@ class UserapiControllerV16 extends Controller
         $trandings = Festival::whereDate('fest_date', $currnt_date)
         ->whereIn('fest_type', array('tranding'))
         ->where('fest_is_delete', 0)
-        ->where('fest_name', 'LIKE', $request->search . '%')
+        ->where('fest_name', 'LIKE', '%'  .$request->search . '%')
         ->orderBy('fest_date', 'ASC')
         ->get();
         for ($i = 0; $i < sizeof($trandings); $i++) {
@@ -7293,7 +7293,7 @@ class UserapiControllerV16 extends Controller
         $festivals = Festival::where('fest_date', '>=', $currnt_date)
         ->where('fest_is_delete', 0)
         ->whereIn('fest_type', array('incedent', 'festival'))
-        ->where('fest_name', 'LIKE', $request->search . '%')
+        ->where('fest_name', 'LIKE', '%'  .$request->search . '%')
         ->orderBy('fest_date', 'ASC')
         ->get();
         for ($i = 0; $i < sizeof($festivals); $i++) {
@@ -7307,7 +7307,7 @@ class UserapiControllerV16 extends Controller
         $business_categories_data = array();
         $business_categories = DB::table('business_category')
         ->where('is_delete', 0)
-        ->where('name', 'LIKE', $request->search . '%')
+        ->where('name', 'LIKE', '%'  .$request->search . '%')
         ->orderBy('name', 'ASC')
         ->get();
 
@@ -7321,7 +7321,7 @@ class UserapiControllerV16 extends Controller
         $greetings_data = array();
         $greetings = DB::table('custom_cateogry')
         ->where('is_active', 1)
-        ->where('name', 'LIKE', $request->search . '%')
+        ->where('name', 'LIKE', '%'  .$request->search . '%')
         ->orderBy('name', 'ASC')
         ->get();
 
@@ -7340,6 +7340,142 @@ class UserapiControllerV16 extends Controller
         ];
         return response()->json(['status' => true, 'data' => $data, 'message' => 'Search complete']);
 
+    }
+
+    public function getBusinessCategoryData(Request $request) {
+        $token = $request->token;
+        $user_id = $this->get_userid($token);
+        if ($user_id == 0) {
+            return response()->json(['status' => false, 'message' => 'user not valid']);
+        }
+
+        $userdata = User::where('id', '=', $user_id)->select(['default_business_id', 'user_language', 'default_political_business_id'])->first();
+
+        $user_selected_language = explode(',', $userdata->user_language);
+        array_push($user_selected_language, "2", "4");
+
+        // $user_language_check = $userdata->user_language != NULL ? true : false;
+        $currntbusiness = Business::where('busi_id', '=', $userdata->default_business_id)->where('busi_delete', '=', 0)->first();
+        $political_category_name = "";
+        $currntbusinessPolitical = PoliticalBusiness::where('pb_id', '=', $userdata->default_political_business_id)->where('pb_is_deleted', '=', 0)->first();
+        if(!empty($currntbusinessPolitical)) {
+            $partyData = DB::table('political_category')->where('pc_id', '=', $currntbusinessPolitical->pb_pc_id)->first();
+            if(!empty($partyData)) {
+                $political_category_name = $partyData->pc_name;
+            }
+        }
+
+        $currntbusiness_photos = array();
+        $sub_categories = array();
+        $sub_categories_post = array();
+
+        if($request->type == 1) {
+
+            if (!empty($currntbusiness)) {
+
+                $currntbusiness_photo_id = DB::table('business_category')->where('name', $currntbusiness->business_category)->where('is_delete', 0)->first();
+
+                if (!empty($currntbusiness_photo_id)) {
+                    $currntbusiness_photo = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type', 'image')->where('buss_cat_post_id', '=', $currntbusiness_photo_id->id)->where('is_deleted', '=', 0)->where('festival_id', 0)->orderBy('image_type', 'ASC')->orderBy('id', 'DESC')->limit(10)->get();
+                    $currntbusiness_photos['id'] =  $currntbusiness_photo_id->id;
+                    $currntbusiness_photos['cat_name'] =  $currntbusiness->business_category;
+                    $currntbusiness_photos['images'] =  [];
+
+                    foreach ($currntbusiness_photo as $img_key => $img_value) {
+
+                        $img_data['image_id'] = strval($img_value->id);
+                        $img_data['image_url'] = !empty($img_value->post_thumb) ? Storage::url($img_value->post_thumb) : Storage::url($img_value->thumbnail);
+                        $img_data['image_type'] = strval($img_value->image_type);
+                        $img_data['image_language_id'] = !empty($img_value->language_id) ? strval($img_value->language_id) : "";
+
+                        array_push($currntbusiness_photos['images'], $img_data);
+                    }
+
+                    $categoriesIds = DB::table('business_category_post_data')->where('buss_cat_post_id', '=', $currntbusiness_photo_id->id)->where('is_deleted', '=', 0)->where('festival_id', 0)->groupBy('business_sub_category_id')->pluck('business_sub_category_id')->toArray();
+                    $sub_categories = BusinessSubCategory::whereIn('id', $categoriesIds)->where('business_category_id', $currntbusiness_photo_id->id)->where('is_delete', 0)->get();
+                }
+            }
+        }
+        else {
+
+            if(!empty($currntbusinessPolitical)) {
+
+                $currntbusiness_photo_id = DB::table('business_category')->where('name', $political_category_name)->where('is_delete', 0)->first();
+                $currntbusiness_photos = array();
+                if (!empty($currntbusiness_photo_id)) {
+                    $currntpoliticalbusiness_photoData = DB::table('business_category_post_data')->whereIn('language_id', $user_selected_language)->where('post_type', 'image')->where('buss_cat_post_id', '=', $currntbusiness_photo_id->id)->where('is_deleted', '=', 0)->where('festival_id', 0)->orderBy('image_type', 'ASC')->orderBy('id', 'DESC')->limit(10)->get();
+                    $currntbusiness_photos['id'] =  $currntbusiness_photo_id->id;
+                    $currntbusiness_photos['cat_name'] =  $political_category_name;
+                    $currntbusiness_photos['images'] =  [];
+
+                    foreach ($currntpoliticalbusiness_photoData as $img_key => $img_value) {
+
+                        $img_data['image_id'] = strval($img_value->id);
+                        $img_data['image_url'] = !empty($img_value->post_thumb) ? Storage::url($img_value->post_thumb) : Storage::url($img_value->thumbnail);
+                        $img_data['image_type'] = strval($img_value->image_type);
+                        $img_data['image_language_id'] = !empty($img_value->language_id) ? strval($img_value->language_id) : "";
+
+                        array_push($currntbusiness_photos['images'], $img_data);
+                    }
+
+                    $categoriesIds = DB::table('business_category_post_data')->where('buss_cat_post_id', '=', $currntbusiness_photo_id->id)->where('is_deleted', '=', 0)->where('festival_id', 0)->groupBy('business_sub_category_id')->pluck('business_sub_category_id')->toArray();
+                    $sub_categories = BusinessSubCategory::whereIn('id', $categoriesIds)->where('business_category_id', $currntbusiness_photo_id->id)->where('is_delete', 0)->get();
+                }
+            }
+        }
+
+        foreach($sub_categories as $categories) {
+            $currntpoliticalbusiness_photoData = DB::table('business_category_post_data')
+            ->whereIn('language_id', $user_selected_language)
+            ->where('post_type', 'image')
+            ->where('business_sub_category_id', $categories->id)
+            ->where('buss_cat_post_id', '=', $currntbusiness_photo_id->id)
+            ->where('is_deleted', '=', 0)
+            ->where('festival_id', 0)
+            ->orderBy('image_type', 'ASC')
+            ->orderBy('id', 'DESC')
+            ->limit(10)
+            ->get();
+
+            $sub_categories_post['id'] =  $currntbusiness_photo_id->id;
+            $sub_categories_post['sub_category_id'] =  $categories->id;
+            $sub_categories_post['cat_name'] =  $categories->name;
+            $sub_categories_post['images'] =  [];
+
+            foreach ($currntpoliticalbusiness_photoData as $img_key => $img_value) {
+
+                $img_data['image_id'] = strval($img_value->id);
+                $img_data['image_url'] = !empty($img_value->post_thumb) ? Storage::url($img_value->post_thumb) : Storage::url($img_value->thumbnail);
+                $img_data['image_type'] = strval($img_value->image_type);
+                $img_data['image_language_id'] = !empty($img_value->language_id) ? strval($img_value->language_id) : "";
+
+                array_push($sub_categories_post['images'], $img_data);
+            }
+        }
+
+        $onlycat = DB::table('custom_cateogry')->where('type', $request->type)->where('is_active', 1)->whereIn('highlight', array(0, 1, 2, 3))->orderBy('slider_img_position', 'ASC')->get();
+
+
+        $greetings = array();
+
+
+        foreach ($onlycat as $value) {
+            $temp = array();
+            $temp['custom_cateogry_id'] = strval($value->custom_cateogry_id);
+            $temp['name'] = !empty($value->name) ? $value->name : "";
+            $temp['custom_image'] = !empty($value->slider_img) ? Storage::url($value->slider_img) : "";
+
+            array_push($greetings, $temp);
+        }
+
+        $data = [
+            'business_photo' => $currntbusiness_photos,
+            'sub_categories' => $sub_categories,
+            'sub_categories_post' => $sub_categories_post,
+            'greetings' => $greetings,
+
+        ];
+        return response()->json(['status' => true, 'data' => $data, 'message' => 'Search complete']);
     }
 }
 

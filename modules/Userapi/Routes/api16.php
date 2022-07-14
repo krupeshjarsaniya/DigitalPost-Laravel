@@ -177,3 +177,5 @@ Route::post('getBanners', 'UserapiControllerV16@getBanners');
 Route::post('testFramejson', 'UserapiControllerV16@testFramejson');
 
 Route::post('search', 'UserapiControllerV16@search');
+
+Route::post('getBusinessCategoryData', 'UserapiControllerV16@getBusinessCategoryData');

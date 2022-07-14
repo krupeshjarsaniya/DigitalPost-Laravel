@@ -63,7 +63,7 @@
                                 </div>
                             </div>
 
-                            
+
                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="cat_slider_img">Image</label>
@@ -100,13 +100,23 @@
                                   </label>
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="imgposition">Type</label>
+                                    <select class="form-control" id="type" placeholder="1, 2, 3 etc.." name="type">
+                                        <option value="0">General</option>
+                                        <option value="1">Business</option>
+                                        <option value="2">Political</option>
+                                    </select>
+                                </div>
+                            </div>
 
-                        <!-- 
+                        <!--
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <img id="blah" src="#" alt="your image" height="100" width="100" />
                                 </div>
-                            </div> 
+                            </div>
                             <div class="col-md-12">
                                 <div class="input-field form-group">
                                     <label class="active" for="files">Photos</label>
@@ -124,7 +134,7 @@
              </form>
         </div>
     </div>
-    
+
     <div class="col-md-12" id="viewfestival">
         <div class="card">
             <div class="card-header">
@@ -209,3 +219,4 @@
 @section('js')
     <script type="text/javascript" src="{{ url('/public/admin/js/user/customcat.js?v='.rand()) }}"></script>
 @endsection
+
