@@ -22,5 +22,6 @@ Route::middleware('distributorAuth')->group(function() {
     //Normal Business
     Route::get('/business', 'Distributors\BusinessController@index')->name('distributors.business');
     Route::get('/businessList/add', 'Distributors\BusinessController@businessAdd')->name('distributors.businessAdd');
+    Route::post('/businessList/insert', 'Distributors\BusinessController@businessInsert')->name('distributors.businessInsert');
     Route::get('/businessList/{id}', 'Distributors\BusinessController@businessList')->name('distributors.businessList');
 });

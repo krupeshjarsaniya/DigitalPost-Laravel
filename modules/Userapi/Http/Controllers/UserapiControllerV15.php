@@ -4567,7 +4567,7 @@ class UserapiControllerV15 extends Controller
         }
 
         if ($watermark_dark != null) {
-            $watermark_path  =  $this->uploadFile($request, null, "watermark_dark", 'political-business-img');
+            $watermark_path_dark  =  $this->uploadFile($request, null, "watermark_dark", 'political-business-img');
         }
 
         if ($logo_dark != null) {
