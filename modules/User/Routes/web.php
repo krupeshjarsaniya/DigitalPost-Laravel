@@ -341,4 +341,5 @@ Route::prefix('political-logo')->middleware('auth','adminauth')->group(function(
     Route::get('/list', 'PoliticalLogoController@list');
     Route::post('/add', 'PoliticalLogoController@add');
     Route::post('/delete', 'PoliticalLogoController@delete');
+    Route::post('/updateOrder', 'PoliticalLogoController@updateOrder');
 });

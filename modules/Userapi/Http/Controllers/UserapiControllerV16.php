@@ -7458,7 +7458,7 @@ class UserapiControllerV16 extends Controller
             }
             array_push($sub_categories_post_data, $sub_categories_post);
         }
-        
+
         $onlycat = DB::table('custom_cateogry')->where('type', $request->type)->where('is_active', 1)->whereIn('highlight', array(0, 1, 2, 3))->orderBy('slider_img_position', 'ASC')->get();
 
 
@@ -7486,7 +7486,7 @@ class UserapiControllerV16 extends Controller
 
     public function getPoliticalLogo(Request $request){
 
-        $logo = PoliticalLogo::all();
+        $logo = PoliticalLogo::orderBy('order_number', 'ASC')->get();
         foreach($logo as $logos)
             {
                 $logos->image = Storage::url($logos->image);

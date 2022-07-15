@@ -1,5 +1,5 @@
-@extends('admin.layouts.app')
-@section('title', 'Distributor Channel')
+@extends('distributor.layouts.app')
+@section('title', 'Profile')
 @section('content')
 <style type="text/css">
     .select2-container {
@@ -7,7 +7,7 @@
     }
 </style>
 <div class="page-header">
-    <h4 class="page-title">Distributor Channel</h4>
+    <h4 class="page-title">Profile</h4>
     <ul class="breadcrumbs">
         <li class="nav-home">
             <a href="{{ route('dashboard') }}">
@@ -18,7 +18,7 @@
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="#">Distributor Channel</a>
+            <a href="#">Profile</a>
         </li>
     </ul>
 </div>
@@ -35,11 +35,8 @@
                 <div class="row">
                     <div class="col-6">
                         <div class="card-title">
-                            Distributor
+                            {{ $distributor->full_name }}
                         </div>
-                    </div>
-                    <div class="col-6">
-                        <a href="{{ route('distributor_channel') }}" class="btn btn-danger float-right">Back</a>
                     </div>
                 </div>
             </div>
@@ -190,18 +187,18 @@
     </div>
 </div>
 
-<div class="modal fade" id="distributorModal">
+<div class="modal fade" id="ProfileModal">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <!-- Modal Header -->
             <div class="modal-header">
-                <h4 class="modal-title">Edit Distributor</h4>
+                <h4 class="modal-title">Edit Profile</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
 
             <!-- Modal body -->
             <div class="modal-body">
-                <form onsubmit="return false;" name="editDistributorForm" enctype="multipart/form-data">
+                <form onsubmit="return false;" name="editProfileForm" enctype="multipart/form-data">
                     @csrf
                     <div class="row">
                         <div class="col-6">
@@ -259,35 +256,6 @@
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="form-group err_referral_benefits">
-                                <label for="referral_benefits">Referral Benefit</label>
-                                <input type="text" id="referral_benefits" value="{{ $distributor->referral_benefits }}" name="referral_benefits" class="form-control">
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-group err_custom_plan_rate">
-                                <label for="custom_plan_rate">Custom Plan Rate</label>
-                                <input type="text" id="custom_plan_rate" value="{{ $distributor->custom_plan_rate }}" name="custom_plan_rate" class="form-control">
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-group err_start_up_plan_rate">
-                                <label for="start_up_plan_rate">Startup Plan Rate</label>
-                                <input type="text" id="start_up_plan_rate" value="{{ $distributor->start_up_plan_rate }}" name="start_up_plan_rate" class="form-control">
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-group err_status">
-                                <label for="status">Status</label>
-                                <select id="status" name="status" class="form-control">
-                                    <option @if($distributor->status == 'pending') selected @endif>pending</option>
-                                    <option @if($distributor->status == 'approved') selected @endif>approved</option>
-                                    <option @if($distributor->status == 'rejected') selected @endif>rejected</option>
-                                    <option @if($distributor->status == 'inactive') selected @endif>inactive</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-6">
                             <div class="form-group err_aadhar_card_photo">
                                 <label for="aadhar_card_photo">Aadhar Card</label>
                                 <input type="file" id="aadhar_card_photo" name="aadhar_card_photo" class="form-control">
@@ -307,88 +275,12 @@
 
             <!-- Modal footer -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" onclick="updateDistributor()">Submit</button>
+                <button type="button" class="btn btn-success" onclick="updateProfile()">Submit</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
-
-@if($distributor->status != 'pending')
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">Transaction List
-                    <button class="btn btn-info btn-sm pull-right" id="add-transaction"><i class="fas fa-plus"></i></button>
-                    </h4>
-                </div>
-                <div class="table-responsive">
-                    <table class="display table table-striped table-hover text-center w-100" id="transaction-table">
-                        <thead>
-                            <tr>
-                                <th>Description</th>
-                                <th>Date</th>
-                                <th>Amount</th>
-                                <th>Type</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="transactionModal">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <form name="addTransactionForm" id="addTransactionForm">
-                    @csrf
-                    <!-- Modal Header -->
-                    <div class="modal-header">
-                        <h4 class="modal-title">Add Transaction</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-
-                    <!-- Modal body -->
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="form-group err_amount">
-                                    <label for="amount">Amount</label>
-                                    <input type="text" id="amount" name="amount" placeholder="Enter Amount" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="form-group err_type">
-                                    <label for="type">Type</label>
-                                    <select id="type" name="type" class="form-control">
-                                        <option>deposit</option>
-                                        <option>withdrawal</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group err_description">
-                                    <label for="description">Description</label>
-                                    <textarea type="text" id="description" name="description" placeholder="Enter Description" class="form-control"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Modal footer -->
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-success"  onclick="addTransaction()">Submit</button>
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-@endif
 
 @endsection
 @section('js')
@@ -396,95 +288,18 @@
 
 var table = "";
 
-$(document).ready(function() {
-    getTransactionList();
-})
-
-$('#add-transaction').click(function() {
-    clearForm();
-    $('#transactionModal').modal('show');
-})
-
 function editDistributor() {
-    $('#distributorModal').modal('show');
+    $('#ProfileModal').modal('show');
 }
 
-function getTransactionList() {
-    table = $('#transaction-table').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: "{{ route('distributor_channel.transactionList', ['id' => $distributor->id]) }}",
-        columns: [
-            {data: 'description', name: 'description'},
-            {data: 'created_at', name: 'created_at'},
-            {data: 'amount', name: 'amount'},
-            {data: 'type', name: 'type'},
-        ],
-        order: [[1, 'desc']]
-    });
-}
-
-function addTransaction(ele) {
-
+function updateProfile() {
     $('span.alerts').remove();
 
-    var form = document.addTransactionForm;
+    var form = document.editProfileForm;
 
     var formData = new FormData(form);
 
-    var url = "{{ route('distributor_channel.addTransaction', ['id' => $distributor->id]) }}";
-    $('.loader-custom').css('display','block');
-    $.ajax({
-        url: url,
-        type: 'POST',
-        processData: false,
-        contentType: false,
-        dataType: 'json',
-        data: formData,
-        dataSrc: "",
-        success: function(response) {
-            $('.loader-custom').css('display','none');
-            if (response.status == 401)
-            {
-                $.each(response.error1, function (index, value) {
-                    if (value.length != 0) {
-                        $('.err_' + index).append('<span class="small alerts text-danger">' + value + '</span>');
-                    }
-
-                });
-                return false;
-            }
-            if(!response.status) {
-                alert(response.message);
-                return false;
-            }
-            $('#distributor_balance').html(response.data.balance);
-            $('#transactionModal').modal('hide');
-            clearForm();
-            table.ajax.reload();
-        },
-        error: function(error) {
-            $('.loader-custom').css('display','none');
-            console.log(error);
-        }
-    });
-
-}
-
-function clearForm() {
-    $('span.alerts').remove();
-    $('#amount').val("");
-    $('#type').val("deposit");
-}
-
-function updateDistributor() {
-    $('span.alerts').remove();
-
-    var form = document.editDistributorForm;
-
-    var formData = new FormData(form);
-
-    var url = "{{ route('distributor_channel.updateDistributor', ['id' => $distributor->id]) }}";
+    var url = "{{ route('distributors.updateProfile') }}";
     $('.loader-custom').css('display','block');
     $.ajax({
         url: url,

@@ -10,4 +10,17 @@ Route::get('/logout', 'Distributors\AuthController@logout')->name('distributors.
 
 Route::middleware('distributorAuth')->group(function() {
     Route::get('/dashboard', 'Distributors\DashboardController@index')->name('distributors.dashboard');
+
+    //Profile
+    Route::get('/profile', 'Distributors\DashboardController@profile')->name('distributors.profile');
+    Route::post('/updateProfile', 'Distributors\DashboardController@updateProfile')->name('distributors.updateProfile');
+
+    //Transaction
+    Route::get('/transaction', 'Distributors\DashboardController@transaction')->name('distributors.transaction');
+    Route::get('/transactionList/{id}', 'Distributors\DashboardController@transactionList')->name('distributors.transactionList');
+
+    //Normal Business
+    Route::get('/business', 'Distributors\BusinessController@index')->name('distributors.business');
+    Route::get('/businessList/add', 'Distributors\BusinessController@businessAdd')->name('distributors.businessAdd');
+    Route::get('/businessList/{id}', 'Distributors\BusinessController@businessList')->name('distributors.businessList');
 });

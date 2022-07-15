@@ -40,6 +40,7 @@
                     <thead>
                         <tr>
                             <th>Image</th>
+                            <th>Order</th>
                             <th>Action</th>
                         </tr>
                     </thead>

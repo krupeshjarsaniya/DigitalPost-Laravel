@@ -11,6 +11,7 @@ function getPoliticalLogo() {
         ajax: APP_URL+'/political-logo/list',
         columns: [
             {data: 'image', name: 'image'},
+            {data: 'order_number', name: 'order_number'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ]
     });
@@ -109,4 +110,28 @@ function deletePoliticalLogo(ele) {
             swal.close();
         }
     });
+}
+
+function updateOrder(ele) {
+    var id = $(ele).data('id');
+    var order = $('#order_' + id).val();
+
+    $('.loader-custom').css('display','block');
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    $.ajax({
+        type:'POST',
+        url:APP_URL+"/political-logo/updateOrder",
+        data: {id, order},
+        success: function (data)
+        {
+            table.ajax.reload();
+            $('.loader-custom').css('display','none');
+        }
+    });
+
 }

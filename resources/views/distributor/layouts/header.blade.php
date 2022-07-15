@@ -27,7 +27,7 @@
 									</li>
 									<li>
 										<div class="dropdown-divider"></div>
-										<a class="dropdown-item" href="{{-- {{ route('profile') }} --}}">Edit Profile</a>
+										<a class="dropdown-item" href="{{ route('distributors.profile') }}">Edit Profile</a>
 										<div class="dropdown-divider"></div>
 										<a class="dropdown-item" href="{{ route('distributors.logout') }}" onclick="event.preventDefault();
                                                      document.getElementById('logout-forms').submit();">Logout</a>

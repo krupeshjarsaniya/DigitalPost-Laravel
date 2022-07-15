@@ -245,6 +245,22 @@ class DistributorChannelController extends Controller
             exit();
         }
 
+        $checkEmail = DistributorChannel::where('email', $request->email)->where('id', '!=', $id)->first();
+        if(!empty($checkEmail)) {
+            return response()->json([
+                'status' => false,
+                'message' => "Email already exists"
+            ]);
+        }
+
+        $checkNumber = DistributorChannel::where('contact_number', $request->contact_number)->where('id', '!=', $id)->first();
+        if(!empty($checkNumber)) {
+            return response()->json([
+                'status' => false,
+                'message' => "Contact number already exists"
+            ]);
+        }
+
         $distributor = DistributorChannel::find($id);
         if(empty($distributor)) {
             return response()->json([
@@ -266,11 +282,22 @@ class DistributorChannelController extends Controller
         $distributor->custom_plan_rate = $request->custom_plan_rate;
         $distributor->start_up_plan_rate = $request->start_up_plan_rate;
         $distributor->status = $request->status;
+
+        if($request->hasFile('aadhar_card_photo')) {
+            $aadhar_card_photo = $this->uploadFile($request, null, 'aadhar_card_photo', 'distributor-image');
+            $distributor->aadhar_card_photo = $aadhar_card_photo;
+        }
+
+        if($request->hasFile('user_photo')) {
+            $user_photo = $this->uploadFile($request, null, 'user_photo', 'distributor-image');
+            $distributor->user_photo = $user_photo;
+        }
+
         $distributor->save();
 
         return response()->json([
             'status' => true,
-            'message' => "Distributor added successfully",
+            'message' => "Distributor updated successfully",
             'data' => $distributor
         ]);
     }

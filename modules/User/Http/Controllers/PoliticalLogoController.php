@@ -37,17 +37,28 @@ class PoliticalLogoController extends Controller
                 }
                 return "";
             })
+            ->editColumn('order_number', function($row) {
+                $order = "<div class='row'>";
+                $order .= "<div class='col-9'>";
+                $order .= "<input class='form-control' type='text' id='order_".$row->id."' value='".$row->order_number."' />";
+                $order .= "</div>";
+                $order .= "<div class='col-3'>";
+                $order .= "<button onclick='updateOrder(this)' data-id='".$row->id."' class='btn btn-sm btn-primary' >Update</button>";
+                $order .= "</div>";
+                $order .= "</div>";
+                return $order;
+            })
             ->addColumn('action',function($row) {
                 $btn = '<button class="btn btn-danger btn-sm mb-2" data-id="'.$row->id.'" onclick="deletePoliticalLogo(this)"><i class="fa fa-trash" aria-hidden="true"></i></button>';
                 return $btn;
             })
-            ->rawColumns(['action', 'image'])
+            ->rawColumns(['action', 'image', 'order_number'])
             ->make(true);
         }
     }
 
     public function add(Request $request) {
-       
+
         $validator = Validator::make($request->all(), [
                 'image' => 'required',
             ],
@@ -79,5 +90,15 @@ class PoliticalLogoController extends Controller
             $logo->delete();
         }
         return response()->json(['status' => true,'data' => "", 'message' => 'Political Logo Deleted' ]);
+    }
+
+    public function updateOrder(Request $request) {
+        $id = $request->id;
+        $logo = PoliticalLogo::find($id);
+        if($logo) {
+            $logo->order_number = $request->order;
+            $logo->save();
+        }
+        return response()->json(['status' => true,'data' => "", 'message' => 'Order updated' ]);
     }
 }
