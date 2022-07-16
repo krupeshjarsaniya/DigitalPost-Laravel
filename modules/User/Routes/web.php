@@ -334,6 +334,13 @@ Route::prefix('distributor-channel')->middleware('adminauth')->group(function() 
 	Route::get('/transaction/{id}', 'DistributorChannelController@transactionList')->name('distributor_channel.transactionList');
 	Route::post('/addTransaction/{id}', 'DistributorChannelController@addTransaction')->name('distributor_channel.addTransaction');
 	Route::post('/updateDistributor/{id}', 'DistributorChannelController@updateDistributor')->name('distributor_channel.updateDistributor');
+	Route::get('/businessList/{id}', 'DistributorChannelController@businessList')->name('distributor_channel.businessList');
+	Route::post('/getBusiness', 'DistributorChannelController@getBusiness')->name('distributor_channel.getBusiness');
+	Route::post('/updateBusiness', 'DistributorChannelController@updateBusiness')->name('distributor_channel.updateBusiness');
+	
+	Route::get('/politicalBusinessList/{id}', 'DistributorChannelController@politicalBusinessList')->name('distributor_channel.politicalBusinessList');
+	Route::post('/getPoliticalBusiness', 'DistributorChannelController@getPoliticalBusiness')->name('distributor_channel.getPoliticalBusiness');
+	Route::post('/updatePoliticalBusiness', 'DistributorChannelController@updatePoliticalBusiness')->name('distributor_channel.updatePoliticalBusiness');
 });
 
 Route::prefix('political-logo')->middleware('auth','adminauth')->group(function() {
