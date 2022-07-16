@@ -8,4 +8,5 @@ class Business extends Model
 {
     protected $table = 'business';
  	public $timestamps = false;
+    protected $primaryKey = 'busi_id';
 }

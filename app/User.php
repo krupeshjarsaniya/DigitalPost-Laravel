@@ -40,4 +40,8 @@ class User extends Authenticatable
     public function distributor() {
         return $this->hasOne(DistributorChannel::class, 'user_id', 'id');
     }
+
+    public function distributorBusiness() {
+        return $this->hasMany(DistributorBusinessUser::class, 'user_id', 'id');
+    }
 }
