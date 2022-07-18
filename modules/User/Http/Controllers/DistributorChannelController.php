@@ -18,11 +18,13 @@ use DB;
 
 class DistributorChannelController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         return view('user::distributor_channel');
     }
 
-    public function list(Request $request) {
+    public function list(Request $request)
+    {
         $distributors = DistributorChannel::select('*');
         return DataTables::of($distributors)
             ->editColumn('created_at', function ($transaction) {
@@ -30,155 +32,169 @@ class DistributorChannelController extends Controller
             })
             ->addColumn('action', function ($distributor) {
                 $button = "";
-                if($distributor->status != 'approved') {
-                    $button .= '<button onclick="approveRequest(this)" class="btn btn-xs btn-success btn-edit mb-2 ml-2" data-id="'.$distributor->id.'">Approve</button>';
+                if ($distributor->status != 'approved') {
+                    $button .= '<button onclick="approveRequest(this)" class="btn btn-xs btn-success btn-edit mb-2 ml-2" data-id="' . $distributor->id . '">Approve</button>';
                 }
-                if($distributor->status != 'rejected') {
-                    $button .= '<button onclick="rejectRequest(this)" class="btn btn-xs btn-danger btn-delet mb-2 ml-2" data-id="'.$distributor->id.'">Reject</button>';
+                if ($distributor->status != 'rejected') {
+                    $button .= '<button onclick="rejectRequest(this)" class="btn btn-xs btn-danger btn-delet mb-2 ml-2" data-id="' . $distributor->id . '">Reject</button>';
                 }
                 $view_url = route('distributor_channel.view', ['id' => $distributor->id]);
-                $button .= '<a href="'.$view_url.'" class="btn btn-xs btn-primary btn-edit mb-2 ml-2" data-id="'.$distributor->id.'">View</button>';
+                $button .= '<a href="' . $view_url . '" class="btn btn-xs btn-primary btn-edit mb-2 ml-2" data-id="' . $distributor->id . '">View</button>';
                 return $button;
             })
             ->rawColumns(['action'])
             ->make(true);
     }
 
-    public function businessList(Request $request,$id) {
-        
+    public function businessList(Request $request, $id)
+    {
+
         $businesses = Business::where('user_id', $id)->where('is_distributor_business', 1);
         return DataTables::of($businesses)
-        ->addIndexColumn()
-        ->editColumn('busi_mobile', function($row) {
-           
+            ->addIndexColumn()
+            ->editColumn('busi_mobile', function ($row) {
+
                 $mobile = "$row->busi_mobile<br>$row->busi_mobile_second";
-           
-            return $mobile;
-        })
-        ->editColumn('busi_logo', function($row) {
-            $image = "";
-            if(!empty($row->busi_logo)) {
-                $image = "<img height='100' width='100' src='". Storage::url($row->busi_logo) ."' />";
-            }
-            return $image;
-        })
-        ->editColumn('watermark_image', function($row) {
-            $image = "";
-            if(!empty($row->watermark_image)) {
-                $image = "<img height='100' width='100' src='". Storage::url($row->watermark_image) ."' />";
-            }
-            return $image;
-        })
-        ->editColumn('busi_logo_dark', function($row) {
-            $image = "";
-            if(!empty($row->busi_logo_dark)) {
-                $image = "<img height='100' width='100' src='". Storage::url($row->busi_logo_dark) ."' />";
-            }
-            return $image;
-        })
-        ->editColumn('watermark_image_dark', function($row) {
-            $image = "";
-            if(!empty($row->watermark_image_dark)) {
-                $image = "<img height='100' width='100' src='". Storage::url($row->watermark_image_dark) ."' />";
-            }
-            return $image;
-        })
-        ->editColumn('is_premium', function($row) {
-            $is_premium = "<span class='badge badge-danger'>false</span>";
 
-            $checkPurchase = Purchase::where('purc_business_type', 1)->where('purc_business_id', $row->busi_id)->where('purc_plan_id', '!=', 3)->first();
-            if(!empty($checkPurchase)) {
-                $is_premium = "<span class='badge badge-success'>true</span>";
-                // $is_premium = true;
-            }
-            return $is_premium;
-        })
+                return $mobile;
+            })
+            ->editColumn('busi_logo', function ($row) {
+                $image = "";
+                if (!empty($row->busi_logo)) {
+                    $image = "<img height='100' width='100' src='" . Storage::url($row->busi_logo) . "' />";
+                }
+                return $image;
+            })
+            ->editColumn('watermark_image', function ($row) {
+                $image = "";
+                if (!empty($row->watermark_image)) {
+                    $image = "<img height='100' width='100' src='" . Storage::url($row->watermark_image) . "' />";
+                }
+                return $image;
+            })
+            ->editColumn('busi_logo_dark', function ($row) {
+                $image = "";
+                if (!empty($row->busi_logo_dark)) {
+                    $image = "<img height='100' width='100' src='" . Storage::url($row->busi_logo_dark) . "' />";
+                }
+                return $image;
+            })
+            ->editColumn('watermark_image_dark', function ($row) {
+                $image = "";
+                if (!empty($row->watermark_image_dark)) {
+                    $image = "<img height='100' width='100' src='" . Storage::url($row->watermark_image_dark) . "' />";
+                }
+                return $image;
+            })
+            ->editColumn('is_premium', function ($row) {
+                $is_premium = "<span class='badge badge-danger'>false</span>";
 
-        ->addColumn('action', function ($row) {
-            $button = "";
-            $button .= '<button onclick="editBusinessData(this)" class="btn btn-xs btn-success btn-edit mb-2" data-id="'.$row->busi_id.'">Edit</button>';
-            return $button;
-        })
-        ->rawColumns(['busi_logo','busi_mobile' ,'watermark_image', 'busi_logo_dark', 'watermark_image_dark', 'is_premium','action'])
-        ->make(true);
+                $checkPurchase = Purchase::where('purc_business_type', 1)->where('purc_business_id', $row->busi_id)->where('purc_plan_id', '!=', 3)->first();
+                if (!empty($checkPurchase)) {
+                    $is_premium = "<span class='badge badge-success'>true</span>";
+                }
+                return $is_premium;
+            })
+
+            ->addColumn('action', function ($row) {
+                $button = "";
+                $button .= '<button onclick="editBusinessData(this)" class="btn btn-xs btn-success btn-edit mb-2" data-id="' . $row->busi_id . '">Edit</button>';
+                return $button;
+            })
+            ->rawColumns(['busi_logo', 'busi_mobile', 'watermark_image', 'busi_logo_dark', 'watermark_image_dark', 'is_premium', 'action'])
+            ->make(true);
     }
 
-    public function politicalBusinessList(Request $request,$id) {
+    public function politicalBusinessList(Request $request, $id)
+    {
 
-        $politicalBusinesses = PoliticalBusiness::where('user_id', $id);
+        $politicalBusinesses = PoliticalBusiness::where('user_id', $id)->where('is_distributor_business', 1)->with('category');;
         return DataTables::of($politicalBusinesses)
-        ->addIndexColumn()
-        ->editColumn('pb_mobile', function($row) {
-           
+            ->addIndexColumn()
+            ->editColumn('pb_mobile', function ($row) {
+
                 $mobile = "$row->pb_mobile<br>$row->pb_mobile_second";
-           
-            return $mobile;
-        })
-        ->editColumn('pb_party_logo', function($row) {
-            $image = "";
-            if(!empty($row->pb_party_logo)) {
-                $image = "<img height='100' width='100' src='". Storage::url($row->pb_party_logo) ."' />";
-            }
-            return $image;
-        })
-        ->editColumn('pb_watermark', function($row) {
-            $image = "";
-            if(!empty($row->pb_watermark)) {
-                $image = "<img height='100' width='100' src='". Storage::url($row->pb_watermark) ."' />";
-            }
-            return $image;
-        })
-        ->editColumn('pb_party_logo_dark', function($row) {
-            $image = "";
-            if(!empty($row->pb_party_logo_dark)) {
-                $image = "<img height='100' width='100' src='". Storage::url($row->pb_party_logo_dark) ."' />";
-            }
-            return $image;
-        })
-        ->editColumn('pb_watermark_dark', function($row) {
-            $image = "";
-            if(!empty($row->pb_watermark_dark)) {
-                $image = "<img height='100' width='100' src='". Storage::url($row->pb_watermark_dark) ."' />";
-            }
-            return $image;
-        })
-        ->editColumn('pb_left_image', function($row) {
-            $image = "";
-            if(!empty($row->pb_left_image)) {
-                $image = "<img height='100' width='100' src='". Storage::url($row->pb_left_image) ."' />";
-            }
-            return $image;
-        })
-        ->editColumn('pb_right_image', function($row) {
-            $image = "";
-            if(!empty($row->pb_right_image)) {
-                $image = "<img height='100' width='100' src='". Storage::url($row->pb_right_image) ."' />";
-            }
-            return $image;
-        })
-        ->addColumn('action', function ($row) {
-            $button = "";
-            $button .= '<button onclick="editPoliticalBusinessData(this)" class="btn btn-xs btn-success btn-edit mb-2" data-id="'.$row->pb_id.'">Edit</button>';
-            return $button;
-        })
-        ->rawColumns(['pb_party_logo','pb_mobile' ,'pb_watermark', 'pb_party_logo_dark', 'pb_watermark_dark', 'pb_left_image','pb_right_image','action'])
-        ->make(true);
+
+                return $mobile;
+            })
+            ->editColumn('pb_party_logo', function ($row) {
+                $image = "";
+                if (!empty($row->pb_party_logo)) {
+                    $image = "<img height='100' width='100' src='" . Storage::url($row->pb_party_logo) . "' />";
+                }
+                return $image;
+            })
+            ->editColumn('pb_watermark', function ($row) {
+                $image = "";
+                if (!empty($row->pb_watermark)) {
+                    $image = "<img height='100' width='100' src='" . Storage::url($row->pb_watermark) . "' />";
+                }
+                return $image;
+            })
+            ->editColumn('pb_party_logo_dark', function ($row) {
+                $image = "";
+                if (!empty($row->pb_party_logo_dark)) {
+                    $image = "<img height='100' width='100' src='" . Storage::url($row->pb_party_logo_dark) . "' />";
+                }
+                return $image;
+            })
+            ->editColumn('pb_watermark_dark', function ($row) {
+                $image = "";
+                if (!empty($row->pb_watermark_dark)) {
+                    $image = "<img height='100' width='100' src='" . Storage::url($row->pb_watermark_dark) . "' />";
+                }
+                return $image;
+            })
+            ->editColumn('pb_left_image', function ($row) {
+                $image = "";
+                if (!empty($row->pb_left_image)) {
+                    $image = "<img height='100' width='100' src='" . Storage::url($row->pb_left_image) . "' />";
+                }
+                return $image;
+            })
+            ->editColumn('pb_right_image', function ($row) {
+                $image = "";
+                if (!empty($row->pb_right_image)) {
+                    $image = "<img height='100' width='100' src='" . Storage::url($row->pb_right_image) . "' />";
+                }
+                return $image;
+            })
+            ->editColumn('is_premium', function ($row) {
+                $is_premium = "<span class='badge badge-danger'>false</span>";
+
+                $checkPurchase = Purchase::where('purc_business_type', 2)->where('purc_business_id', $row->pb_id)->where('purc_plan_id', '!=', 3)->first();
+                if (!empty($checkPurchase)) {
+                    $is_premium = "<span class='badge badge-success'>true</span>";
+                }
+                return $is_premium;
+            })
+            ->addColumn('action', function ($row) {
+                $button = "";
+                $button .= '<button onclick="editPoliticalBusinessData(this)" class="btn btn-xs btn-success btn-edit mb-2" data-id="' . $row->pb_id . '">Edit</button>';
+                return $button;
+            })
+            ->rawColumns(['pb_party_logo', 'pb_mobile', 'pb_watermark', 'pb_party_logo_dark', 'pb_watermark_dark', 'pb_left_image', 'pb_right_image', 'is_premium', 'action'])
+            ->make(true);
     }
 
-    public function getBusiness(Request $request){
-        $getData = Business::where('busi_id',$request->id)->first();
-        return response()->json(['status'=> true, 'data' => $getData]);
+    public function getBusiness(Request $request)
+    {
+        $getData = Business::where('busi_id', $request->id)->first();
+        return response()->json(['status' => true, 'data' => $getData]);
     }
-    
-    public function getPoliticalBusiness(Request $request){
-        $getData = PoliticalBusiness::where('pb_id',$request->id)->first();
-        return response()->json(['status'=> true, 'data' => $getData]);
+
+    public function getPoliticalBusiness(Request $request)
+    {
+        $getData = PoliticalBusiness::where('pb_id', $request->id)->first();
+        return response()->json(['status' => true, 'data' => $getData]);
     }
-    
+
 
     public function updateBusiness(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make(
+            $request->all(),
+            [
                 'busi_name' => 'required',
             ],
             [
@@ -186,15 +202,14 @@ class DistributorChannelController extends Controller
             ]
         );
 
-        if ($validator->fails())
-        {
-            $error=json_decode($validator->errors());
+        if ($validator->fails()) {
+            $error = json_decode($validator->errors());
 
-            return response()->json(['status' => 401,'error1' => $error]);
+            return response()->json(['status' => 401, 'error1' => $error]);
             exit();
         }
 
-        $updateCategory = Business::where('busi_id',$request->busi_id)->first();
+        $updateCategory = Business::where('busi_id', $request->busi_id)->first();
         $updateCategory->busi_name = $request->busi_name;
         $updateCategory->busi_email = $request->busi_email;
         $updateCategory->busi_mobile = $request->busi_mobile;
@@ -208,19 +223,19 @@ class DistributorChannelController extends Controller
         $updateCategory->busi_linkedin = $request->busi_linkedin;
         $updateCategory->busi_youtube = $request->busi_youtube;
 
-        if($request->hasFile('busi_logo')) {
+        if ($request->hasFile('busi_logo')) {
             $busi_logo = $this->uploadFile($request, null, 'busi_logo', 'business-img');
             $updateCategory->busi_logo = $busi_logo;
         }
-        if($request->hasFile('busi_logo_dark')) {
+        if ($request->hasFile('busi_logo_dark')) {
             $busi_logo_dark = $this->uploadFile($request, null, 'busi_logo_dark', 'business-img');
             $updateCategory->busi_logo_dark = $busi_logo_dark;
         }
-        if($request->hasFile('watermark_image')) {
+        if ($request->hasFile('watermark_image')) {
             $watermark_image = $this->uploadFile($request, null, 'watermark_image', 'business-img');
             $updateCategory->watermark_image = $watermark_image;
         }
-        if($request->hasFile('watermark_image_dark')) {
+        if ($request->hasFile('watermark_image_dark')) {
             $watermark_image_dark = $this->uploadFile($request, null, 'watermark_image_dark', 'business-img');
             $updateCategory->watermark_image_dark = $watermark_image_dark;
         }
@@ -228,11 +243,13 @@ class DistributorChannelController extends Controller
         $updateCategory->business_category = $request->business_category;
         $updateCategory->save();
 
-        return response()->json(['status' => true,'message' => "Business Insert successfully"]);
+        return response()->json(['status' => true, 'message' => "Business Insert successfully"]);
     }
     public function updatePoliticalBusiness(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make(
+            $request->all(),
+            [
                 'pb_name' => 'required',
             ],
             [
@@ -240,15 +257,14 @@ class DistributorChannelController extends Controller
             ]
         );
 
-        if ($validator->fails())
-        {
-            $error=json_decode($validator->errors());
+        if ($validator->fails()) {
+            $error = json_decode($validator->errors());
 
-            return response()->json(['status' => 401,'error1' => $error]);
+            return response()->json(['status' => 401, 'error1' => $error]);
             exit();
         }
 
-        $updatePoliticalBusiness = PoliticalBusiness::where('pb_id',$request->pb_id)->first();
+        $updatePoliticalBusiness = PoliticalBusiness::where('pb_id', $request->pb_id)->first();
         $updatePoliticalBusiness->pb_name = $request->pb_name;
         $updatePoliticalBusiness->pb_designation = $request->pb_designation;
         $updatePoliticalBusiness->pb_mobile = $request->pb_mobile;
@@ -261,39 +277,40 @@ class DistributorChannelController extends Controller
         $updatePoliticalBusiness->pb_linkedin = $request->pb_linkedin;
         $updatePoliticalBusiness->pb_youtube = $request->pb_youtube;
 
-        if($request->hasFile('pb_party_logo')) {
+        if ($request->hasFile('pb_party_logo')) {
             $pb_party_logo = $this->uploadFile($request, null, 'pb_party_logo', 'political-business-img');
             $updatePoliticalBusiness->pb_party_logo = $pb_party_logo;
         }
-        if($request->hasFile('pb_party_logo_dark')) {
+        if ($request->hasFile('pb_party_logo_dark')) {
             $pb_party_logo_dark = $this->uploadFile($request, null, 'pb_party_logo_dark', 'political-business-img');
             $updatePoliticalBusiness->pb_party_logo_dark = $pb_party_logo_dark;
         }
-        if($request->hasFile('watermark_image')) {
+        if ($request->hasFile('watermark_image')) {
             $watermark_image = $this->uploadFile($request, null, 'watermark_image', 'political-business-img');
             $updatePoliticalBusiness->watermark_image = $watermark_image;
         }
-        if($request->hasFile('pb_watermark_dark')) {
+        if ($request->hasFile('pb_watermark_dark')) {
             $pb_watermark_dark = $this->uploadFile($request, null, 'pb_watermark_dark', 'political-business-img');
             $updatePoliticalBusiness->pb_watermark_dark = $pb_watermark_dark;
         }
-        if($request->hasFile('pb_left_image')) {
+        if ($request->hasFile('pb_left_image')) {
             $pb_left_image = $this->uploadFile($request, null, 'pb_left_image', 'political-business-img');
             $updatePoliticalBusiness->pb_left_image = $pb_left_image;
         }
-        if($request->hasFile('pb_right_image')) {
+        if ($request->hasFile('pb_right_image')) {
             $pb_right_image = $this->uploadFile($request, null, 'pb_right_image', 'political-business-img');
             $updatePoliticalBusiness->pb_right_image = $pb_right_image;
         }
         $updatePoliticalBusiness->save();
-        return response()->json(['status' => true,'message' => "Political Business Update successfully"]);
+        return response()->json(['status' => true, 'message' => "Political Business Update successfully"]);
     }
 
 
-    public function get(Request $request) {
+    public function get(Request $request)
+    {
         $id = $request->id;
         $data = DistributorChannel::find($id);
-        if(empty($data)) {
+        if (empty($data)) {
             return response()->json([
                 'status' => false,
                 'message' => "Request not found"
@@ -306,9 +323,12 @@ class DistributorChannelController extends Controller
         ]);
     }
 
-    public function approve(Request $request) {
+    public function approve(Request $request)
+    {
 
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make(
+            $request->all(),
+            [
                 'id' => 'required',
                 'referral_benefits' => 'required',
                 'start_up_plan_rate' => 'required',
@@ -322,17 +342,16 @@ class DistributorChannelController extends Controller
             ]
         );
 
-        if ($validator->fails())
-        {
-            $error=json_decode($validator->errors());
+        if ($validator->fails()) {
+            $error = json_decode($validator->errors());
 
-            return response()->json(['status' => 401,'error1' => $error]);
+            return response()->json(['status' => 401, 'error1' => $error]);
             exit();
         }
 
         $id = $request->id;
         $checkRequest = DistributorChannel::find($id);
-        if(!empty($checkRequest)) {
+        if (!empty($checkRequest)) {
             $checkRequest->referral_benefits = $request->referral_benefits;
             $checkRequest->start_up_plan_rate = $request->start_up_plan_rate;
             $checkRequest->custom_plan_rate = $request->custom_plan_rate;
@@ -346,10 +365,11 @@ class DistributorChannelController extends Controller
         ]);
     }
 
-    public function reject(Request $request) {
+    public function reject(Request $request)
+    {
         $id = $request->id;
         $checkRequest = DistributorChannel::find($id);
-        if(!empty($checkRequest)) {
+        if (!empty($checkRequest)) {
             $checkRequest->status = 'rejected';
         }
         $checkRequest->save();
@@ -360,37 +380,41 @@ class DistributorChannelController extends Controller
         ]);
     }
 
-    public function view($id) {
+    public function view($id)
+    {
 
-        $busi_cats = DB::table('business_category')->where('is_delete',0)->get();
-        $pb_cats = PoliticalCategory::where('pc_is_deleted',0)->get();
+        $busi_cats = DB::table('business_category')->where('is_delete', 0)->get();
+        $pb_cats = PoliticalCategory::where('pc_is_deleted', 0)->get();
         $distributor = DistributorChannel::find($id);
-        if(empty($distributor)) {
+        if (empty($distributor)) {
             return redirect()->back();
         }
-        return view('user::distributor_channel_detail', compact('distributor','busi_cats','pb_cats'));
+        return view('user::distributor_channel_detail', compact('distributor', 'busi_cats', 'pb_cats'));
     }
 
-    public function transactionList(Request $request, $id) {
+    public function transactionList(Request $request, $id)
+    {
         $transactions = DistributorTransaction::where('distributor_id', $id);
         return DataTables::of($transactions)
-        ->editColumn('type', function ($transaction) {
-            if($transaction->type == 'deposit') {
-                return "<span style='font-size: 12px; text-transform: uppercase;' class='badge badge-success'>$transaction->type</span>";
-            }
-            else {
-                return "<span style='font-size: 12px; text-transform: uppercase;' class='badge badge-danger'>$transaction->type</span>";
-            }
-        })
-        ->editColumn('created_at', function ($transaction) {
-            return Carbon::parse($transaction->created_at)->format("d-m-Y h:i A");
-        })
-        ->rawColumns(['created_at', 'type'])
-        ->make(true);
+            ->editColumn('type', function ($transaction) {
+                if ($transaction->type == 'deposit') {
+                    return "<span style='font-size: 12px; text-transform: uppercase;' class='badge badge-success'>$transaction->type</span>";
+                } else {
+                    return "<span style='font-size: 12px; text-transform: uppercase;' class='badge badge-danger'>$transaction->type</span>";
+                }
+            })
+            ->editColumn('created_at', function ($transaction) {
+                return Carbon::parse($transaction->created_at)->format("d-m-Y h:i A");
+            })
+            ->rawColumns(['created_at', 'type'])
+            ->make(true);
     }
 
-    public function addTransaction(Request $request, $id) {
-        $validator = Validator::make($request->all(), [
+    public function addTransaction(Request $request, $id)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
                 'amount' => 'required',
                 'type' => 'required|in:deposit,withdrawal',
             ],
@@ -401,23 +425,22 @@ class DistributorChannelController extends Controller
             ]
         );
 
-        if ($validator->fails())
-        {
-            $error=json_decode($validator->errors());
+        if ($validator->fails()) {
+            $error = json_decode($validator->errors());
 
-            return response()->json(['status' => 401,'error1' => $error]);
+            return response()->json(['status' => 401, 'error1' => $error]);
             exit();
         }
 
         $distributor = DistributorChannel::find($id);
-        if(empty($distributor)) {
+        if (empty($distributor)) {
             return response()->json([
                 'status' => false,
                 'message' => "Distributor not found"
             ]);
         }
 
-        if($distributor->status != 'approved') {
+        if ($distributor->status != 'approved') {
             return response()->json([
                 'status' => false,
                 'message' => "Distributor not approved"
@@ -425,11 +448,10 @@ class DistributorChannelController extends Controller
         }
 
         $newAmount = $distributor->balance;
-        if($request->type == 'deposit') {
+        if ($request->type == 'deposit') {
             $newAmount = $newAmount + $request->amount;
-        }
-        else {
-            if($request->amount > $newAmount) {
+        } else {
+            if ($request->amount > $newAmount) {
                 return response()->json([
                     'status' => false,
                     'message' => "insufficient balance"
@@ -459,8 +481,11 @@ class DistributorChannelController extends Controller
         ]);
     }
 
-    public function updateDistributor(Request $request, $id) {
-        $validator = Validator::make($request->all(), [
+    public function updateDistributor(Request $request, $id)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
                 'full_name' => 'required',
                 'email' => 'required',
                 'contact_number' => 'required',
@@ -489,19 +514,19 @@ class DistributorChannelController extends Controller
                 'custom_plan_rate.required' => 'Custom plan rate Is Required',
                 'start_up_plan_rate.required' => 'Start up plan rate Is Required',
                 'status.required' => 'Status Is Required',
+                'status.required' => 'Status Is Required',
             ]
         );
 
-        if ($validator->fails())
-        {
-            $error=json_decode($validator->errors());
+        if ($validator->fails()) {
+            $error = json_decode($validator->errors());
 
-            return response()->json(['status' => 401,'error1' => $error]);
+            return response()->json(['status' => 401, 'error1' => $error]);
             exit();
         }
 
         $checkEmail = DistributorChannel::where('email', $request->email)->where('id', '!=', $id)->first();
-        if(!empty($checkEmail)) {
+        if (!empty($checkEmail)) {
             return response()->json([
                 'status' => false,
                 'message' => "Email already exists"
@@ -509,7 +534,7 @@ class DistributorChannelController extends Controller
         }
 
         $checkNumber = DistributorChannel::where('contact_number', $request->contact_number)->where('id', '!=', $id)->first();
-        if(!empty($checkNumber)) {
+        if (!empty($checkNumber)) {
             return response()->json([
                 'status' => false,
                 'message' => "Contact number already exists"
@@ -517,7 +542,7 @@ class DistributorChannelController extends Controller
         }
 
         $distributor = DistributorChannel::find($id);
-        if(empty($distributor)) {
+        if (empty($distributor)) {
             return response()->json([
                 'status' => false,
                 'message' => "Distributor not found"
@@ -537,13 +562,14 @@ class DistributorChannelController extends Controller
         $distributor->custom_plan_rate = $request->custom_plan_rate;
         $distributor->start_up_plan_rate = $request->start_up_plan_rate;
         $distributor->status = $request->status;
+        $distributor->allow_add_frames = $request->allow_add_frames;
 
-        if($request->hasFile('aadhar_card_photo')) {
+        if ($request->hasFile('aadhar_card_photo')) {
             $aadhar_card_photo = $this->uploadFile($request, null, 'aadhar_card_photo', 'distributor-image');
             $distributor->aadhar_card_photo = $aadhar_card_photo;
         }
 
-        if($request->hasFile('user_photo')) {
+        if ($request->hasFile('user_photo')) {
             $user_photo = $this->uploadFile($request, null, 'user_photo', 'distributor-image');
             $distributor->user_photo = $user_photo;
         }
@@ -556,5 +582,4 @@ class DistributorChannelController extends Controller
             'data' => $distributor
         ]);
     }
-
 }

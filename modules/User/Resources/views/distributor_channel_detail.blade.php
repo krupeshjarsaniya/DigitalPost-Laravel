@@ -57,6 +57,16 @@
                             <span style="font-size: 12px;" class="badge badge-danger">Rejected</span>
                         @endif
                         </span>
+                        <br />
+                        <br />
+                        <span style="font-size: 16px;">Frames Allowed :
+                        @if($distributor->allow_add_frames)
+                            <span style="font-size: 12px;" class="badge badge-success">True</span>
+                        @else
+                            <span style="font-size: 12px;" class="badge badge-danger">False</span>
+                        @endif
+
+                        </span>
                     </div>
 
                     <div class="col-4">
@@ -288,6 +298,15 @@
                             </div>
                         </div>
                         <div class="col-6">
+                            <div class="form-group err_allow_add_frames">
+                                <label for="allow_add_frames">Frame Allowed</label>
+                                <select id="allow_add_frames" name="allow_add_frames" class="form-control">
+                                    <option value="1"@if($distributor->allow_add_frames) selected @endif>true</option>
+                                    <option value="0"@if(!$distributor->allow_add_frames) selected @endif>false</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-6">
                             <div class="form-group err_aadhar_card_photo">
                                 <label for="aadhar_card_photo">Aadhar Card</label>
                                 <input type="file" id="aadhar_card_photo" name="aadhar_card_photo" class="form-control">
@@ -441,12 +460,14 @@
                             <th>Name</th>
                             <th>Mobile</th>
                             <th>Designation</th>
+                            <th>Category</th>
                             <th>Logo</th>
                             <th>Watermark</th>
                             <th>Logo Dark</th>
                             <th>Watermark Dark</th>
                             <th>Left Image</th>
                             <th>Right Image</th>
+                            <th>Premium</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -532,7 +553,7 @@
                                 </div>
                                     <img id="watermarkimg" src="#" alt="your image" style="display: none;width: 100px;height:100px;"/>
                             </div>
-                            
+
                             <div class="col-6 ">
                                 <div class="form-group err_watermark_image_dark">
                                     <label for="watermark_image_dark" class="form-label">Upload Dark Watermark</label>
@@ -573,20 +594,20 @@
                                     <input type="text" name="busi_linkedin" id="busi_linkedin" class="form-control">
                                 </div>
                             </div>
-                            
+
                             <div class="col-6">
                                 <div class="form-group err_busi_youtube">
                                     <lable for="busi_youtube">You Tube</lable>
                                     <input type="text" name="busi_youtube" id="busi_youtube" class="form-control">
                                 </div>
                             </div>
-                            
+
                             <div class="col-6">
                                 <div class="form-group err_business_category">
                                     <label for="sel1">Select Category:</label>
                                     <select class="form-control" id="business_category" name="business_category">
                                         <option value="Select Category" disabled>Select Category</option>
-                                        @foreach($busi_cats as $busi_cat)   
+                                        @foreach($busi_cats as $busi_cat)
                                             <option value={{$busi_cat->name}}>{{$busi_cat->name}}</option>
                                         @endforeach
                                     </select>
@@ -601,7 +622,7 @@
                     </div>
                 </div>
             </div>
-            
+
         </div>
     </div>
 </div>
@@ -609,7 +630,7 @@
 <div class="modal fade" id="politicalBusinessModel">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            
+
             <!-- Modal Header -->
             <div class="modal-header">
                 <h4 class="modal-title">Edit Political Business</h4>
@@ -647,7 +668,7 @@
                                     <input type="text" name="pb_mobile_second" id="pb_mobile_second" class="form-control">
                                 </div>
                             </div>
-                            
+
                             <div class="col-6 ">
                                 <div class="form-group err_pb_party_logo">
                                     <label for="pb_party_logo" class="form-label">Upload Logo</label>
@@ -669,7 +690,7 @@
                                 </div>
                                     <img id="watermarkimg" src="#" alt="your image" style="display: none;width: 100px;height:100px;"/>
                             </div>
-                            
+
                             <div class="col-6 ">
                                 <div class="form-group err_pb_watermark_dark">
                                     <label for="pb_watermark_dark" class="form-label">Upload Dark Watermark</label>
@@ -721,7 +742,7 @@
                                     <input type="text" name="pb_linkedin" id="pb_linkedin" class="form-control">
                                 </div>
                             </div>
-                            
+
                             <div class="col-6">
                                 <div class="form-group err_pb_youtube">
                                     <lable for="pb_youtube">You Tube</lable>
@@ -734,7 +755,7 @@
                                     <label for="sel1">Select Category:</label>
                                     <select class="form-control" id="pb_pc_id" name="pb_pc_id">
                                         <option value="Select Category" disabled>Select Category</option>
-                                        @foreach($pb_cats as $pb_cat)   
+                                        @foreach($pb_cats as $pb_cat)
                                             <option value={{$pb_cat->pc_id}}>{{$pb_cat->pc_name}}</option>
                                         @endforeach
                                     </select>
@@ -825,12 +846,14 @@ function getPoliticalBusinessList() {
             {data: 'pb_name', name: 'pb_designation'},
             {data: 'pb_mobile', name: 'pb_mobile'},
             {data: 'pb_designation', name: 'pb_designation'},
+            {data: 'category.pc_name', name: 'category.pc_name'},
             {data: 'pb_party_logo', name: 'pb_party_logo'},
             {data: 'pb_watermark', name: 'pb_watermark'},
             {data: 'pb_party_logo_dark', name: 'pb_party_logo_dark'},
             {data: 'pb_watermark_dark', name: 'pb_watermark_dark'},
             {data: 'pb_left_image', name: 'pb_left_image'},
             {data: 'pb_right_image', name: 'pb_right_image'},
+            {data: 'is_premium', name: 'is_premium', orderable: false, searchable: false},
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ],
         order: [[1, 'desc']]
@@ -879,7 +902,7 @@ function addTransaction(ele) {
         error: function(error) {
             $('.loader-custom').css('display','none');
             console.log(error);
-            
+
         }
     });
 
@@ -900,7 +923,7 @@ function editPoliticalBusinessData(ele)
         data: {id},
         dataType: 'json',
         success: function(response) {
-           
+
             $('#politicalBusinessModel').modal('show');
             $('#pb_id').val(response.data.pb_id);
             $('#pb_name').val(response.data.pb_name);
@@ -914,7 +937,7 @@ function editPoliticalBusinessData(ele)
             $('#pb_linkedin').val(response.data.pb_linkedin);
             $('#pb_youtube').val(response.data.pb_youtube);
             $('#pb_pc_id').val(response.data.pb_pc_id);
-            
+
         },
         error: function(error) {
             $('.loader-custom').css('display','none');
@@ -1061,11 +1084,11 @@ function updatePoliticalBusinessData()
                 alert(response.message);
                 return false;
             }
-               
+
                 $('#politicalBusinessModel').modal('hide');
                 alert(response.message);
                 politicalBusinessTable.ajax.reload();
-               
+
             }
     });
 }
