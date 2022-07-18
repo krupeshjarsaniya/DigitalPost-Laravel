@@ -5,10 +5,16 @@ namespace Modules\User\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\DistributorChannel;
+use App\Business;
 use App\DistributorTransaction;
+use App\Purchase;
+use App\PoliticalBusiness;
+use App\PoliticalCategory;
 use DataTables;
 use Validator;
 use Carbon\Carbon;
+use Storage;
+use DB;
 
 class DistributorChannelController extends Controller
 {
@@ -37,6 +43,252 @@ class DistributorChannelController extends Controller
             ->rawColumns(['action'])
             ->make(true);
     }
+
+    public function businessList(Request $request,$id) {
+        
+        $businesses = Business::where('user_id', $id)->where('is_distributor_business', 1);
+        return DataTables::of($businesses)
+        ->addIndexColumn()
+        ->editColumn('busi_mobile', function($row) {
+           
+                $mobile = "$row->busi_mobile<br>$row->busi_mobile_second";
+           
+            return $mobile;
+        })
+        ->editColumn('busi_logo', function($row) {
+            $image = "";
+            if(!empty($row->busi_logo)) {
+                $image = "<img height='100' width='100' src='". Storage::url($row->busi_logo) ."' />";
+            }
+            return $image;
+        })
+        ->editColumn('watermark_image', function($row) {
+            $image = "";
+            if(!empty($row->watermark_image)) {
+                $image = "<img height='100' width='100' src='". Storage::url($row->watermark_image) ."' />";
+            }
+            return $image;
+        })
+        ->editColumn('busi_logo_dark', function($row) {
+            $image = "";
+            if(!empty($row->busi_logo_dark)) {
+                $image = "<img height='100' width='100' src='". Storage::url($row->busi_logo_dark) ."' />";
+            }
+            return $image;
+        })
+        ->editColumn('watermark_image_dark', function($row) {
+            $image = "";
+            if(!empty($row->watermark_image_dark)) {
+                $image = "<img height='100' width='100' src='". Storage::url($row->watermark_image_dark) ."' />";
+            }
+            return $image;
+        })
+        ->editColumn('is_premium', function($row) {
+            $is_premium = "<span class='badge badge-danger'>false</span>";
+
+            $checkPurchase = Purchase::where('purc_business_type', 1)->where('purc_business_id', $row->busi_id)->where('purc_plan_id', '!=', 3)->first();
+            if(!empty($checkPurchase)) {
+                $is_premium = "<span class='badge badge-success'>true</span>";
+                // $is_premium = true;
+            }
+            return $is_premium;
+        })
+
+        ->addColumn('action', function ($row) {
+            $button = "";
+            $button .= '<button onclick="editBusinessData(this)" class="btn btn-xs btn-success btn-edit mb-2" data-id="'.$row->busi_id.'">Edit</button>';
+            return $button;
+        })
+        ->rawColumns(['busi_logo','busi_mobile' ,'watermark_image', 'busi_logo_dark', 'watermark_image_dark', 'is_premium','action'])
+        ->make(true);
+    }
+
+    public function politicalBusinessList(Request $request,$id) {
+
+        $politicalBusinesses = PoliticalBusiness::where('user_id', $id);
+        return DataTables::of($politicalBusinesses)
+        ->addIndexColumn()
+        ->editColumn('pb_mobile', function($row) {
+           
+                $mobile = "$row->pb_mobile<br>$row->pb_mobile_second";
+           
+            return $mobile;
+        })
+        ->editColumn('pb_party_logo', function($row) {
+            $image = "";
+            if(!empty($row->pb_party_logo)) {
+                $image = "<img height='100' width='100' src='". Storage::url($row->pb_party_logo) ."' />";
+            }
+            return $image;
+        })
+        ->editColumn('pb_watermark', function($row) {
+            $image = "";
+            if(!empty($row->pb_watermark)) {
+                $image = "<img height='100' width='100' src='". Storage::url($row->pb_watermark) ."' />";
+            }
+            return $image;
+        })
+        ->editColumn('pb_party_logo_dark', function($row) {
+            $image = "";
+            if(!empty($row->pb_party_logo_dark)) {
+                $image = "<img height='100' width='100' src='". Storage::url($row->pb_party_logo_dark) ."' />";
+            }
+            return $image;
+        })
+        ->editColumn('pb_watermark_dark', function($row) {
+            $image = "";
+            if(!empty($row->pb_watermark_dark)) {
+                $image = "<img height='100' width='100' src='". Storage::url($row->pb_watermark_dark) ."' />";
+            }
+            return $image;
+        })
+        ->editColumn('pb_left_image', function($row) {
+            $image = "";
+            if(!empty($row->pb_left_image)) {
+                $image = "<img height='100' width='100' src='". Storage::url($row->pb_left_image) ."' />";
+            }
+            return $image;
+        })
+        ->editColumn('pb_right_image', function($row) {
+            $image = "";
+            if(!empty($row->pb_right_image)) {
+                $image = "<img height='100' width='100' src='". Storage::url($row->pb_right_image) ."' />";
+            }
+            return $image;
+        })
+        ->addColumn('action', function ($row) {
+            $button = "";
+            $button .= '<button onclick="editPoliticalBusinessData(this)" class="btn btn-xs btn-success btn-edit mb-2" data-id="'.$row->pb_id.'">Edit</button>';
+            return $button;
+        })
+        ->rawColumns(['pb_party_logo','pb_mobile' ,'pb_watermark', 'pb_party_logo_dark', 'pb_watermark_dark', 'pb_left_image','pb_right_image','action'])
+        ->make(true);
+    }
+
+    public function getBusiness(Request $request){
+        $getData = Business::where('busi_id',$request->id)->first();
+        return response()->json(['status'=> true, 'data' => $getData]);
+    }
+    
+    public function getPoliticalBusiness(Request $request){
+        $getData = PoliticalBusiness::where('pb_id',$request->id)->first();
+        return response()->json(['status'=> true, 'data' => $getData]);
+    }
+    
+
+    public function updateBusiness(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+                'busi_name' => 'required',
+            ],
+            [
+                'busi_name' => 'Please Enter Name',
+            ]
+        );
+
+        if ($validator->fails())
+        {
+            $error=json_decode($validator->errors());
+
+            return response()->json(['status' => 401,'error1' => $error]);
+            exit();
+        }
+
+        $updateCategory = Business::where('busi_id',$request->busi_id)->first();
+        $updateCategory->busi_name = $request->busi_name;
+        $updateCategory->busi_email = $request->busi_email;
+        $updateCategory->busi_mobile = $request->busi_mobile;
+        $updateCategory->busi_mobile_second = $request->busi_mobile_second;
+        $updateCategory->busi_website = $request->busi_website;
+        $updateCategory->busi_address = $request->busi_address;
+        $updateCategory->hashtag = $request->hashtag;
+        $updateCategory->busi_facebook = $request->busi_facebook;
+        $updateCategory->busi_twitter = $request->busi_twitter;
+        $updateCategory->busi_instagram = $request->busi_instagram;
+        $updateCategory->busi_linkedin = $request->busi_linkedin;
+        $updateCategory->busi_youtube = $request->busi_youtube;
+
+        if($request->hasFile('busi_logo')) {
+            $busi_logo = $this->uploadFile($request, null, 'busi_logo', 'business-img');
+            $updateCategory->busi_logo = $busi_logo;
+        }
+        if($request->hasFile('busi_logo_dark')) {
+            $busi_logo_dark = $this->uploadFile($request, null, 'busi_logo_dark', 'business-img');
+            $updateCategory->busi_logo_dark = $busi_logo_dark;
+        }
+        if($request->hasFile('watermark_image')) {
+            $watermark_image = $this->uploadFile($request, null, 'watermark_image', 'business-img');
+            $updateCategory->watermark_image = $watermark_image;
+        }
+        if($request->hasFile('watermark_image_dark')) {
+            $watermark_image_dark = $this->uploadFile($request, null, 'watermark_image_dark', 'business-img');
+            $updateCategory->watermark_image_dark = $watermark_image_dark;
+        }
+
+        $updateCategory->business_category = $request->business_category;
+        $updateCategory->save();
+
+        return response()->json(['status' => true,'message' => "Business Insert successfully"]);
+    }
+    public function updatePoliticalBusiness(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+                'pb_name' => 'required',
+            ],
+            [
+                'pb_name' => 'Please Enter Name',
+            ]
+        );
+
+        if ($validator->fails())
+        {
+            $error=json_decode($validator->errors());
+
+            return response()->json(['status' => 401,'error1' => $error]);
+            exit();
+        }
+
+        $updatePoliticalBusiness = PoliticalBusiness::where('pb_id',$request->pb_id)->first();
+        $updatePoliticalBusiness->pb_name = $request->pb_name;
+        $updatePoliticalBusiness->pb_designation = $request->pb_designation;
+        $updatePoliticalBusiness->pb_mobile = $request->pb_mobile;
+        $updatePoliticalBusiness->pb_mobile_second = $request->pb_mobile_second;
+        $updatePoliticalBusiness->pb_pc_id = $request->pb_pc_id;
+        $updatePoliticalBusiness->hashtag = $request->hashtag;
+        $updatePoliticalBusiness->pb_facebook = $request->pb_facebook;
+        $updatePoliticalBusiness->pb_twitter = $request->pb_twitter;
+        $updatePoliticalBusiness->pb_instagram = $request->pb_instagram;
+        $updatePoliticalBusiness->pb_linkedin = $request->pb_linkedin;
+        $updatePoliticalBusiness->pb_youtube = $request->pb_youtube;
+
+        if($request->hasFile('pb_party_logo')) {
+            $pb_party_logo = $this->uploadFile($request, null, 'pb_party_logo', 'political-business-img');
+            $updatePoliticalBusiness->pb_party_logo = $pb_party_logo;
+        }
+        if($request->hasFile('pb_party_logo_dark')) {
+            $pb_party_logo_dark = $this->uploadFile($request, null, 'pb_party_logo_dark', 'political-business-img');
+            $updatePoliticalBusiness->pb_party_logo_dark = $pb_party_logo_dark;
+        }
+        if($request->hasFile('watermark_image')) {
+            $watermark_image = $this->uploadFile($request, null, 'watermark_image', 'political-business-img');
+            $updatePoliticalBusiness->watermark_image = $watermark_image;
+        }
+        if($request->hasFile('pb_watermark_dark')) {
+            $pb_watermark_dark = $this->uploadFile($request, null, 'pb_watermark_dark', 'political-business-img');
+            $updatePoliticalBusiness->pb_watermark_dark = $pb_watermark_dark;
+        }
+        if($request->hasFile('pb_left_image')) {
+            $pb_left_image = $this->uploadFile($request, null, 'pb_left_image', 'political-business-img');
+            $updatePoliticalBusiness->pb_left_image = $pb_left_image;
+        }
+        if($request->hasFile('pb_right_image')) {
+            $pb_right_image = $this->uploadFile($request, null, 'pb_right_image', 'political-business-img');
+            $updatePoliticalBusiness->pb_right_image = $pb_right_image;
+        }
+        $updatePoliticalBusiness->save();
+        return response()->json(['status' => true,'message' => "Political Business Update successfully"]);
+    }
+
 
     public function get(Request $request) {
         $id = $request->id;
@@ -109,11 +361,14 @@ class DistributorChannelController extends Controller
     }
 
     public function view($id) {
+
+        $busi_cats = DB::table('business_category')->where('is_delete',0)->get();
+        $pb_cats = PoliticalCategory::where('pc_is_deleted',0)->get();
         $distributor = DistributorChannel::find($id);
         if(empty($distributor)) {
             return redirect()->back();
         }
-        return view('user::distributor_channel_detail', compact('distributor'));
+        return view('user::distributor_channel_detail', compact('distributor','busi_cats','pb_cats'));
     }
 
     public function transactionList(Request $request, $id) {
