@@ -330,17 +330,16 @@ Route::prefix('distributor-channel')->middleware('adminauth')->group(function() 
 	Route::get('/list', 'DistributorChannelController@list')->name('distributor_channel.list');
 	Route::post('/approve', 'DistributorChannelController@approve')->name('distributor_channel.approve');
 	Route::post('/reject', 'DistributorChannelController@reject')->name('distributor_channel.reject');
-	Route::get('/{id}', 'DistributorChannelController@view')->name('distributor_channel.view');
 	Route::get('/transaction/{id}', 'DistributorChannelController@transactionList')->name('distributor_channel.transactionList');
 	Route::post('/addTransaction/{id}', 'DistributorChannelController@addTransaction')->name('distributor_channel.addTransaction');
 	Route::post('/updateDistributor/{id}', 'DistributorChannelController@updateDistributor')->name('distributor_channel.updateDistributor');
 	Route::get('/businessList/{id}', 'DistributorChannelController@businessList')->name('distributor_channel.businessList');
 	Route::post('/getBusiness', 'DistributorChannelController@getBusiness')->name('distributor_channel.getBusiness');
 	Route::post('/updateBusiness', 'DistributorChannelController@updateBusiness')->name('distributor_channel.updateBusiness');
-	
 	Route::get('/politicalBusinessList/{id}', 'DistributorChannelController@politicalBusinessList')->name('distributor_channel.politicalBusinessList');
 	Route::post('/getPoliticalBusiness', 'DistributorChannelController@getPoliticalBusiness')->name('distributor_channel.getPoliticalBusiness');
 	Route::post('/updatePoliticalBusiness', 'DistributorChannelController@updatePoliticalBusiness')->name('distributor_channel.updatePoliticalBusiness');
+	Route::get('/{id}', 'DistributorChannelController@view')->name('distributor_channel.view');
 });
 
 Route::prefix('political-logo')->middleware('auth','adminauth')->group(function() {
@@ -349,4 +348,9 @@ Route::prefix('political-logo')->middleware('auth','adminauth')->group(function(
     Route::post('/add', 'PoliticalLogoController@add');
     Route::post('/delete', 'PoliticalLogoController@delete');
     Route::post('/updateOrder', 'PoliticalLogoController@updateOrder');
+});
+
+Route::prefix('distributor/frame-request')->middleware('adminauth')->group(function() {
+    Route::get('/', 'DistributorChannelController@frame')->name('distributor_frame');
+    Route::get('/list', 'DistributorChannelController@frameList')->name('distributor_frame.list');
 });

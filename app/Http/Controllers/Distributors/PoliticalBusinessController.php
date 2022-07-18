@@ -416,6 +416,7 @@ class PoliticalBusinessController extends Controller
             $image = $this->multipleUploadFile($image,'Political-logo');
             $newBusinessUser = new DistributorBusinessFrame;
             $newBusinessUser->user_id = Auth::user()->id;
+            $newBusinessUser->distributor_id = Auth::user()->distributor->id;
             $newBusinessUser->business_id = $request->business_id;
             $newBusinessUser->business_type = 2;
             $newBusinessUser->frame_url = $image;

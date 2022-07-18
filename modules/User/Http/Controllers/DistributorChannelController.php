@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\DistributorChannel;
 use App\Business;
+use App\DistributorBusinessFrame;
 use App\DistributorTransaction;
 use App\Purchase;
 use App\PoliticalBusiness;
@@ -581,5 +582,31 @@ class DistributorChannelController extends Controller
             'message' => "Distributor updated successfully",
             'data' => $distributor
         ]);
+    }
+
+    public function frame()
+    {
+        return view('user::distributor_frame_request');
+    }
+
+    public function frameList(Request $request)
+    {
+        $frame_requests = DistributorBusinessFrame::where('distributor_business_frames.status', 'PENDING')->with('distributor');
+        return DataTables::of($frame_requests)
+            ->editColumn('frame_url', function ($frame_request) {
+                $image = "";
+                if(!empty($frame_request->frame_url)) {
+                    $image = '<img src="'.Storage::url($frame_request->frame_url).'" width="150px" height="150px" />';
+                }
+                return $image;
+            })
+            ->editColumn('created_at', function ($frame_request) {
+                return Carbon::parse($frame_request->created_at)->format("d-m-Y h:i A");
+            })
+            ->addColumn('action', function ($frame_request) {
+                return "";
+            })
+            ->rawColumns(['created_at', 'frame_url', 'action'])
+            ->make(true);
     }
 }
