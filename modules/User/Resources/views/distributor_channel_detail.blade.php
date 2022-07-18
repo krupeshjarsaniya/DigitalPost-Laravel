@@ -443,7 +443,7 @@
     </div>
 </div>
 
-<!-- Political Business -->
+<!-- Political Business Table -->
 <div class="row">
     <div class="col-md-12">
         <div class="card">
@@ -468,6 +468,34 @@
                             <th>Left Image</th>
                             <th>Right Image</th>
                             <th>Premium</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Frame Table -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Frame List
+                <!-- <button class="btn btn-info btn-sm pull-right" id="add-transaction"><i class="fas fa-plus"></i></button> -->
+                </h4>
+            </div>
+            <div class="table-responsive">
+                <table class="display table table-striped table-hover text-center w-100" id="frame_list_table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Business Name</th>
+                            <th>Business Type</th>
+                            <th>Frame</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -787,6 +815,7 @@ $(document).ready(function() {
     getTransactionList();
     getBusinessList();
     getPoliticalBusinessList();
+    getFrameLists();
 })
 
 $('#add-transaction').click(function() {
@@ -812,6 +841,80 @@ function getTransactionList() {
         ],
         order: [[1, 'desc']]
     });
+}
+
+function getFrameLists() {
+    frameTable = $('#frame_list_table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "{{ route('distributor_channel.getFrameList', ['id' => $distributor->id]) }}",
+        columns: [
+            {data: 'DT_RowIndex', name: 'user_frames_id'},
+            {data: 'business_name', name: 'business_name'},
+            {data: 'business_type', name: 'business_type'},
+            {data: 'frame_url', name: 'frame_url'},
+            {data: 'action', name: 'action', orderable: false, searchable: false},
+        ],
+        order: [[1, 'desc']]
+    });
+}
+
+function deleteFrame(ele){
+
+    var id = $(ele).data('id');
+   
+    swal({
+        title: 'Are you sure?',
+        text: "Reject this request!",
+        type: 'warning',
+        buttons:{
+            confirm: {
+                text : 'Yes, Reject it!',
+                className : 'btn btn-success'
+            },
+            cancel: {
+                visible: true,
+                className: 'btn btn-danger'
+            }
+        }
+    }).then((result) => {
+        if(result) {
+            $.ajaxSetup({
+                headers:
+                {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            var url = '{{route('distributor_channel.deleteFrame')}}';
+
+            $.ajax({
+                type: 'post',
+                url: url,
+                dataType: 'json',
+                data:{id},
+                beforeSend: function ()
+                {
+                    $('.loader-custom').css('display','block');
+                },
+                complete: function (data, status)
+                {
+                    $('.loader-custom').css('display','none');
+                },
+
+                success: function (response)
+                {
+                    if(!response.status) {
+                        alert(response.message);
+                        return false;
+                    }
+                    frameTable.ajax.reload();
+                    alert(response.message);
+                }
+            });
+        }
+    });
+
 }
 
 function getBusinessList() {

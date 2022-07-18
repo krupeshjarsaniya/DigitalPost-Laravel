@@ -32,8 +32,7 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
-                <h4 class="card-title">Transaction List
-                <button class="btn btn-info btn-sm pull-right" id="add-transaction"><i class="fas fa-plus"></i></button>
+                <h4 class="card-title">Distributer Frame Request
                 </h4>
             </div>
             <div class="table-responsive">
@@ -42,6 +41,7 @@
                         <tr>
                             <th>Distributor Name</th>
                             <th>Distributor Mobile</th>
+                            <th>Business Name</th>
                             <th>Frame</th>
                             <th>Date</th>
                             <th>Action</th>
@@ -60,8 +60,6 @@
 <script>
 
 var table = "";
-
-
 $(document).ready(function() {
     getFrameList();
 })
@@ -74,6 +72,7 @@ function getFrameList() {
         columns: [
             {data: 'distributor.full_name', name: 'distributor.full_name'},
             {data: 'distributor.contact_number', name: 'distributor.contact_number'},
+            {data: 'business_name', name: 'business_name'},
             {data: 'frame_url', name: 'frame_url'},
             {data: 'created_at', name: 'created_at'},
             {data: 'action', name: 'action'},
@@ -82,20 +81,134 @@ function getFrameList() {
     });
 }
 
+function changeStatus(ele){
+
+    var id = $(ele).attr('data-id');
+    
+    swal({
+        title: 'Are you sure?',
+        text: "Reject this request!",
+        type: 'warning',
+        buttons:{
+            confirm: {
+                text : 'Yes, Reject it!',
+                className : 'btn btn-success'
+            },
+            cancel: {
+                visible: true,
+                className: 'btn btn-danger'
+            }
+        }
+    }).then((result) => {
+        if(result) {
+            $.ajaxSetup({
+                headers:
+                {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            var url = '{{route('distributor_frame.changeFrameStatus')}}';
+
+            $.ajax({
+                type: 'post',
+                url: url,
+                dataType: 'json',
+                data:{id},
+                beforeSend: function ()
+                {
+                    $('.loader-custom').css('display','block');
+                },
+                complete: function (data, status)
+                {
+                    $('.loader-custom').css('display','none');
+                },
+
+                success: function (response)
+                {
+                    if(!response.status) {
+                        alert(response.message);
+                        return false;
+                    }
+                    table.ajax.reload();
+                    alert(response.message);
+                }
+            });
+        }
+    });
+}
+
+function acceptFrames(ele){
+
+    var id = $(ele).attr('data-id');
+
+    swal({
+        title: 'Are you sure?',
+        text: "Reject this request!",
+        type: 'warning',
+        buttons:{
+            confirm: {
+                text : 'Yes, Reject it!',
+                className : 'btn btn-success'
+            },
+            cancel: {
+                visible: true,
+                className: 'btn btn-danger'
+            }
+        }
+    }).then((result) => {
+        if(result) {
+            $.ajaxSetup({
+                headers:
+                {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            var url = '{{route('distributor_frame.acceptFrame')}}';
+
+            $.ajax({
+                type: 'post',
+                url: url,
+                dataType: 'json',
+                data:{id},
+                beforeSend: function ()
+                {
+                    $('.loader-custom').css('display','block');
+                },
+                complete: function (data, status)
+                {
+                    $('.loader-custom').css('display','none');
+                },
+
+                success: function (response)
+                {
+                    if(!response.status) {
+                        alert(response.message);
+                        return false;
+                    }
+                    table.ajax.reload();
+                    alert(response.message);
+                }
+            });
+        }
+    });
+}
+
 function updateBusinessData()
 {
-        $.ajaxSetup({
-            headers:
-            {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
+    $.ajaxSetup({
+        headers:
+        {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
 
-        var form = document.editBusinessForm;
-        var formData = new FormData(form);
-        var url = '{{route('distributor_channel.updateBusiness')}}';
+    var form = document.editBusinessForm;
+    var formData = new FormData(form);
+    var url = '{{route('distributor_channel.updateBusiness')}}';
 
-        $.ajax({
+    $.ajax({
         type: 'POST',
         url: url,
         processData: false,
@@ -128,9 +241,9 @@ function updateBusinessData()
                 alert(response.message);
                 return false;
             }
-                $('#businessModel').modal('hide');
-                alert(response.message);
-                businessTable.ajax.reload();
+            $('#businessModel').modal('hide');
+            alert(response.message);
+            businessTable.ajax.reload();
         }
     });
 }

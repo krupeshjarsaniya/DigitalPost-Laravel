@@ -281,6 +281,32 @@ class BusinessController extends Controller
         ->make(true);
     }
 
+    public function getPendingFrameList(Request $request) {
+        $businesses = DistributorBusinessFrame::where('business_id', $request->id)
+        ->where('business_type', 1);
+        return DataTables::of($businesses)
+        ->addIndexColumn()
+        ->editColumn('status', function($row) {
+            $status = "";
+            if ($row->status == "PENDING") {
+                $status = '<span class="badge badge-primary">'.$row->status.'</span>';
+            }else{
+                $status = '<span class="badge badge-danger">'.$row->status.'</span>';
+            }
+            return $status;
+        })
+        ->addColumn('frame_url', function($row) {
+            $image = "";
+            if (!empty($row->frame_url)) {
+                $image = "<img height='100' width='100' src='" . Storage::url($row->frame_url) . "' />";
+            }
+            return $image;
+        })
+        ->rawColumns(['frame_url','status'])
+        ->make(true);
+    }
+
+
     public function businessUserAdd(Request $request) {
         $validator = Validator::make($request->all(), [
                 'business_id' => 'required',

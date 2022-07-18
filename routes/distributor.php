@@ -31,6 +31,7 @@ Route::middleware('distributorAuth')->group(function() {
     Route::post('/businessFrame/add', 'Distributors\BusinessController@businessFrameAdd')->name('distributors.businessFrameAdd');
     Route::post('/businessUser/delete', 'Distributors\BusinessController@businessUserDelete')->name('distributors.businessUserDelete');
     Route::get('/businessList/view/{id}', 'Distributors\BusinessController@businessList')->name('distributors.businessList');
+    Route::get('/getpendingFrameList/', 'Distributors\BusinessController@getPendingFrameList')->name('distributors.getpendingFrameList');
 
     //Normal Business
     Route::get('/political-business', 'Distributors\PoliticalBusinessController@index')->name('distributors.politicalBusiness');

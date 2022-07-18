@@ -183,6 +183,67 @@ class DistributorChannelController extends Controller
         $getData = Business::where('busi_id', $request->id)->first();
         return response()->json(['status' => true, 'data' => $getData]);
     }
+    public function getFrameList(Request $request,$id)
+    {
+        $frame = DB::table('user_frames')->where('distributor_id', $id)->where('is_deleted',0);
+
+        return DataTables::of($frame)
+            ->addIndexColumn()
+            ->addColumn('business_name', function ($row) {
+                $businessName = "";
+                if($row->business_type == 1)
+                {
+                    $getBusiness = Business::where('busi_id',$row->business_id)->first();
+                    if(!empty($getBusiness)){
+                        $businessName = $getBusiness->busi_name;
+                    }
+                }
+                else{
+
+                    $getBusiness = PoliticalBusiness::where('pb_id',$row->business_id)->first();
+                    if(!empty($getBusiness)){
+                        $businessName = $getBusiness->pb_name;
+                    }
+                }
+
+                return $businessName;
+            })
+
+            ->addColumn('business_type', function ($row) {
+                $businessType = "";
+                if($row->business_type == 1)
+                {
+                    $businessType = "Normal Business";
+                }
+                else{
+                    $businessType = "Political Business";
+                }
+
+                return $businessType;
+            })
+            
+            ->editColumn('frame_url', function ($row) {
+                $image = "";
+                if (!empty($row->frame_url)) {
+                    $image = "<img height='100' width='100' src='" . Storage::url($row->frame_url) . "' />";
+                }
+                return $image;
+            })
+           
+            ->addColumn('action', function ($row) {
+                $button = "";
+                $button .= '<button onclick="deleteFrame(this)" class="btn btn-xs btn-danger btn-edit mb-2" data-id="' . $row->user_frames_id . '">Delete</button>';
+                return $button;
+            })
+            ->rawColumns(['action','frame_url'])
+            ->make(true);
+    }
+
+    public function deleteFrame(Request $request){
+       
+        DB::table('user_frames')->where('user_frames_id', $request->id)->update(['is_deleted'=>1]);
+        return response()->json(['status' => true, 'message' => "Delete Frame successfully"]);
+    }
 
     public function getPoliticalBusiness(Request $request)
     {
@@ -218,9 +279,23 @@ class DistributorChannelController extends Controller
         $updateCategory->busi_website = $request->busi_website;
         $updateCategory->busi_address = $request->busi_address;
         $updateCategory->hashtag = $request->hashtag;
-        $updateCategory->busi_facebook = $request->busi_facebook;
-        $updateCategory->busi_twitter = $request->busi_twitter;
-        $updateCategory->busi_instagram = $request->busi_instagram;
+        $updateCategoryRoute::prefix('distributor-channel')->middleware('adminauth')->group(function() {
+            Route::get('/', 'DistributorChannelController@index')->name('distributor_channel');
+            Route::post('/get', 'DistributorChannelController@get')->name('distributor_channel.get');
+            Route::get('/list', 'DistributorChannelController@list')->name('distributor_channel.list');
+            Route::post('/approve', 'DistributorChannelController@approve')->name('distributor_channel.approve');
+            Route::post('/reject', 'DistributorChannelController@reject')->name('distributor_channel.reject');
+            Route::get('/transaction/{id}', 'DistributorChannelController@transactionList')->name('distributor_channel.transactionList');
+            Route::post('/addTransaction/{id}', 'DistributorChannelController@addTransaction')->name('distributor_channel.addTransaction');
+            Route::post('/updateDistributor/{id}', 'DistributorChannelController@updateDistributor')->name('distributor_channel.updateDistributor');
+            Route::get('/businessList/{id}', 'DistributorChannelController@businessList')->name('distributor_channel.businessList');
+            Route::post('/getBusiness', 'DistributorChannelController@getBusiness')->name('distributor_channel.getBusiness');
+            Route::post('/updateBusiness', 'DistributorChannelController@updateBusiness')->name('distributor_channel.updateBusiness');
+            Route::get('/politicalBusinessList/{id}', 'DistributorChannelController@politicalBusinessList')->name('distributor_channel.politicalBusinessList');
+            Route::post('/getPoliticalBusiness', 'DistributorChannelController@getPoliticalBusiness')->name('distributor_channel.getPoliticalBusiness');
+            Route::post('/updatePoliticalBusiness', 'DistributorChannelController@updatePoliticalBusiness')->name('distributor_channel.updatePoliticalBusiness');
+            Route::get('/{id}', 'DistributorChannelController@view')->name('distributor_channel.view');
+        });
         $updateCategory->busi_linkedin = $request->busi_linkedin;
         $updateCategory->busi_youtube = $request->busi_youtube;
 
@@ -238,6 +313,23 @@ class DistributorChannelController extends Controller
         }
         if ($request->hasFile('watermark_image_dark')) {
             $watermark_image_dark = $this->uploadFile($request, null, 'watermark_image_dark', 'business-img');
+            $updateCaRoute::prefix('distributor-channel')->middleware('adminauth')->group(function() {
+                Route::get('/', 'DistributorChannelController@index')->name('distributor_channel');
+                Route::post('/get', 'DistributorChannelController@get')->name('distributor_channel.get');
+                Route::get('/list', 'DistributorChannelController@list')->name('distributor_channel.list');
+                Route::post('/approve', 'DistributorChannelController@approve')->name('distributor_channel.approve');
+                Route::post('/reject', 'DistributorChannelController@reject')->name('distributor_channel.reject');
+                Route::get('/transaction/{id}', 'DistributorChannelController@transactionList')->name('distributor_channel.transactionList');
+                Route::post('/addTransaction/{id}', 'DistributorChannelController@addTransaction')->name('distributor_channel.addTransaction');
+                Route::post('/updateDistributor/{id}', 'DistributorChannelController@updateDistributor')->name('distributor_channel.updateDistributor');
+                Route::get('/businessList/{id}', 'DistributorChannelController@businessList')->name('distributor_channel.businessList');
+                Route::post('/getBusiness', 'DistributorChannelController@getBusiness')->name('distributor_channel.getBusiness');
+                Route::post('/updateBusiness', 'DistributorChannelController@updateBusiness')->name('distributor_channel.updateBusiness');
+                Route::get('/politicalBusinessList/{id}', 'DistributorChannelController@politicalBusinessList')->name('distributor_channel.politicalBusinessList');
+                Route::post('/getPoliticalBusiness', 'DistributorChannelController@getPoliticalBusiness')->name('distributor_channel.getPoliticalBusiness');
+                Route::post('/updatePoliticalBusiness', 'DistributorChannelController@updatePoliticalBusiness')->name('distributor_channel.updatePoliticalBusiness');
+                Route::get('/{id}', 'DistributorChannelController@view')->name('distributor_channel.view');
+            }); 
             $updateCategory->watermark_image_dark = $watermark_image_dark;
         }
 
@@ -589,9 +681,50 @@ class DistributorChannelController extends Controller
         return view('user::distributor_frame_request');
     }
 
+    public function changeFrameStatus(Request $request){
+
+        DistributorBusinessFrame::where('id', $request->id)->update(['status'=>'REJECTED']);
+        return response()->json([
+            'status' => true,
+            'message' => "Frame Rejected successfully"
+          
+        ]);
+    }
+
+    public function acceptFrame(Request $request){
+
+        $data = DistributorBusinessFrame::where('id', $request->id)->first();
+        
+        if(empty($data))
+        {
+            return response()->json([
+                'status' => false,
+                'message' => "Frame Not Found",
+            ]);
+        }
+
+        $dataArr = array(
+            'user_id' => $data->user_id,
+            'business_id' => $data->business_id,
+            'business_type' => $data->business_type,
+            'frame_url' => $data->frame_url,
+            'distributor_id' => $data ->distributor_id
+        );
+
+       DB::table('user_frames')->insert($dataArr);
+       $data->delete();
+       
+       return response()->json([
+        'status' => true,
+        'message' => "Frame Addes to Distributor Business",
+        ]);
+      
+    }
+
     public function frameList(Request $request)
     {
         $frame_requests = DistributorBusinessFrame::where('distributor_business_frames.status', 'PENDING')->with('distributor');
+       
         return DataTables::of($frame_requests)
             ->editColumn('frame_url', function ($frame_request) {
                 $image = "";
@@ -600,13 +733,38 @@ class DistributorChannelController extends Controller
                 }
                 return $image;
             })
+            ->editColumn('business_name', function ($frame_request) {
+               
+                $business_name = "";
+                if($frame_request->business_type == 1)
+                {
+
+                    $getBusiness = Business::where('busi_id',$frame_request->business_id)->first();
+                    if(!empty($getBusiness)){
+                        $business_name = $getBusiness->busi_name;
+                    }
+                }
+                else{
+
+                    $getBusiness = PoliticalBusiness::where('pb_id',$frame_request->business_id)->first();
+                    if(!empty($getBusiness)){
+                        $business_name = $getBusiness->pb_name;
+                    }
+                }
+
+                return $business_name;
+            })
             ->editColumn('created_at', function ($frame_request) {
                 return Carbon::parse($frame_request->created_at)->format("d-m-Y h:i A");
             })
             ->addColumn('action', function ($frame_request) {
-                return "";
+                    $btn = "";
+                    $btn .= '<button class="btn btn-primary btn-sm mr-2" onClick="acceptFrames(this)" data-id="' . $frame_request->id . '"  ">Accept</button>';
+                    $btn .= '<button class="btn btn-danger btn-sm mr-2" onClick="changeStatus(this)"  data-id="' . $frame_request->id . '"">Reject</button>';
+                    return $btn;
+                
             })
-            ->rawColumns(['created_at', 'frame_url', 'action'])
+            ->rawColumns(['created_at', 'frame_url','action'])
             ->make(true);
     }
 }

@@ -340,6 +340,9 @@ Route::prefix('distributor-channel')->middleware('adminauth')->group(function() 
 	Route::post('/getPoliticalBusiness', 'DistributorChannelController@getPoliticalBusiness')->name('distributor_channel.getPoliticalBusiness');
 	Route::post('/updatePoliticalBusiness', 'DistributorChannelController@updatePoliticalBusiness')->name('distributor_channel.updatePoliticalBusiness');
 	Route::get('/{id}', 'DistributorChannelController@view')->name('distributor_channel.view');
+
+	Route::get('/getFrameList/{id}', 'DistributorChannelController@getFrameList')->name('distributor_channel.getFrameList');
+	Route::post('/deleteFrame', 'DistributorChannelController@deleteFrame')->name('distributor_channel.deleteFrame');
 });
 
 Route::prefix('political-logo')->middleware('auth','adminauth')->group(function() {
@@ -353,4 +356,6 @@ Route::prefix('political-logo')->middleware('auth','adminauth')->group(function(
 Route::prefix('distributor/frame-request')->middleware('adminauth')->group(function() {
     Route::get('/', 'DistributorChannelController@frame')->name('distributor_frame');
     Route::get('/list', 'DistributorChannelController@frameList')->name('distributor_frame.list');
+    Route::post('/changeFrameStatus', 'DistributorChannelController@changeFrameStatus')->name('distributor_frame.changeFrameStatus');
+    Route::post('/acceptFrame', 'DistributorChannelController@acceptFrame')->name('distributor_frame.acceptFrame');
 });

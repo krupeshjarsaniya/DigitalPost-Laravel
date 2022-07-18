@@ -243,11 +243,42 @@
 </div>
 @endif
 
+<!-- Frame Request Table-->
 
 <div class="card">
     <!-- Modal Header -->
     <div class="card-header">
-        <h4 class="card-title">Frames
+        <h4 class="card-title">Frame Request
+        </h4>
+    </div>
+
+    <!-- Modal body -->
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table class="display table table-striped table-hover text-center w-100" id="frame-request-table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Frame</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="card">
+    <!-- Modal Header -->
+    <div class="card-header">
+        <h4 class="card-title">Approved Frames
         </h4>
     </div>
 
@@ -278,9 +309,11 @@
 <script>
 var table = "";
 var table2 = "";
+var table3 = "";
 $(document).ready(function() {
     getBusinessUserList("{{ $business->busi_id }}");
     getBusinessFrameList("{{ $business->busi_id }}");
+    getPendingFramesList("{{ $business->busi_id }}");
 })
 
 $('#add-user').on('click', function(e) {
@@ -376,6 +409,27 @@ function getBusinessUserList(id) {
             {data: 'user.name', name: 'user.name'},
             {data: 'user.mobile', name: 'user.mobile'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
+        ],
+    });
+}
+
+function getPendingFramesList(id)
+{
+    if(table3 != "") {
+        table3.destroy();
+    }
+    table3 = $('#frame-request-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url : "{{ route('distributors.getpendingFrameList') }}",
+            data: {id}
+        },
+        columns: [
+            {data: 'DT_RowIndex', name: 'id'},
+            {data: 'frame_url', name: 'frame_url'},
+            {data: 'status', name: 'status'},
+            
         ],
     });
 }
