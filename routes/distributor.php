@@ -26,7 +26,9 @@ Route::middleware('distributorAuth')->group(function() {
     Route::get('/business/view/{id}', 'Distributors\BusinessController@businessView')->name('distributors.businessView');
     Route::post('/business/update/{id}', 'Distributors\BusinessController@businessUpdate')->name('distributors.businessUpdate');
     Route::get('/businessUserList/', 'Distributors\BusinessController@businessUserList')->name('distributors.businessUserList');
+    Route::get('/businessFrameList/', 'Distributors\BusinessController@businessFrameList')->name('distributors.businessFrameList');
     Route::post('/businessUser/add', 'Distributors\BusinessController@businessUserAdd')->name('distributors.businessUserAdd');
+    Route::post('/businessFrame/add', 'Distributors\BusinessController@businessFrameAdd')->name('distributors.businessFrameAdd');
     Route::post('/businessUser/delete', 'Distributors\BusinessController@businessUserDelete')->name('distributors.businessUserDelete');
     Route::get('/businessList/view/{id}', 'Distributors\BusinessController@businessList')->name('distributors.businessList');
 
@@ -37,7 +39,9 @@ Route::middleware('distributorAuth')->group(function() {
     Route::get('/political-business/view/{id}', 'Distributors\PoliticalBusinessController@politicalBusinessView')->name('distributors.politicalBusinessView');
     Route::post('/political-business/update/{id}', 'Distributors\PoliticalBusinessController@politicalBusinessUpdate')->name('distributors.politicalBusinessUpdate');
     Route::get('/political-businessUserList/', 'Distributors\PoliticalBusinessController@politicalBusinessUserList')->name('distributors.politicalBusinessUserList');
+    Route::get('/political-businessFrameList/', 'Distributors\PoliticalBusinessController@politicalBusinessFrameList')->name('distributors.politicalBusinessFrameList');
     Route::post('/political-businessUser/add', 'Distributors\PoliticalBusinessController@politicalBusinessUserAdd')->name('distributors.politicalBusinessUserAdd');
+    Route::post('/political-businessFrame/add', 'Distributors\PoliticalBusinessController@politicalBusinessFrameAdd')->name('distributors.politicalBusinessFrameAdd');
     Route::post('/political-businessUser/delete', 'Distributors\PoliticalBusinessController@politicalBusinessUserDelete')->name('distributors.politicalBusinessUserDelete');
     Route::get('/political-businessList/view/{id}', 'Distributors\PoliticalBusinessController@politicalBusinessList')->name('distributors.politicalBusinessList');
 });

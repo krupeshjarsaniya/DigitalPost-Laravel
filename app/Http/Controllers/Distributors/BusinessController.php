@@ -15,6 +15,7 @@ use App\Distributor;
 use App\Purchase;
 use App\Plan;
 use App\DistributorBusinessUser;
+use App\DistributorBusinessFrame;
 use App\User;
 use Illuminate\Support\Facades\Storage;
 use DB;
@@ -268,7 +269,6 @@ class BusinessController extends Controller
     public function businessUserList(Request $request) {
         $businesses = DistributorBusinessUser::with('user')
         ->where('business_id', $request->id)
-        ->where('business_id', $request->id)
         ->where('business_type', 1);
         return DataTables::of($businesses)
         ->addIndexColumn()
@@ -343,5 +343,60 @@ class BusinessController extends Controller
             $newBusinessUser->delete();
         }
         return response()->json(['status' => true,'message' => "Users removed successfully"]);
+    }
+
+    public function businessFrameList(Request $request) {
+        $frames = DB::table('user_frames')
+        ->where('business_id', $request->id)
+        ->where('business_type', 1)
+        ->whereNotNull('frame_url')
+        ->where('frame_url', '!=', '')
+        ->where('is_deleted', 0);
+        return DataTables::of($frames)
+        ->addIndexColumn()
+        ->addColumn('frame_url', function($row) {
+            $image = "";
+            if(!empty($row->frame_url)) {
+                $image = "<img width='150px' height='150px' src='" . Storage::url($row->frame_url) . "' />";
+            }
+            return $image;
+        })
+        ->rawColumns(['frame_url'])
+        ->make(true);
+    }
+
+    public function businessFrameAdd(Request $request) {
+        if(!Auth::user()->distributor->allow_add_frames) {
+            return response()->json(['status' => false,'message' => "You are not allowed to add frames"]);
+        }
+        $validator = Validator::make($request->all(), [
+                'business_id' => 'required',
+                'frames' => 'required',
+            ],
+            [
+                'business_id.required' => 'Business ID is required',
+                'frames.required' => 'frame is required',
+            ]
+        );
+
+        if ($validator->fails())
+        {
+            $error=json_decode($validator->errors());
+
+            return response()->json(['status' => 401,'error1' => $error]);
+            exit();
+        }
+
+        foreach ($request->file('frames') as $key => $image) {
+            $image = $this->multipleUploadFile($image,'Political-logo');
+            $newBusinessUser = new DistributorBusinessFrame;
+            $newBusinessUser->user_id = Auth::user()->id;
+            $newBusinessUser->business_id = $request->business_id;
+            $newBusinessUser->business_type = 1;
+            $newBusinessUser->frame_url = $image;
+            $newBusinessUser->save();
+        }
+
+        return response()->json(['status' => true,'message' => "Request sent to admin"]);
     }
 }

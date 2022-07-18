@@ -221,14 +221,71 @@
     </div>
 </div>
 
+@if(Auth::user()->distributor->allow_add_frames)
+<div class="card">
+    <!-- Modal Header -->
+    <div class="card-header">
+        <h4 class="card-title">Add Frames
+        </h4>
+    </div>
+
+    <!-- Modal body -->
+    <div class="card-body">
+        <form onsubmit="return false" method="POST" name="addFrameForm" id="addFrameForm">
+            @csrf
+            <div class="row">
+                <div class="col-md-9 form-group err_frames">
+                    <input type="hidden" name="business_id" id="business_id" value="{{ $business->pb_id }}">
+                    <label for="frames">Frames</label>
+                    <input type="file" name="frames[]" id="frames" class="form-control">
+                </div>
+                <div class="col-md-3 form-group mt-4 text-right">
+                    <button type="button" onclick="addFrameToBusiness()" class="btn btn-success">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@endif
+
+<div class="card">
+    <!-- Modal Header -->
+    <div class="card-header">
+        <h4 class="card-title">Frames
+        </h4>
+    </div>
+
+    <!-- Modal body -->
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table class="display table table-striped table-hover text-center w-100" id="frames-table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Frame</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('js')
 <script>
 
+var table = "";
 var table2 = "";
 $(document).ready(function() {
     getBusinessUserList("{{ $business->pb_id }}");
+    getBusinessFrameList("{{ $business->pb_id }}");
 })
 
 $('#add-user').on('click', function(e) {
@@ -425,6 +482,76 @@ function removeUserFromBusiness(ele) {
         }
         else {
             swal.close();
+        }
+    });
+}
+
+function getBusinessFrameList(id) {
+    if(table != "") {
+        table.destroy();
+    }
+    table = $('#frames-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url : "{{ route('distributors.politicalBusinessFrameList') }}",
+            data: {id}
+        },
+        columns: [
+            {data: 'DT_RowIndex', name: 'date_added'},
+            {data: 'frame_url', name: 'frame_url'},
+        ],
+    });
+}
+
+function addFrameToBusiness() {
+    $.ajaxSetup({
+        headers:
+        {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    var form = document.addFrameForm;
+    var formData = new FormData(form);
+    var url = '{{route('distributors.politicalBusinessFrameAdd')}}';
+
+    $.ajax({
+        type: 'POST',
+        url: url,
+        processData: false,
+        contentType: false,
+        dataType: 'json',
+        data: formData,
+        dataSrc: "",
+        beforeSend: function ()
+        {
+            $('.loader-custom').css('display','block');
+            $('span.alerts').remove();
+        },
+        complete: function (data, status)
+        {
+            $('.loader-custom').css('display','none');
+        },
+
+        success: function (response)
+        {
+            if (response.status == 401)
+            {
+                $.each(response.error1, function (index, value) {
+                    if (value.length != 0) {
+                        $('.err_' + index).append('<span class="small alerts text-danger">' + value + '</span>');
+                    }
+
+                });
+                return false;
+            }
+            if(!response.status) {
+                alert(response.message);
+                return false;
+            }
+            $('#frames').val("");
+            alert(response.message);
         }
     });
 }

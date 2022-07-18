@@ -174,7 +174,7 @@ Route::post('addDistributor', 'UserapiControllerV16@addDistributor');
 
 Route::post('getBanners', 'UserapiControllerV16@getBanners');
 
-Route::post('testFramejson', 'UserapiControllerV16@testFramejson');
+Route::post('testFramejson', 'UserapiControlleFrameJson@testFramejson');
 
 Route::post('search', 'UserapiControllerV16@search');
 
