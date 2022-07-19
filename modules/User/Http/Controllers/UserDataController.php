@@ -1384,8 +1384,6 @@ class UserDataController extends Controller
 
     public function allpostdelete()
     {
-
-
         $adv_datas = DB::table('advetisement')->where('is_delete','=',0)->get();
         $advetisement = array();
 

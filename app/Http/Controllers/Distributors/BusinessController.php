@@ -466,4 +466,147 @@ class BusinessController extends Controller
 
         return response()->json(['status' => true, 'message' => "Request sent to admin"]);
     }
+
+    public function upcomingRenewals(Request $request)
+    {
+        return view('distributor.upcomingRenewals');
+    }
+
+    public function normalBusinessExpirePlan (Request $request)
+    {
+        $getexpiredplan =  DB::table('purchase_plan')
+        ->leftJoin('business','business.busi_id','=','purchase_plan.purc_business_id')
+        ->leftJoin('plan','plan.plan_id','=','purchase_plan.purc_plan_id')
+        ->where('business.user_id','=',Auth::user()->id)
+        ->where('business.is_distributor_business',1)
+        ->where('purchase_plan.purc_business_type',1)
+        ->where('purchase_plan.purc_plan_id',3)
+        ->get();
+
+        if ($request->ajax())
+        {
+            return DataTables::of($getexpiredplan)
+            ->addIndexColumn()
+            ->addColumn('purc_start_date',function($row) {
+                $date = date('d-m-Y',strtotime($row->purc_start_date));
+                return $date;
+            })
+            ->addColumn('purc_end_date',function($row) {
+                $date1 = date('d-m-Y',strtotime($row->purc_end_date));
+                return $date1;
+            })
+            ->addColumn('action',function($row) {
+                $btn = '<button class="btn btn-primary" id="purchaseplans" data-id="'.$row->busi_id.'" data-type="'.$row->purc_business_type.'" onclick="purchaseplans(this)">Purchase Plan</button>';
+                return $btn;
+            })
+            ->rawColumns(['action','purc_end_date','purc_start_date'])
+            ->make(true);
+        }
+    }
+    public function politicalBusinessExpirePlan (Request $request)
+    {
+        $getexpiredplan =  DB::table('purchase_plan')
+        ->leftJoin('political_business','political_business.pb_id','=','purchase_plan.purc_business_id')
+        ->leftJoin('plan','plan.plan_id','=','purchase_plan.purc_plan_id')
+        ->where('political_business.user_id','=',Auth::user()->id)
+        ->where('political_business.is_distributor_business',1)
+        ->where('purchase_plan.purc_business_type',2)
+        ->where('purchase_plan.purc_plan_id',3)
+        ->get();
+
+        if ($request->ajax())
+        {
+            return DataTables::of($getexpiredplan)
+            ->addIndexColumn()
+            ->addColumn('purc_start_date',function($row) {
+                $date = date('d-m-Y',strtotime($row->purc_start_date));
+                return $date;
+            })
+            ->addColumn('purc_end_date',function($row) {
+                $date1 = date('d-m-Y',strtotime($row->purc_end_date));
+                return $date1;
+            })
+            ->addColumn('action',function($row) {
+                $btn = '<button class="btn btn-primary" id="purchaseplans" data-id="'.$row->pb_id.'" data-type="'.$row->purc_business_type.'" onclick="purchaseplans(this)">Purchase Plan</button>';
+                return $btn;
+            })
+            ->rawColumns(['action','purc_end_date','purc_start_date'])
+            ->make(true);
+        }
+    }
+    
+    public function normalBusinessUpcomingExpirePlan (Request $request)
+    {
+        $days = DB::table('setting')->value('renewal_days');
+        $current_date = Carbon::now()->addDays($days);
+        $getexpiredplan =  DB::table('purchase_plan')
+        ->leftJoin('business','business.busi_id','=','purchase_plan.purc_business_id')
+        ->leftJoin('plan','plan.plan_id','=','purchase_plan.purc_plan_id')
+        ->where('business.user_id','=',Auth::user()->id)
+        ->where('business.is_distributor_business',1)
+        ->where('purchase_plan.purc_business_type',1)
+        ->where('purchase_plan.purc_end_date','<=',$current_date)
+        ->get();
+
+        if ($request->ajax())
+        {
+            return DataTables::of($getexpiredplan)
+            ->addIndexColumn()
+            ->addColumn('purc_start_date',function($row) {
+                $date = date('d-m-Y',strtotime($row->purc_start_date));
+                return $date;
+            })
+            ->addColumn('purc_end_date',function($row) {
+                $date1 = date('d-m-Y',strtotime($row->purc_end_date));
+                return $date1;
+            })
+            ->addColumn('action',function($row) {
+                $btn = '<button class="btn btn-primary" id="purchaseplans" data-id="'.$row->busi_id.'" data-type="'.$row->purc_business_type.'" onclick="purchaseplans(this)">Purchase Plan</button>';
+                return $btn;
+            })
+            ->rawColumns(['action','purc_end_date','purc_start_date'])
+            ->make(true);
+        }
+    }
+    public function politicalBusinessUpcomingExpirePlan (Request $request)
+    {
+        $days = DB::table('setting')->value('renewal_days');
+        $current_date = Carbon::now()->addDays($days);
+        $getexpiredplan =  DB::table('purchase_plan')
+        ->leftJoin('political_business','political_business.pb_id','=','purchase_plan.purc_business_id')
+        ->leftJoin('plan','plan.plan_id','=','purchase_plan.purc_plan_id')
+        ->where('political_business.user_id','=',Auth::user()->id)
+        ->where('political_business.is_distributor_business',1)
+        ->where('purchase_plan.purc_business_type',2)
+        ->where('purchase_plan.purc_end_date','<=',$current_date)
+        ->get();
+
+        if ($request->ajax())
+        {
+            return DataTables::of($getexpiredplan)
+            ->addIndexColumn()
+            ->addColumn('purc_start_date',function($row) {
+                $date = date('d-m-Y',strtotime($row->purc_start_date));
+                return $date;
+            })
+            ->addColumn('purc_end_date',function($row) {
+                $date1 = date('d-m-Y',strtotime($row->purc_end_date));
+                return $date1;
+            })
+            ->addColumn('action',function($row) {
+                $btn = '<button class="btn btn-primary" id="purchaseplans" data-id="'.$row->pb_id.'" data-type="'.$row->purc_business_type.'" onclick="purchaseplans(this)">Purchase Plan</button>';
+                return $btn;
+            })
+            ->rawColumns(['action','purc_end_date','purc_start_date'])
+            ->make(true);
+        }
+    }
+
+    public function purchasePlan(Request $request){
+
+        dd($request->all());
+
+    }
+
+
 }

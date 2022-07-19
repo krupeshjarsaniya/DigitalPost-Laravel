@@ -32,6 +32,16 @@ Route::middleware('distributorAuth')->group(function() {
     Route::post('/businessUser/delete', 'Distributors\BusinessController@businessUserDelete')->name('distributors.businessUserDelete');
     Route::get('/businessList/view/{id}', 'Distributors\BusinessController@businessList')->name('distributors.businessList');
     Route::get('/getpendingFrameList/', 'Distributors\BusinessController@getPendingFrameList')->name('distributors.getpendingFrameList');
+    
+    
+    Route::get('/upcomingRenewals/', 'Distributors\BusinessController@upcomingRenewals')->name('distributors.upcomingRenewals');
+    Route::get('/normalBusinessExpirePlan/', 'Distributors\BusinessController@normalBusinessExpirePlan')->name('distributors.normalBusinessExpirePlan');
+    Route::get('/politicalBusinessExpirePlan/', 'Distributors\BusinessController@politicalBusinessExpirePlan')->name('distributors.politicalBusinessExpirePlan');
+    Route::get('/normalBusinessUpcomingExpirePlan/', 'Distributors\BusinessController@normalBusinessUpcomingExpirePlan')->name('distributors.normalBusinessUpcomingExpirePlan');
+    Route::get('/politicalBusinessUpcomingExpirePlan/', 'Distributors\BusinessController@politicalBusinessUpcomingExpirePlan')->name('distributors.politicalBusinessUpcomingExpirePlan');
+    Route::post('/purchasePlan/', 'Distributors\BusinessController@purchasePlan')->name('distributors.purchasePlan');
+
+
 
     //Normal Business
     Route::get('/political-business', 'Distributors\PoliticalBusinessController@index')->name('distributors.politicalBusiness');

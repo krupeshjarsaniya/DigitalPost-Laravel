@@ -7493,6 +7493,18 @@ class UserapiControllerV16 extends Controller
             }
         return response()->json(['status' => true,'message' => 'Political Logo List' ,'data' => $logo]);
     }
+
+    public function Test(Request $request){
+
+        $data = Business::leftJoin('purchase_plan','purchase_plan.purc_business_id', '=' ,'business.busi_id')
+        ->where('purchase_plan.purc_business_type',1)
+        ->whereNull('purchase_plan.purc_user_id')
+        ->first();
+        return response()->json(['status' => true,'message' => 'Hiii','data'=>$data ]);
+    }
+
+
+
 }
 
 

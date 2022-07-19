@@ -182,3 +182,5 @@ Route::post('getBusinessCategoryData', 'UserapiControllerV16@getBusinessCategory
 
 Route::post('getPoliticalLogo', 'UserapiControllerV16@getPoliticalLogo');
 
+Route::get('testApi', 'UserapiControllerV16@Test');
+
