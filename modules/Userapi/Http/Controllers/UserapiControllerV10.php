@@ -5,7 +5,7 @@ namespace Modules\Userapi\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth; 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Arr;
@@ -52,7 +52,7 @@ class UserapiControllerV10 extends Controller
 
     public function sendRegisterOTP(Request $request) {
         $input = $request->all();
-        $name = $input['name']; 
+        $name = $input['name'];
         $country_code = $input['country_code'];
         $mobile = $input['mobile'];
 
@@ -98,9 +98,9 @@ class UserapiControllerV10 extends Controller
         return response()->json(['status'=>true,'message'=>'OTP sent to you mobile']);
     }
 
-    public function register(Request $request) 
-    {   
-        $input = $request->all(); 
+    public function register(Request $request)
+    {
+        $input = $request->all();
         $country_code = $input['country_code'];
         $mobile = $input['mobile'];
         $otp = $input['otp'];
@@ -148,7 +148,7 @@ class UserapiControllerV10 extends Controller
             $users = array();
             $user_data = array();
 
-            
+
                 $user_data['id'] = strval($user->id);
                 $user_data['name'] =!empty($user->name)?$user->name:"";
                 $user_data['mobile'] =!empty($user->mobile)?$user->mobile:"";
@@ -156,10 +156,10 @@ class UserapiControllerV10 extends Controller
                 $user_data['device'] =!empty($user->device)?$user->device:"";
                 array_push($users, $user_data);
 
-            return response()->json(['data' => $users,'token'=> $token, 'status'=>true,'message'=>'Register Successfully']); 
+            return response()->json(['data' => $users,'token'=> $token, 'status'=>true,'message'=>'Register Successfully']);
 
         } else {
-            return response()->json(['status'=>false,'message'=>'Invalid Mobile number']); 
+            return response()->json(['status'=>false,'message'=>'Invalid Mobile number']);
         }
 
     }
@@ -171,7 +171,7 @@ class UserapiControllerV10 extends Controller
 
         $checkUser = User::where('mobile', $mobile)->where('is_verified', 1)->first();
         if(empty($checkUser)) {
-            return response()->json(['status'=>false,'message'=>'user not found']); 
+            return response()->json(['status'=>false,'message'=>'user not found']);
         }
         if($checkUser->status == 1) {
             return response()->json(['status'=>false,'message'=>'You were blocked']);
@@ -194,8 +194,8 @@ class UserapiControllerV10 extends Controller
         return response()->json(['status'=>true,'message'=>'OTP sent to you mobile']);
     }
 
-    public function login(Request $request){ 
-         $input = $request->all(); 
+    public function login(Request $request){
+         $input = $request->all();
          $country_code = $input['country_code'];
          $mobile = $input['mobile'];
          $otp = $input['otp'];
@@ -230,9 +230,9 @@ class UserapiControllerV10 extends Controller
                 $userdeviceinsert->remember_token = $token;
                 $userdeviceinsert->device_token = $input['device_token'];
                 $userdeviceinsert->save();
-                
+
                 $isbusiness = false;
-                
+
                 if($user->default_business_id != '' || $user->default_business_id != 0){
                     $isbusiness = true;
                 }
@@ -247,17 +247,17 @@ class UserapiControllerV10 extends Controller
                 array_push($users, $data);
                 $user->save();
 
-                return response()->json(['data' => $users, 'token'=> $token, 'status'=>true,'message'=>'Login Successfully', 'isbusiness' => $isbusiness]); 
+                return response()->json(['data' => $users, 'token'=> $token, 'status'=>true,'message'=>'Login Successfully', 'isbusiness' => $isbusiness]);
             } else if($user->status == 1){
-                return response()->json(['status'=>false,'message'=>'You were blocked']); 
+                return response()->json(['status'=>false,'message'=>'You were blocked']);
             } else {
-                return response()->json(['status'=>false,'message'=>'You were removed']); 
+                return response()->json(['status'=>false,'message'=>'You were removed']);
             }
-          
-        } 
-        else{ 
-            return response()->json(['status'=>false,'message'=>'Mobile number not registered. Please register first']); 
-        } 
+
+        }
+        else{
+            return response()->json(['status'=>false,'message'=>'Mobile number not registered. Please register first']);
+        }
     }
 
     public function logout(Request $request){
@@ -273,30 +273,30 @@ class UserapiControllerV10 extends Controller
                 $user->delete();
             }
 
-          return response()->json(['status'=>true,'message'=>'Logout Successfully']); 
+          return response()->json(['status'=>true,'message'=>'Logout Successfully']);
     }
-    
+
     public function checkMobile(Request $request){
-        $input = $request->all(); 
+        $input = $request->all();
 
         $user = User::where('mobile', '=', $input['mobile'])->first();
         if(!empty($user)){
-             return response()->json(['status'=>false,'message'=>'mobile number already exist']); 
+             return response()->json(['status'=>false,'message'=>'mobile number already exist']);
         } else {
-            return response()->json(['status'=>true,'message'=>'mobile number not exist']); 
+            return response()->json(['status'=>true,'message'=>'mobile number not exist']);
         }
     }
     // ------------------------------------ Profile Apis -------------------------------------------------
 
     public function editMyProfile(Request $request){
-        $input = $request->all(); 
+        $input = $request->all();
 
         $user_id = $this->get_userid($input['token']);
 
         if($user_id == 0){
             return response()->json(['status'=>false,'message'=>'user not valid']);
         } else {
-            if ($request['email'] != "") 
+            if ($request['email'] != "")
             {
                 User::where('id', $user_id)->update(array(
                     'name'=>$request['name'],
@@ -315,15 +315,15 @@ class UserapiControllerV10 extends Controller
 
             $data['name'] =!empty($request['name'])?$request['name']:"" ;
             $data['email'] =!empty($request['email'])?$request['email']:"" ;
-            
-            return response()->json(['status'=>true,'message'=>'Account Information Successfully Update','data'=>$data]); 
+
+            return response()->json(['status'=>true,'message'=>'Account Information Successfully Update','data'=>$data]);
 
         }
-        
+
     }
     public function getMyProfile(Request $request){
 
-        $input = $request->all(); 
+        $input = $request->all();
 
         $user_id = $this->get_userid($input['token']);
         if($user_id == 0){
@@ -341,9 +341,9 @@ class UserapiControllerV10 extends Controller
         $newdata = array_map(function($v){
             return (is_null($v)) ? "" : $v;
         },$userdata);
-        
+
         // print_r($userdata);die();
-       
+
           if($userdata != null || !empty($userdata) || $userdata != ''){
 
             return response()->json(['data' => $newdata,'status'=>true,'message'=>'user valid']);
@@ -380,7 +380,7 @@ class UserapiControllerV10 extends Controller
     // ------------------------------------ Business Apis -------------------------------------------------
 
     public function addBusiness(Request $request){
-        $input = $request->all(); 
+        $input = $request->all();
 
         $user_id = $this->get_userid($input['token']);
         if($user_id == 0){
@@ -413,8 +413,8 @@ class UserapiControllerV10 extends Controller
 
             $path = url('/').'/public/images/'.$filename;*/
             $path  =  $this->uploadFile($request, null,"logo", 'business-img');
-        } 
-        
+        }
+
             $business = new Business();
             $business->busi_name = $name;
             $business->user_id = $user_id;
@@ -432,13 +432,13 @@ class UserapiControllerV10 extends Controller
             $business->busi_linkedin = $linkedin;
             $business->busi_youtube = $youtube;
             $business->save();
-            
-            $business_id = $business->id;
+
+            $business_id = $business->busi_id;
 
             $start_date = date('Y-m-d');
 
             // $end_date = date('Y-m-d', strtotime($start_date. ' + 3 days'));
-            
+
 
             $purchase = new Purchase();
             $purchase->purc_user_id = $user_id;
@@ -447,9 +447,9 @@ class UserapiControllerV10 extends Controller
             $purchase->purc_start_date = $start_date;
             // $purchase->purc_end_date = $end_date;
             $purchase->save();
-            
+
             $userdata = User::where('id','=',$user_id)->select('default_business_id')->first();
-            
+
             if($userdata->default_business_id == 0 || $userdata->default_business_id == ''){
                 User::where('id', $user_id)->update(array(
                     'default_business_id' => $business_id,
@@ -461,32 +461,32 @@ class UserapiControllerV10 extends Controller
         // }
 
     }
-    
+
     public function getcurrntbusinesspreornot(Request $request){
-        $input = $request->all(); 
+        $input = $request->all();
 
         $user_id = $this->get_userid($input['token']);
         if($user_id == 0){
             return response()->json(['status'=>false,'message'=>'user not valid']);
         }
         $userdata = User::where('id','=',$user_id)->select('default_business_id')->first();
-        
-        
+
+
         $currntbusiness = Business::where('busi_id','=',$userdata->default_business_id)->first();
-        
+
         $ispreminum = false;
         if($currntbusiness != null || !empty($currntbusiness) || $currntbusiness != ''){
-              
+
             $priminum = Purchase::where('purc_business_id','=',$userdata->default_business_id)->where('purc_plan_id','=',2)->first();
-            
-            
-            
+
+
+
             if(!empty($priminum) || $priminum != null || $priminum != ''){
                  $ispreminum = true;
             } else{
                 $ispreminum = false;
             }
-    
+
             return response()->json(['data' => $currntbusiness,'status'=>true,'message'=>'data recived', 'premium' => $ispreminum]);
 
         } else {
@@ -494,28 +494,28 @@ class UserapiControllerV10 extends Controller
 
         }
 
-        
+
     }
-    
+
    public function markascurrentbusiness(Request $request){
-        $input = $request->all(); 
+        $input = $request->all();
 
         $user_id = $this->get_userid($input['token']);
         if($user_id == 0){
             return response()->json(['status'=>false,'message'=>'user not valid']);
         }
-        
+
         $business_id = $input['business_id'];
-        
+
         User::where('id', $user_id)->update(array(
             'default_business_id' => $business_id,
         ));
         $user_data = User::find($user_id);
         $frameList = DB::table('user_frames')->where('user_id','=',$user_id)->where('business_id','=',$user_data->default_business_id)->where('is_deleted','=',0)->orderBy('user_frames_id','DESC')->get();
-        
+
         $frameLists = array();
 
-        foreach ($frameList as $key => $value) 
+        foreach ($frameList as $key => $value)
         {
            $data = array();
 
@@ -529,7 +529,7 @@ class UserapiControllerV10 extends Controller
 
         }
 
-        
+
         $currntbusiness = Business::where('busi_id','=',$user_data->default_business_id)->where('busi_delete','=',0)->first();
 
         $updatedCurrentBusinessDetails = array();
@@ -537,13 +537,13 @@ class UserapiControllerV10 extends Controller
         $ispreminum = false;
         if($currntbusiness != null || !empty($currntbusiness) || $currntbusiness != ''){
             $priminum = Purchase::where('purc_business_id','=',$user_data->default_business_id)->select('purc_id','purc_plan_id','purc_start_date','purc_end_date')->first();
-            
+
             if(!empty($priminum) || $priminum != null || $priminum != ''){
                 $start_dates = date('Y-m-d');
                 if($priminum->purc_plan_id == 1){
                     $plantrial = Plan::where('plan_sku','=','000FREESKU')->select('plan_validity')->first();
-                    $start_date = strtotime($start_dates); 
-                    $end_date = strtotime($priminum->end_date); 
+                    $start_date = strtotime($start_dates);
+                    $end_date = strtotime($priminum->end_date);
                     $days = ($end_date - $start_date)/60/60/24;
                     if($days > $plantrial->plan_validity && $days > 0){
                         $ispreminum = false;
@@ -552,15 +552,15 @@ class UserapiControllerV10 extends Controller
                     }
                 }
                 if($priminum->purc_plan_id == 3){
-                   
+
                      $ispreminum = false;
-                        
+
                 }
-                
+
                 if($priminum->purc_plan_id == 2){
                     $ispreminum = true;
                 }
-                 
+
             } else{
                 $ispreminum = false;
             }
@@ -586,17 +586,17 @@ class UserapiControllerV10 extends Controller
 
             $p_plan = Purchase::where('purc_user_id',$user_id)->where('purc_business_id',$user_data->default_business_id)->get();
             $plan_name = "";
-            if (count($p_plan) != 0) 
+            if (count($p_plan) != 0)
             {
-                foreach ($p_plan as $key => $value) 
+                foreach ($p_plan as $key => $value)
                 {
-                    if ($value->purc_is_cencal == 0 && $value->purc_is_expire == 0) 
+                    if ($value->purc_is_cencal == 0 && $value->purc_is_expire == 0)
                     {
-                       if ($value->purc_plan_id == 2) 
+                       if ($value->purc_plan_id == 2)
                        {
                            $plan_name = 'Premium';
                        }
-                       elseif ($value->purc_plan_id == 3) 
+                       elseif ($value->purc_plan_id == 3)
                        {
                            $plan_name = 'Free';
                        }
@@ -626,8 +626,8 @@ class UserapiControllerV10 extends Controller
     }
 
     public function updateBusiness(Request $request){
-        
-        $input = $request->all(); 
+
+        $input = $request->all();
 
         $user_id = $this->get_userid($input['token']);
         if($user_id == 0){
@@ -658,7 +658,7 @@ class UserapiControllerV10 extends Controller
         $youtube =  isset($input['youtube']) ? $input['youtube'] : "";
 
         if(!is_null($currntbusiness)){
-           
+
             $namechange = false;
             if($currntbusiness->busi_name != $name){
                 $namechange = true;
@@ -685,11 +685,11 @@ class UserapiControllerV10 extends Controller
             // if(($logo != null && $namechange) || ($logo != null && !$namechange) || $namechange){
             if($namechange){
 
-                    
+
                 Business::where('busi_id', $id)->update(array(
                     'busi_is_approved' => 0
                 ));
-                
+
                 $_isBusinessAvail = DB::table('business_new')->where('busi_id_old','=', $id)->select('user_id_new')->first();
                 $_isPremiumUser = DB::table('purchase_plan')->where('purc_business_type', 1)->where('purc_business_id','=', $id)->where('purc_plan_id','!=',3)->first();
 
@@ -729,7 +729,7 @@ class UserapiControllerV10 extends Controller
                             'busi_logo' => $path,
 
                         ));
-                        
+
                     } else {
                         DB::table('business_new')
                         ->where('busi_id_old', $id)
@@ -765,7 +765,7 @@ class UserapiControllerV10 extends Controller
 
                         ));
                     }
-                
+
                     return response()->json(['status'=>true,'message'=>'Please wait till admin approves your changes!']);
                 } else {
                     Business::where('busi_id', $id)->update(array(
@@ -814,13 +814,13 @@ class UserapiControllerV10 extends Controller
         } else{
              return response()->json(['status'=>false,'message'=>'Record not Found']);
         }
-        
+
     }
 
 
     public function getmyallbusiness(Request $request){
 
-        $input = $request->all(); 
+        $input = $request->all();
 
         $user_id = $this->get_userid($input['token']);
         if($user_id == 0){
@@ -831,26 +831,26 @@ class UserapiControllerV10 extends Controller
         // $listofbusiness = Business::where('user_id','=',$user_id)->where('busi_delete','=',0)->get();
         $listofbusiness = DB::table('business')->where('business.user_id','=',$user_id)->where('business.busi_delete','=',0)->leftJoin('purchase_plan','business.busi_id','=','purchase_plan.purc_business_id')->leftJoin('plan','purchase_plan.purc_plan_id',
             '=','plan.plan_id')->select('business.busi_id','business.busi_name','business.business_category','business.busi_email','business.busi_address','business.busi_mobile', 'business.busi_mobile_second','business.busi_logo','business.watermark_image','business.busi_website','plan.plan_name','plan.plan_id','purchase_plan.purc_start_date','purchase_plan.purc_end_date','purchase_plan.purc_plan_id','business.watermark_image','business.busi_facebook','business.busi_instagram','business.busi_twitter','business.busi_linkedin','business.busi_youtube','purchase_plan.purc_is_expire')->distinct()->get()->toArray();
-        
+
         // print_r($listofbusiness);die();
         $listofbusiness = array_map(function ($value) {
             return (array)$value;
         }, $listofbusiness);
-        
+
         // echo count($listofbusiness);
         $finalarr = array();
         for ($i = 0; $i < count($listofbusiness); $i++) {
         //     for ($j = 0; $j < count($listofbusiness[$i]); $j++) {
-               
+
                 $newdata = array_map(function($v){
                     return (is_null($v)) ? "" : $v;
                 },$listofbusiness[$i]);
                 // print_r($listofbusiness[$i]);
-                
+
                 array_push($finalarr,$newdata);
         //     }
         }
-        
+
         $finale_array = array();
         $start_dates = date('Y-m-d');
         foreach($finalarr as $business){
@@ -868,7 +868,7 @@ class UserapiControllerV10 extends Controller
                 $business['need_to_upgrade'] = 0;
             }
 
-            if ($business['busi_id'] == $user->default_business_id) 
+            if ($business['busi_id'] == $user->default_business_id)
             {
                 $val_busi = 1;
                $business['is_current_business'] = strval($val_busi);
@@ -894,22 +894,22 @@ class UserapiControllerV10 extends Controller
             } else {
                 $business['remaining_days'] = '0 Days';
             }
-           
-        
+
+
 
              //print_r($business);
             array_push($finale_array,$business);
             // echo $business['plan_id'];
             // die;
         }
-        
+
         return response()->json(['data' => $finale_array,'status' => true,'message'=>'List of all business']);
 
     }
 
     public function removeMyBusiness(Request $request){
 
-        $input = $request->all(); 
+        $input = $request->all();
 
         $user_id = $this->get_userid($input['token']);
         if($user_id == 0){
@@ -920,7 +920,7 @@ class UserapiControllerV10 extends Controller
             return response()->json(['status'=>false,'message'=>'Something goes wrong']);
         }
         $userdata = User::where('id','=',$user_id)->select('default_business_id')->first();
-        
+
         if($userdata->default_business_id != $input['id']){
 
             Business::where('busi_id', $input['id'])->update(array(
@@ -931,7 +931,7 @@ class UserapiControllerV10 extends Controller
             ));
 
             // $currntbusiness = Business::where('user_id','=',$user_id)->where('busi_delete','=',0)->select('busi_id')->first();
-            
+
             // if(!empty($currntbusiness) || !is_null($currntbusiness)){
             //     User::where('id', $user_id)->update(array(
             //         'default_business_id' => $currntbusiness->busi_id,
@@ -943,7 +943,7 @@ class UserapiControllerV10 extends Controller
             // }
             return response()->json(['status' => true,'message'=>'Business Succesfully Removed']);
         } else {
-            
+
             Business::where('busi_id', $input['id'])->update(array(
                 'busi_delete' => 1,
             ));
@@ -952,7 +952,7 @@ class UserapiControllerV10 extends Controller
             ));
 
             $currntbusiness = Business::where('user_id','=',$user_id)->where('busi_delete','=',0)->select('busi_id')->first();
-            
+
             if(!empty($currntbusiness) || !is_null($currntbusiness)){
                 User::where('id', $user_id)->update(array(
                     'default_business_id' => $currntbusiness->busi_id,
@@ -964,7 +964,7 @@ class UserapiControllerV10 extends Controller
             }
             return response()->json(['status' => true,'message'=>'Business Succesfully Removed']);
         }
-        
+
         //DB::delete('delete from photos where photo_business_id = ?',$input['id']);
 
     }
@@ -980,11 +980,11 @@ class UserapiControllerV10 extends Controller
         $prev_date = date('Y-m-d', strtotime($currnt_date .' -1 day'));
         $next_date = date('Y-m-d', strtotime($currnt_date .' +1 day'));
 
-    
+
         // $slider = Festival::where('fest_date', '=', $currnt_date)->orWhere('fest_date', '=', $prev_date)->orWhere('fest_date', '=', $next_date)->where('fest_type','=','festival')->where('fest_is_delete','=',0)->limit(3)->get();
         $slider = Festival::whereDate('fest_date', '>=', $currnt_date)->where('fest_type','festival')->where('fest_is_delete',0)->orderBy('fest_date','asc')->get();
 
-        for ($i=0; $i < sizeof($slider); $i++) { 
+        for ($i=0; $i < sizeof($slider); $i++) {
             if($slider[$i]['fest_date'] == $currnt_date){
                 $slider[$i]['current_date'] = true;
             } else {
@@ -996,14 +996,14 @@ class UserapiControllerV10 extends Controller
 
         $festivals = Festival::where('fest_date', 'LIKE', $date . '%')->where('fest_type','=','festival')->where('fest_is_delete','=',0)->get();
 
-        for ($i=0; $i < sizeof($festivals); $i++) { 
+        for ($i=0; $i < sizeof($festivals); $i++) {
             $festivals[$i]['fest_day'] = date_parse_from_format('Y-m-d', $festivals[$i]['fest_date'])['day'];
             $festivals[$i]['fest_date'] = date("d-m-Y", strtotime($festivals[$i]['fest_date']));
         }
 
         $incedents = Festival::where('fest_type','=','incident')->where('fest_is_delete','=',0)->get();
         $incedentsArray = array();
-        for ($i=0; $i < sizeof($incedents); $i++) { 
+        for ($i=0; $i < sizeof($incedents); $i++) {
             $incedents[$i]['fest_day'] = date_parse_from_format('Y-m-d', $incedents[$i]['fest_date'])['day'];
             $photo = Post::where('post_category_id','=',$incedents[$i]['fest_id'])->where('post_is_deleted','=',0)->select('post_content','post_id','post_category_id')->orderBy('post_id','DESC')->get();
             $temp['title'] = $incedents[$i]['fest_name'];
@@ -1013,16 +1013,16 @@ class UserapiControllerV10 extends Controller
             $temp['fest_id'] = $incedents[$i]['fest_id'];
             array_push($incedentsArray,$temp);
         }
-        
+
             // ----------------------------- Get current business
-        $input = $request->all(); 
+        $input = $request->all();
 
         $user_id = $this->get_userid($input['token']);
         if($user_id == 0){
             return response()->json(['status'=>false,'message'=>'user not valid']);
         }
         $userdata = User::where('id','=',$user_id)->select('default_business_id')->first();
-        
+
         $currntbusiness = Business::where('busi_id','=',$userdata->default_business_id)->where('busi_delete','=',0)->first();
 
         $updatedCurrentBusinessDetails = array();
@@ -1032,13 +1032,13 @@ class UserapiControllerV10 extends Controller
         if($currntbusiness != null || !empty($currntbusiness) || $currntbusiness != ''){
             // ->where('purc_plan_id','=',2)->orWhere('purc_plan_id','=',1)
             $priminum = Purchase::where('purc_business_id','=',$userdata->default_business_id)->select('purc_id','purc_plan_id','purc_start_date','purc_end_date')->first();
-            
+
             if(!empty($priminum) || $priminum != null || $priminum != ''){
                 $start_dates = date('Y-m-d');
                 if($priminum->purc_plan_id == 1){
                     $plantrial = Plan::where('plan_sku','=','000FREESKU')->select('plan_validity')->first();
-                    $start_date = strtotime($start_dates); 
-                    $end_date = strtotime($priminum->end_date); 
+                    $start_date = strtotime($start_dates);
+                    $end_date = strtotime($priminum->end_date);
                     $days = ($end_date - $start_date)/60/60/24;
                     if($days > $plantrial->plan_validity && $days > 0){
                         $ispreminum = false;
@@ -1048,8 +1048,8 @@ class UserapiControllerV10 extends Controller
                 }
                 if($priminum->purc_plan_id == 3){
                     // $plantrial = Plan::where('plan_sku','=','premium_2599')->select('plan_validity')->first();
-                    // $start_date = strtotime($start_dates); 
-                    // $end_date = strtotime($priminum->end_date); 
+                    // $start_date = strtotime($start_dates);
+                    // $end_date = strtotime($priminum->end_date);
                     // $days = ($end_date - $start_date)/60/60/24;
                     // if($days > $plantrial->plan_validity && $days > 0){
                         $ispreminum = false;
@@ -1057,11 +1057,11 @@ class UserapiControllerV10 extends Controller
                         //     'purc_is_cencal'=>1,
                         // ]);
                 }
-                
+
                 if($priminum->purc_plan_id == 2){
                     $ispreminum = true;
                 }
-                 
+
             } else{
                 $ispreminum = false;
             }
@@ -1088,7 +1088,7 @@ class UserapiControllerV10 extends Controller
             }
 
             if(!empty($preference)){
-                
+
                 foreach ($preference as $value) {
                     if($value->preference_value == 1){
                         // $currntbusiness->bus_logo = '';
@@ -1122,11 +1122,11 @@ class UserapiControllerV10 extends Controller
            $currntbusiness = "you havent't set current business yet";
 
         }
-        
+
         $userstatus = User::where('remember_token','=',$input['token'])->select('status')->first();
-        
+
         $logout = false;
-        
+
         if($userstatus->status == 1 || $userstatus->status == 2){
             $logout = true;
         }
@@ -1162,13 +1162,13 @@ class UserapiControllerV10 extends Controller
         $prev_date = date('Y-m-d', strtotime($currnt_date .' -1 day'));
         $next_date = date('Y-m-d', strtotime($currnt_date .' +1 day'));
 
-    
-        
+
+
         /*$slider = Festival::whereDate('fest_date', '>=', $currnt_date)->where('fest_type','festival')->where('fest_is_delete',0)->orderBy('fest_date','asc')->get();
 
         $sliders = array();
         $data = array();
-        for ($i=0; $i < sizeof($slider); $i++) { 
+        for ($i=0; $i < sizeof($slider); $i++) {
             if($slider[$i]['fest_date'] == $currnt_date){
                 $slider[$i]['current_date'] = "true";
             } else {
@@ -1188,13 +1188,13 @@ class UserapiControllerV10 extends Controller
             $data['fest_is_delete'] = strval($slider[$i]['fest_is_delete']);
 
             array_push($sliders, $data);
-            
+
         }
             */
         $adv_datas = DB::table('advetisement')->where('is_delete','=',0)->get();
         $advetisement = array();
 
-        foreach ($adv_datas as $key => $value) 
+        foreach ($adv_datas as $key => $value)
         {
             $data = array();
             $data['id'] = strval($value->id);
@@ -1209,7 +1209,7 @@ class UserapiControllerV10 extends Controller
          $festivals = Festival::whereDate('fest_date', '>=', $currnt_date)->where('fest_type','festival')->where('fest_is_delete',0)->orderBy('fest_date','asc')->offset(0)->limit(10)->get();
         $festival = array();
         $data_festival = array();
-        for ($i=0; $i < sizeof($festivals); $i++) { 
+        for ($i=0; $i < sizeof($festivals); $i++) {
             $festivals[$i]['fest_day'] = date_parse_from_format('Y-m-d', $festivals[$i]['fest_date'])['day'];
             $festivals[$i]['fest_date'] = date("d-m-Y", strtotime($festivals[$i]['fest_date']));
             $data_festival['fest_id'] = strval($festivals[$i]['fest_id']);
@@ -1229,9 +1229,9 @@ class UserapiControllerV10 extends Controller
 
         $incedent = array();
         $data_incedent = array();
-        for ($i=0; $i < sizeof($incedents); $i++) { 
+        for ($i=0; $i < sizeof($incedents); $i++) {
             $incedents[$i]['fest_day'] = date_parse_from_format('Y-m-d', $incedents[$i]['fest_date'])['day'];
-            
+
             $incedents[$i]['fest_date'] = date("d-m-Y", strtotime($incedents[$i]['fest_date']));
             $data_incedent['fest_id'] = strval($incedents[$i]['fest_id']);
             $data_incedent['fest_name'] = !empty($incedents[$i]['fest_name'])?$incedents[$i]['fest_name']:"";
@@ -1245,10 +1245,10 @@ class UserapiControllerV10 extends Controller
             array_push($incedent, $data_incedent);
         }
 
-        
-        
+
+
             // ----------------------------- Get current business
-        $input = $request->all(); 
+        $input = $request->all();
 
         $user_id = $this->get_userid($input['token']);
         if($user_id == 0){
@@ -1281,13 +1281,13 @@ class UserapiControllerV10 extends Controller
         // $popupData = (object)[];
         if($currntbusiness != null || !empty($currntbusiness) || $currntbusiness != ''){
             $priminum = Purchase::where('purc_business_id','=',$userdata->default_business_id)->where('purc_business_type', 1)->select('purc_id','purc_plan_id','purc_start_date','purc_end_date')->first();
-            
+
             if(!empty($priminum) || $priminum != null || $priminum != ''){
                 $start_dates = date('Y-m-d');
                 if($priminum->purc_plan_id == 1){
                     $plantrial = Plan::where('plan_id','=',$priminum->purc_plan_id)->select('plan_validity')->first();
-                    $start_date = strtotime($start_dates); 
-                    $end_date = strtotime($priminum->purc_end_date); 
+                    $start_date = strtotime($start_dates);
+                    $end_date = strtotime($priminum->purc_end_date);
                     $days = ($end_date - $start_date)/60/60/24;
                     $tmp_end_date = Carbon::parse($priminum->purc_end_date);
                     $tmp_start_date = Carbon::now();
@@ -1306,14 +1306,14 @@ class UserapiControllerV10 extends Controller
                     }
                 }
                 if($priminum->purc_plan_id == 3){
-                   
+
                      $ispreminum = false;
-                        
+
                 }
                 else
                 {
-                    $start_date = strtotime($start_dates); 
-                    $end_date = strtotime($priminum->purc_end_date); 
+                    $start_date = strtotime($start_dates);
+                    $end_date = strtotime($priminum->purc_end_date);
                     $days = ($end_date - $start_date)/60/60/24;
                     $tmp_end_date = Carbon::parse($priminum->purc_end_date);
                     $tmp_start_date = Carbon::now();
@@ -1324,18 +1324,18 @@ class UserapiControllerV10 extends Controller
                     }
                     $ispreminum = true;
                 }
-                
+
                 /*if($priminum->purc_plan_id == 2){
                     $ispreminum = true;
                 }*/
-                 
+
             } else{
                 $ispreminum = false;
             }
 
 
-            
-                
+
+
                 $updatedCurrentBusinessDetails['busi_id'] = strval($currntbusiness->busi_id);
                 $updatedCurrentBusinessDetails['user_id'] = strval($currntbusiness->user_id);
                 $updatedCurrentBusinessDetails['busi_name'] = !empty($currntbusiness->busi_name)?$currntbusiness->busi_name:"";
@@ -1357,18 +1357,18 @@ class UserapiControllerV10 extends Controller
 
                 $p_plan = Purchase::where('purc_user_id',$user_id)->where('purc_business_id',$userdata->default_business_id)->get();
                 $plan_name = "";
-                if (count($p_plan) != 0 && !empty($p_plan) && $p_plan != "") 
+                if (count($p_plan) != 0 && !empty($p_plan) && $p_plan != "")
                 {
-                    foreach ($p_plan as $key => $value) 
+                    foreach ($p_plan as $key => $value)
                     {
-                        if ($value->purc_is_cencal == 0 && $value->purc_is_expire == 0) 
+                        if ($value->purc_is_cencal == 0 && $value->purc_is_expire == 0)
                         {
-              
-                          /* if ($value->purc_plan_id == 2) 
+
+                          /* if ($value->purc_plan_id == 2)
                            {
                                $plan_name = 'Premium';
                            }
-                           elseif ($value->purc_plan_id == 3) 
+                           elseif ($value->purc_plan_id == 3)
                            {
                                $plan_name = 'Free';
                            }*/
@@ -1386,7 +1386,7 @@ class UserapiControllerV10 extends Controller
                                 $plan_name = 'Free';
                                 $cur_status = 0;
                             }
-                           
+
                         }
                         else
                         {
@@ -1404,10 +1404,10 @@ class UserapiControllerV10 extends Controller
                 $updatedCurrentBusinessDetails['plan_name'] = $plan_name;
                 $cur_status = 1;
                 $updatedCurrentBusinessDetails['status'] = strval($cur_status);
-           
+
 
             /*if(!empty($preference)){
-                
+
                 foreach ($preference as $value) {
                     if($value->preference_value == 1){
                         // $currntbusiness->bus_logo = '';
@@ -1446,7 +1446,7 @@ class UserapiControllerV10 extends Controller
 
         if($currntbusinessPolitical != null || !empty($currntbusinessPolitical) || $currntbusinessPolitical != ''){
             $priminumPolitical = Purchase::where('purc_business_id','=',$userdata->default_political_business_id)->where('purc_business_type', 2)->select('purc_id','purc_plan_id','purc_start_date','purc_end_date')->first();
-            
+
             if(!empty($priminumPolitical) || $priminumPolitical != null || $priminumPolitical != ''){
                 if($priminumPolitical->purc_plan_id != 3){
                     $tmp_end_datePolitical = Carbon::parse($priminumPolitical->purc_end_date);
@@ -1457,7 +1457,7 @@ class UserapiControllerV10 extends Controller
                         $renewalPopuppoliticalBusiness = false;
                     }
                 }
-                 
+
             }
         }
         if($renewPopup) {
@@ -1492,12 +1492,12 @@ class UserapiControllerV10 extends Controller
                 }
             }
         }
-        
+
         //$userstatus = User::where('remember_token','=',$input['token'])->select('status')->first();
         $userstatus = User::where('id','=',$user_id)->select('status')->first();;
-        
+
         $logout = false;
-        
+
         if($userstatus->status == 1 || $userstatus->status == 2){
             $logout = true;
         }
@@ -1508,8 +1508,8 @@ class UserapiControllerV10 extends Controller
             $query->where('business_id', '=', $userdata->default_business_id)
                   ->orWhere('business_id', '=', $userdata->default_political_business_id);
         })->where('is_deleted','=',0)->orderBy('user_frames_id','DESC')->get();
-        
-       
+
+
 
         if(!empty($frameList)){
             foreach ($frameList as &$frame) {
@@ -1529,9 +1529,9 @@ class UserapiControllerV10 extends Controller
         $category = array();
 
         $keyval = 0;
-        foreach ($category_data as $key => $value) 
+        foreach ($category_data as $key => $value)
         {
-            $data = array();    
+            $data = array();
             $data['id'] = strval($value->id);
             $data['category_name'] = !empty($value->name)?$value->name:"";
             $data['image'] = !empty($value->image)? Storage::url($value->image):"";
@@ -1543,16 +1543,16 @@ class UserapiControllerV10 extends Controller
                     $keyval = $key;
                 }
             }
-            
-            
+
+
         }
 
         $buss_category = $this->moveElement($category,$keyval,0);
         $currntbusiness_photos = array();
-        if (!empty($currntbusiness)) 
+        if (!empty($currntbusiness))
         {
-           
-        
+
+
             $currntbusiness_photo_id = DB::table('business_category')->where('name', $currntbusiness->business_category)->where('is_delete',0)->first();
 
             if(!empty($currntbusiness_photo_id))
@@ -1565,16 +1565,16 @@ class UserapiControllerV10 extends Controller
                    $currntbusiness_photos['cat_name'] =  $currntbusiness->business_category;
                    $currntbusiness_photos['images'] =  [];
 
-                    /*foreach ($currntbusiness_photo as $key => $value) 
+                    /*foreach ($currntbusiness_photo as $key => $value)
                     {
                        $data = array();
                        $data['url'] = $value;
 
                        array_push($currntbusiness_photos['images'] , $data);
                     }*/
-                    foreach ($currntbusiness_photo as $img_key => $img_value) 
+                    foreach ($currntbusiness_photo as $img_key => $img_value)
                     {
-                
+
                         $img_data['image_id'] = strval($img_value->id);
                         //$img_data['image_url'] = !empty($img_value->thumbnail) ? Storage::url($img_value->thumbnail) :"";
                         $img_data['image_url'] = !empty($img_value->post_thumb) ? Storage::url($img_value->post_thumb) : Storage::url($img_value->thumbnail);
@@ -1585,17 +1585,17 @@ class UserapiControllerV10 extends Controller
                     }
                 }
             }
-            
-        }
-        
 
-        
+        }
+
+
+
 
 
         $new_category_data = Festival::where('fest_is_delete','=',0)->where('new_cat','!=',0)->orderBy('position_no','ASC')->get();
         $new_category_dataArray = array();
         $user_language = User::where('id',$user_id)->value('user_language');
-        for ($i=0; $i < sizeof($new_category_data); $i++) { 
+        for ($i=0; $i < sizeof($new_category_data); $i++) {
 
             $temp['id'] = $new_category_data[$i]['fest_id'];
             $temp['title'] = $new_category_data[$i]['fest_name'];
@@ -1651,7 +1651,7 @@ class UserapiControllerV10 extends Controller
                     }
                     /* ->orderBy('post_id','DESC') ->inRandomOrder()*/
                 }
-                
+
                 foreach($photo as $ph_value)
                 {
                     //$data_ph['post_content'] = !empty($ph_value->post_content) ? Storage::url($ph_value->post_content) :"";
@@ -1662,8 +1662,8 @@ class UserapiControllerV10 extends Controller
                     array_push($temp['img_url'],$data_ph);
                 }
             }
-           
-            
+
+
             array_push($new_category_dataArray,$temp);
         }
 
@@ -1672,7 +1672,7 @@ class UserapiControllerV10 extends Controller
         foreach ($new_category_data_greetings as $greeting) {
 
             $photo = DB::table('custom_cateogry_data')->where('custom_cateogry_id','=',$greeting->custom_cateogry_id)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderBy('custom_cateogry_data_id','DESC')->limit(10)->get();
-            
+
             $temp1['id'] = $greeting->custom_cateogry_id;
             $temp1['title'] = $greeting->name;
             // $temp1['type'] = $greeting[$i]['new_cat'];
@@ -1692,27 +1692,27 @@ class UserapiControllerV10 extends Controller
                 $data_ph1['images']['img_width'] = $ph_value->img_width;
                 array_push($temp1['img_url'],$data_ph1);
             }
-            
+
             array_push($new_category_data_greetingsArray,$temp1);
         }
 
         /*$is_mark_data = Festival::where('fest_type','=','incident')->where('fest_is_delete','=',0)->where('is_mark',1)->get();
         $is_mark_dataArray = array();
-        for ($i=0; $i < sizeof($is_mark_data); $i++) { 
-           
+        for ($i=0; $i < sizeof($is_mark_data); $i++) {
+
             $photo = Post::where('post_category_id','=',$is_mark_data[$i]['fest_id'])->where('post_is_deleted','=',0)->select('post_content','post_id','image_type','post_category_id')->orderBy('post_id','DESC')->get();
             $is_mark_temp['id'] = $is_mark_data[$i]['fest_id'];
             $is_mark_temp['title'] = $is_mark_data[$i]['fest_name'];
             $is_mark_temp['img_url'] = $photo;
-            
+
             array_push($is_mark_dataArray,$is_mark_temp);
         }*/
-        
+
 
         /*$cateogry_data = DB::table('custom_cateogry')->where('is_active', 1)->get();
         $cateogry = array();
 
-        foreach ($cateogry_data as $key => $value) 
+        foreach ($cateogry_data as $key => $value)
         {
             $data['id'] = $value->custom_cateogry_id;
             $data['cateogry_name'] = $value->name;
@@ -1772,14 +1772,14 @@ class UserapiControllerV10 extends Controller
             $languageid = explode(',', $language_id);
 
             $user_language = User::where('id',$user_id)->value('user_language');
-            
+
             if (in_array(0, $languageid))
             {
                 if($user_language != null)
                 {
                     $checkFestival = Festival::where('fest_id', $input['postcategoryid'])->first();
                     if($checkFestival->fest_name == "Trending") {
-                        if($sub_category_id == 0) 
+                        if($sub_category_id == 0)
                         {
                             $posts = Post::where('post_category_id','=',$input['postcategoryid'])->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset)->get();
                         }
@@ -1803,8 +1803,8 @@ class UserapiControllerV10 extends Controller
                     }
                     else {
                         $posts = Post::where('post_category_id','=',$input['postcategoryid'])->where('sub_category_id', $sub_category_id)->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset)->get();
-                    } 
-                     
+                    }
+
                 }
             }
             else
@@ -1877,7 +1877,7 @@ class UserapiControllerV10 extends Controller
                 {
                     $checkFestival = Festival::where('fest_id', $input['postcategoryid'])->first();
                     if($checkFestival->fest_name == "Trending") {
-                        if($sub_category_id == 0) 
+                        if($sub_category_id == 0)
                         {
                             $posts_next = Post::where('post_category_id','=',$input['postcategoryid'])->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset + count($posts))->get();
                         }
@@ -1901,8 +1901,8 @@ class UserapiControllerV10 extends Controller
                     }
                     else {
                         $posts_next = Post::where('post_category_id','=',$input['postcategoryid'])->where('sub_category_id', $sub_category_id)->where('post_is_deleted','=',0)->orderBy('image_type','ASC')->orderBy('post_id','DESC')->take($transactionLimit)->skip($offset + count($posts))->get();
-                    } 
-                     
+                    }
+
                 }
             }
             else
@@ -1920,7 +1920,7 @@ class UserapiControllerV10 extends Controller
 
             $language = array();
 
-            foreach ($languages as $key => $value) 
+            foreach ($languages as $key => $value)
             {
                 $data = array();
                 $data['id'] = strval($value->id);
@@ -1969,7 +1969,7 @@ class UserapiControllerV10 extends Controller
             //     }
             // }
             $user_language = User::where('id',$user_id)->value('user_language');
-            if (in_array(0, $languageid)) 
+            if (in_array(0, $languageid))
             {
                 if($user_language != null )
                 {
@@ -2009,7 +2009,7 @@ class UserapiControllerV10 extends Controller
                 array_push($language_id_array, $id->language_id);
             }
             $language_id_array = array_unique($language_id_array, SORT_REGULAR);
-            
+
             $videos = array();
 
             if($offset == 0) {
@@ -2048,8 +2048,8 @@ class UserapiControllerV10 extends Controller
                     array_push($videos, $img_data);
                 }
             }
-            
-            foreach ($video as $key => $value) 
+
+            foreach ($video as $key => $value)
             {
                 $data = array();
 
@@ -2058,7 +2058,7 @@ class UserapiControllerV10 extends Controller
                 if($value->video_store == "LOCAL") {
                     $data['video'] = !empty($value->video_url)?url('/').'/'.$value->video_url:"";
                 }
-                else {    
+                else {
                     $data['video'] = !empty($value->video_url)?url('/').'/'.$value->video_url:"";
                     // $data['video'] = !empty($value->video_url)?Storage::url($value->video_url):"";
                 }
@@ -2067,7 +2067,7 @@ class UserapiControllerV10 extends Controller
                 array_push($videos, $data);
             }
 
-            if (in_array(0, $languageid)) 
+            if (in_array(0, $languageid))
             {
                 if($user_language != null )
                 {
@@ -2104,7 +2104,7 @@ class UserapiControllerV10 extends Controller
 
             $language = array();
 
-            foreach ($languages as $key => $value) 
+            foreach ($languages as $key => $value)
             {
                 $data = array();
                 $data['id'] = strval($value->id);
@@ -2130,7 +2130,7 @@ class UserapiControllerV10 extends Controller
     }
 
     public function getDays(Request $request){
-        
+
         $input = $request->all();
         $user_id = $this->get_userid($input['token']);
         $currnt_date = date('Y-m-d');
@@ -2141,21 +2141,21 @@ class UserapiControllerV10 extends Controller
             $date = date('Y-m-d',strtotime($date));
 
         // $festivals = Festival::where('fest_date', 'LIKE', $date . '%')->where('fest_type','=','festival')->where('fest_is_delete','=',0)->get();
-        
+
             $festivals = Festival::where('fest_date', '=', $date)->where('fest_type','=','festival')->where('fest_is_delete','=',0)->get()->toArray();
         } else {
             //  $festivals = Festival::where('fest_type','=','festival')->where('fest_is_delete','=',0)->get()->toArray();
-            
+
             $festivals1 = Festival::where('fest_date', '>=', date('Y-m-d'))->where('fest_type','=','festival')->where('fest_is_delete','=',0)->get()->toArray();
-            
+
             $festivals2 = Festival::where('fest_date', '<', date('Y-m-d'))->where('fest_type','=','festival')->where('fest_is_delete','=',0)->get()->toArray();
-            
+
             $festivals = array_merge($festivals1,$festivals2);
-            
+
         }
         $festival = array();
         $data_festival = array();
-        for ($i=0; $i < sizeof($festivals); $i++) { 
+        for ($i=0; $i < sizeof($festivals); $i++) {
             //$festivals[$i]['fest_day'] = date_parse_from_format('Y-m-d', $festivals[$i]['fest_date'])['day'];
             $festivals[$i]['fest_date'] = date("d-m-Y", strtotime($festivals[$i]['fest_date']));
             $data_festival['fest_id'] = strval($festivals[$i]['fest_id']);
@@ -2172,7 +2172,7 @@ class UserapiControllerV10 extends Controller
         if(!empty($userdata)){
             $ispreminum = false;
             if($currntbusiness != null || !empty($currntbusiness) || $currntbusiness != ''){
-                
+
                 $priminum = Purchase::where('purc_business_id','=',$userdata->default_business_id)->where('purc_plan_id','=',2)->first();
 
                 if(!empty($priminum) || $priminum != null || $priminum != ''){
@@ -2208,7 +2208,7 @@ class UserapiControllerV10 extends Controller
         usort($olddate, function($a, $b){
             return strtotime($a['fest_date']) <=> strtotime($b['fest_date']);
         });
-        
+
 
         $finalarr = array_merge($newdate,array_reverse($olddate));
 
@@ -2226,7 +2226,7 @@ class UserapiControllerV10 extends Controller
             $updatedCurrentBusinessDetails['busi_delete'] = $currntbusiness->busi_delete;
 
             if(!empty($preference)){
-                
+
                 foreach ($preference as $value) {
                     if($value->preference_value == 1){
                         // $currntbusiness->bus_logo = '';
@@ -2272,7 +2272,7 @@ class UserapiControllerV10 extends Controller
         }
 
         if($input['is_delete'] == 'false' || $input['is_delete'] == false){
-     
+
             DB::table('user_preference')->insert(
                 ['user_id' => $user_id, 'preference_value' => $input['preference_value']]
             );
@@ -2283,7 +2283,7 @@ class UserapiControllerV10 extends Controller
         $userdata = User::where('id','=',$user_id)->select('default_business_id')->first();
         if(!empty($userdata)){
             $currntbusiness = Business::where('busi_id','=',$userdata->default_business_id)->where('busi_delete','=',0)->first();
-        
+
             $preference = DB::table('user_preference')->where('user_id', '=', $user_id)->get();
 
             $updatedCurrentBusinessDetails = array();
@@ -2305,7 +2305,7 @@ class UserapiControllerV10 extends Controller
             $updatedCurrentBusinessDetails['watermark_image'] = Storage::url($currntbusiness->watermark_image);
 
             if(!empty($preference)){
-                
+
                 foreach ($preference as $value) {
                     if($value->preference_value == 1){
                         // $currntbusiness->bus_logo = '';
@@ -2343,7 +2343,7 @@ class UserapiControllerV10 extends Controller
         $onlycat = DB::table('custom_cateogry')->where('is_active', 1)->orderBy('slider_img_position','ASC')->get();
 
         // $preference = DB::table('custom_cateogry_data')->join('custom_cateogry', 'custom_cateogry_data.custom_cateogry_id', '=', 'custom_cateogry.custom_cateogry_id')->get();
-        
+
         $finalarry = array();
 
         $slider = array();
@@ -2371,7 +2371,7 @@ class UserapiControllerV10 extends Controller
                 $data['images']['img_width'] = $value2->img_width;
                 array_push($temp['catdata'],$data);
             }
-            
+
             array_push($finalarry,$temp);
             $slide = array();
             $slide['custom_cateogry_id'] = $value->custom_cateogry_id;
@@ -2418,7 +2418,7 @@ class UserapiControllerV10 extends Controller
         }
         $finalarr = array();
         $festivals =  DB::table('video_post')->where('is_deleted','=',0)->orderBy('date_added','ASC')->get();
-       
+
         if(!empty($festivals)){
             $olddate = array();
             $newdate = array();
@@ -2433,7 +2433,7 @@ class UserapiControllerV10 extends Controller
                 $fest->video_url = url('/').'/'.$fest->video_url;
                 $imgurl_create = Storage::url('/');
                 $fest->thumbnail = str_replace(".com/",".com",$imgurl_create).''.$fest->thumbnail;
-                
+
             }
             // print_r($newdate);die;
             usort($newdate, function($a, $b){
@@ -2444,11 +2444,11 @@ class UserapiControllerV10 extends Controller
             usort($olddate, function($a, $b){
                 return strtotime($a->date) <=> strtotime($b->date);
             });
-            
+
 
             $finalarr = array_merge($newdate,array_reverse($olddate));
         }
-        
+
         if(count($festivals) != 0)
         {
             return response()->json(['status' =>true,'message'=>'Videos listed successfully', 'data' => $finalarr]);
@@ -2460,7 +2460,7 @@ class UserapiControllerV10 extends Controller
 
     public function getBusinessCategory(Request $request)
     {
-       $input = $request->all(); 
+       $input = $request->all();
 
         $user_id = $this->get_userid($input['token']);
         if($user_id == 0){
@@ -2471,16 +2471,16 @@ class UserapiControllerV10 extends Controller
 
         $category = array();
 
-        foreach ($category_data as $key => $value) 
+        foreach ($category_data as $key => $value)
         {
             $data['id'] = strval($value->id);
             $data['category_name'] = !empty($value->name)?$value->name:"";
             array_push($category,$data);
-            
-        }
-        
 
-        if (count($category_data) != 0) 
+        }
+
+
+        if (count($category_data) != 0)
         {
             return response()->json(['status' =>true,'message'=>'Category list successfully', 'cateogry' => $category]);
         }
@@ -2493,13 +2493,13 @@ class UserapiControllerV10 extends Controller
     }
 
 
-    
+
 
     // ------------------------------------ Plan Apis -------------------------------------------------
 
     public function purchasePlan(Request $request)
     {
-        $input = $request->all(); 
+        $input = $request->all();
 
         $user_id = $this->get_userid($input['token']);
         if($user_id == 0){
@@ -2514,12 +2514,12 @@ class UserapiControllerV10 extends Controller
         if(empty($checkBusiness)) {
             return response()->json(['status'=>false,'message'=>'Something goes wrong']);
         }
-        
+
         // $results = DB::select('select * from  refferal_data where ref_user_id = ?', [$user_id]); = 2
         $is_purchasebeforee = DB::table('purchase_plan')->where('purc_user_id','=',$user_id)->where('purc_plan_id','!=',3)->select('purc_user_id')->first();
-        
+
         if(is_null($is_purchasebeforee)){
-            
+
             $results = DB::table('refferal_data')->where('ref_user_id','=',$user_id)->select('ref_by_user_id')->first();
             if(!is_null($results)){
               $credit = DB::table('setting')->where('setting_id','=',1)->select('credit')->first();
@@ -2532,12 +2532,12 @@ class UserapiControllerV10 extends Controller
                   'user_credit'=>$newcredit,
               ));
             }
-            
+
         }
-        
+
         //$remainingcredit = $input['remainingcredit'];
         $remainingcredit = '';
-      
+
         if($remainingcredit != 0){
            $usercredit = DB::table('users')->where('id', '=', $user_id)->select('user_credit','id')->first();
            $newcredit = intval($usercredit->user_credit) - intval($remainingcredit);
@@ -2546,7 +2546,7 @@ class UserapiControllerV10 extends Controller
                 'user_credit'=>$newcredit,
             ));
         }
-        
+
         $business_id = $input['business_id'];
         $plan_id = $input['plan_id'];
         $start_date = date('Y-m-d');
@@ -2587,7 +2587,7 @@ class UserapiControllerV10 extends Controller
         //         $this->addPoliticalBusinessWhilePlanIsThree($user_id,$plan_id, $business_id);
         //     }
         // }
-        
+
         if($input['plan_type'] == 3){
             $userdata = User::where('id','=',$user_id)->select(['default_business_id','default_political_business_id'])->first();
             $getPurchaseData = Purchase::where('purc_business_id', $business_id)->where('purc_business_type', $input['business_type'])->first();
@@ -2745,7 +2745,7 @@ class UserapiControllerV10 extends Controller
                 DB::table('user_business_comment')->where('business_id', $business_id)->where('business_type', 1)->delete();
                 $this->addPurchasePlanHistory($business_id, 1, $new_start_date);
             }
-            
+
             $user_data = User::find($user_id);
             if($user_data->default_business_id == '' || empty($user_data->default_business_id) || $user_data->default_business_id == 0) {
                 User::where('id', $user_id)->update(array(
@@ -2862,7 +2862,7 @@ class UserapiControllerV10 extends Controller
                 }
                 DB::table('user_business_comment')->where('business_id', $business_id)->where('business_type', 2)->delete();
                 $this->addPurchasePlanHistory($business_id, 2, $new_start_date);
-                
+
             }
             $user_data = User::find($user_id);
             if($user_data->default_political_business_id == '' || empty($user_data->default_political_business_id) || $user_data->default_political_business_id == 0) {
@@ -2876,7 +2876,7 @@ class UserapiControllerV10 extends Controller
 
 
     public function cencalPurchasedPlan(Request $request){
-         $input = $request->all(); 
+         $input = $request->all();
 
         $user_id = $this->get_userid($input['token']);
         if($user_id == 0){
@@ -2891,7 +2891,7 @@ class UserapiControllerV10 extends Controller
     }
 
     public function exiprePurchasedPlan(Request $request){
-         $input = $request->all(); 
+         $input = $request->all();
 
         $user_id = $this->get_userid($input['token']);
         if($user_id == 0){
@@ -2906,7 +2906,7 @@ class UserapiControllerV10 extends Controller
     }
 
     public function getMyPurchasePlanList(Request $request){
-        $input = $request->all(); 
+        $input = $request->all();
 
         $user_id = $this->get_userid($input['token']);
         if($user_id == 0){
@@ -2918,23 +2918,23 @@ class UserapiControllerV10 extends Controller
         foreach ($activeplan as $key => $value) {
             $value->plan_information = unserialize($value->plan_information);
         }
-        
+
         // print_r($activeplan);die();
-        
+
         $activeplan = array_map(function ($value) {
             return (array)$value;
         }, $activeplan);
-        
+
         // echo count($listofbusiness);
         $finalarr = array();
         for ($i = 0; $i < count($activeplan); $i++) {
-   
-               
+
+
                 $newdata = array_map(function($v){
                     return (is_null($v)) ? "" : $v;
                 },$activeplan[$i]);
 
-                
+
                 array_push($finalarr,$newdata);
 
         }
@@ -2947,7 +2947,7 @@ class UserapiControllerV10 extends Controller
 
         $cencaledplan = DB::table('purchase_plan')->where('purc_user_id','=',$user_id)->where('purc_is_cencal','=',1)->join('business','purchase_plan.purc_business_id','=','business.busi_id')->join('plan','purchase_plan.purc_plan_id','=','plan.plan_id')->get();
 
-        
+
         foreach ($cencaledplan as $key => $value) {
             $value->plan_information = unserialize($value->plan_information);
         }
@@ -2959,14 +2959,14 @@ class UserapiControllerV10 extends Controller
         }
     }
     public function testplan(Request $request){
-        $input = $request->all(); 
+        $input = $request->all();
         $start_dates = date('Y-m-d');
         $business = DB::table('purchase_plan')->where('purc_business_id','=',$input['business_id'])->select('purc_plan_id','purc_end_date')->first();
         $primiumPlanInfo = DB::table('plan')->where('plan_id','=',2)->select('plan_information','plan_actual_price','plan_descount')->first();
         if($business->purc_plan_id == 1){
             $plantrial = Plan::where('plan_sku','=','000FREESKU')->select('plan_validity')->first();
-            $start_date = strtotime($start_dates); 
-            $end_date = strtotime($business->purc_end_date); 
+            $start_date = strtotime($start_dates);
+            $end_date = strtotime($business->purc_end_date);
             $days = ($end_date - $start_date)/60/60/24;
             if($days > $plantrial->plan_validity && $days > 0){
                 $this_plan_expire_no_trial = 1;
@@ -3036,14 +3036,14 @@ class UserapiControllerV10 extends Controller
                 'plan_sku' => 'premium_199',
                 'plan_actual_price' => 199,
             ]);
-            
+
             return response()->json(['plans' => $temparray,'status' => true,'message'=>'List of all Plan','this_plan_expire_no_trial'=>$this_plan_expire_no_trial]);
     }
     // -------------------------------------- Photos Api -------------------------------------
-    
+
     public function savePhotos(Request $request) {
 
-        $input = $request->all(); 
+        $input = $request->all();
 
         $logo = $request->file('image');
 
@@ -3076,24 +3076,24 @@ class UserapiControllerV10 extends Controller
 
     public function getPhotos(Request $request)
     {
-        $input = $request->all(); 
+        $input = $request->all();
         $user_id = $this->get_userid($input['token']);
         if($user_id == 0){
             return response()->json(['status'=>false,'message'=>'user not valid']);
         }
-        
+
         $page = $request['page']==NULL ? 1 : $request['page'];
         $limit = 10;
         $offset = $limit * ($page - 1);
 
         //$getallphotos = Photos::where('photo_user_id','=',$user_id)->get();
-        
+
         // $getallphotos = Photos::all();
-        
+
         //  $getallphotos = DB::table('post')->join('festival_data','post.post_category_id','=','festival_data.fest_id')->join('users','post.user_id','=','users.id')->select('users.name','post.post_content','post.post_id','festival_data.fest_name')->get();
-        
+
         $getallphotos = DB::table('photos')->join('users','photos.photo_user_id','=','users.id')->select('users.name','photos.photo_url','photos.photo_id')->where('photos.photo_is_delete','=',0)->where('photos.photo_user_id','=', $user_id)->orderBy('photos.photo_id', 'DESC')->limit($limit)->offset($offset)->get();
-        
+
         if(!empty($getallphotos)){
             return response()->json(['data' => $getallphotos,'status' => true,'message'=>"Image successfully get" ]);
         }
@@ -3101,39 +3101,39 @@ class UserapiControllerV10 extends Controller
             return response()->json(['status' => false,'message'=>"You don't have any image yet" ]);
         }
     }
-    
+
     // --------------------------------------------------------------------------------------------------------------------------------
-    
-    
-    
-     function drawBorder(&$img, &$color, $thickness = 1) 
+
+
+
+     function drawBorder(&$img, &$color, $thickness = 1)
     {
-        $x1 = 50; 
-        $y1 = 50; 
-        // $x2 = ImageSX($img) - 1; 
-        // $y2 = ImageSY($img) - 1; 
+        $x1 = 50;
+        $y1 = 50;
+        // $x2 = ImageSX($img) - 1;
+        // $y2 = ImageSY($img) - 1;
 
-        $x2 = ImageSX($img) - 50; 
-        $y2 = ImageSY($img) - 50; 
+        $x2 = ImageSX($img) - 50;
+        $y2 = ImageSY($img) - 50;
 
-        for($i = 0; $i < $thickness; $i++) 
-        { 
-            ImageRectangle($img, $x1++, $y1++, $x2--, $y2--, $color); 
-        } 
+        for($i = 0; $i < $thickness; $i++)
+        {
+            ImageRectangle($img, $x1++, $y1++, $x2--, $y2--, $color);
+        }
     }
-    
-    
+
+
     public function getTemplates(Request $request) {
-         $input = $request->all(); 
+         $input = $request->all();
         $user_id = $this->get_userid($input['token']);
         if($user_id == 0){
             return response()->json(['status'=>false,'message'=>'user not valid']);
         }
 
         $defaultbusiness = User::where('id','=',$user_id)->select('default_business_id')->first();
-        
+
         if($defaultbusiness == null || $defaultbusiness == '' || empty($defaultbusiness)){
-            
+
              return response()->json(['status' => false,'message'=>"You don't have any default business yet" ]);
         }
 
@@ -3142,23 +3142,23 @@ class UserapiControllerV10 extends Controller
         $bdetail = Business::where('busi_id','=',$businessid)->select('busi_name', 'busi_email', 'busi_mobile', 'busi_website', 'busi_address', 'busi_logo')->first();
 
         if($bdetail == null || $bdetail == '' || empty($bdetail)){
-            
+
              return response()->json(['status' => false,'message'=>"You don't have any default business yet" ]);
         }
 
         $logo_img = $bdetail->busi_logo;
-        
+
         $item = array();
 
         // if(!empty($_FILES['file'])) {
-     
+
         //     $min_rand=rand(0,1000);
 
         //     $max_rand=rand(100000000000,10000000000000000);
 
         //     $name_file=rand($min_rand,$max_rand);//this part is for creating random name for image
 
-            
+
 
         //      $extension = pathinfo($_FILES["file"]["name"], PATHINFO_EXTENSION);
 
@@ -3173,19 +3173,19 @@ class UserapiControllerV10 extends Controller
         //         //$filenameimage="images/" . $name_file.".".$ext;
 
         //         $logo_img="images/logo/".$name_file.'.png';
-                 
+
         //     }
 
         //     //$ext=end(explode(".", $_FILES["file"]["name"]));//gets extension
 
         // }
 
-        $images = imagecreatefrompng(public_path('/').'images1.png'); 
+        $images = imagecreatefrompng(public_path('/').'images1.png');
 
        imagealphablending($images, false);
         imagesavealpha($images, true);
-        
-        $image_width = imagesx($images);  
+
+        $image_width = imagesx($images);
 
         $image_height = imagesy($images);
 
@@ -3217,7 +3217,7 @@ class UserapiControllerV10 extends Controller
 
         // company name
 
-         
+
 
         if($company_name!='')
 
@@ -3247,9 +3247,9 @@ class UserapiControllerV10 extends Controller
             }
             // imagealphablending($second, false);
             // imagesavealpha($second, true);
-            //$x = ceil((1000 - $second[5]) / 2); 
+            //$x = ceil((1000 - $second[5]) / 2);
             imagecopyresized($images,$second,20,20,0,0, 468, 356, 468, 356);
-        }   
+        }
 
 
         // Email id
@@ -3356,32 +3356,32 @@ class UserapiControllerV10 extends Controller
         $tempname = 'images/'.rand().'.png';
         $name = public_path('/').$tempname;
 
-        //header('Content-type: image/png');   
+        //header('Content-type: image/png');
 
-        imagepng($images,$name); 
+        imagepng($images,$name);
 
-        //imagepng($images); 
+        //imagepng($images);
 
-        imagedestroy($images); 
+        imagedestroy($images);
 
 
 
 
         // $item = array();
-    
+
         $data = URL('/public').'/'.$tempname;
         array_push($item, $data);
-        
+
             // --------------------------------------- second template
-            
-            
-            
+
+
+
         $logo_img = $bdetail->busi_logo;
 
 
-        $images = imagecreatefrompng(public_path('/').'images1.png'); 
+        $images = imagecreatefrompng(public_path('/').'images1.png');
 
-        $image_width = imagesx($images);  
+        $image_width = imagesx($images);
 
         $image_height = imagesy($images);
 
@@ -3406,7 +3406,7 @@ class UserapiControllerV10 extends Controller
 
         // company name
 
-         
+
 
         if($company_name!='')
 
@@ -3434,9 +3434,9 @@ class UserapiControllerV10 extends Controller
             if(!$second){
                 return response()->json(['status' => false,'message'=>"Not valid png" ]);
             }
-            //$x = ceil((1000 - $second[5]) / 2); 
+            //$x = ceil((1000 - $second[5]) / 2);
             imagecopyresized($images,$second,1300,20,0,0, 468, 356, 468, 356);
-        }   
+        }
 
 
         $mimage = imagecreatefrompng(public_path('/images').'/phone.png');
@@ -3514,29 +3514,29 @@ class UserapiControllerV10 extends Controller
         $tempname = 'images/'.rand().'.png';
         $name = public_path('/').$tempname;
 
-        //header('Content-type: image/png');   
+        //header('Content-type: image/png');
 
-        imagepng($images,$name); 
+        imagepng($images,$name);
 
-        //imagepng($images); 
+        //imagepng($images);
 
-        imagedestroy($images); 
+        imagedestroy($images);
 
 
 
 
         $data = URL('/public').'/'.$tempname;
         array_push($item, $data);
-        
+
         //  -------------------------------------------- third
-        
-        
+
+
         $logo_img = $bdetail->busi_logo;
 
 
-        $images = imagecreatefrompng(public_path('/').'images1.png'); 
+        $images = imagecreatefrompng(public_path('/').'images1.png');
 
-        $image_width = imagesx($images);  
+        $image_width = imagesx($images);
 
         $image_height = imagesy($images);
 
@@ -3561,7 +3561,7 @@ class UserapiControllerV10 extends Controller
 
         // company name
 
-         
+
 
         if($company_name!='')
 
@@ -3589,12 +3589,12 @@ class UserapiControllerV10 extends Controller
             if(!$second){
                 return response()->json(['status' => false,'message'=>"Not valid png" ]);
             }
-            //$x = ceil((1000 - $second[5]) / 2); 
+            //$x = ceil((1000 - $second[5]) / 2);
             imagecopyresized($images,$second,750,$image_height-500,0,0, 468, 356, 468, 356);
-        }   
+        }
 
 
-        
+
 
         // mobile no
 
@@ -3677,24 +3677,24 @@ class UserapiControllerV10 extends Controller
         $tempname = 'images/'.rand().'.png';
         $name = public_path('/').$tempname;
 
-        //header('Content-type: image/png');   
+        //header('Content-type: image/png');
 
-        imagepng($images,$name); 
+        imagepng($images,$name);
 
-        //imagepng($images); 
+        //imagepng($images);
 
-        imagedestroy($images); 
-        
+        imagedestroy($images);
+
        // echo json_encode($item);
         $data = URL('/public').'/'.$tempname;
         array_push($item, $data);
-        
+
          return response()->json(['data' => $item,'status' => true,'message'=>"Image Genetares" ]);
     }
 
     public function getAllVideoPosts(Request $request)
     {
-        $input = $request->all(); 
+        $input = $request->all();
         $user_id = $this->get_userid($input['token']);
         if($user_id == 0){
             return response()->json(['status'=>false,'message'=>'user not valid']);
@@ -3706,14 +3706,14 @@ class UserapiControllerV10 extends Controller
         $festivals = DB::table('video_data')->where('video_type','=','festival')->whereDate('video_date', '>=', $currnt_date)->where('video_is_delete',0)->orderBy('video_date','asc')->offset(0)->limit(10)->get();
 
         $incidents = DB::table('video_data')->where('video_type','=','incident')->where('video_is_delete','=',0)->get();
-        
+
         $data_festival = array();
         $data_incident = array();
 
-        foreach ($festivals as $key => $festival) 
+        foreach ($festivals as $key => $festival)
         {
             $data = array();
-            
+
             $data['id'] = strval($festival->video_id);
             $data['video_name'] = !empty($festival->video_name)?$festival->video_name:"";
             $data['video_date'] = !empty($festival->video_date)? date('d-m-Y',strtotime($festival->video_date)):"";
@@ -3724,10 +3724,10 @@ class UserapiControllerV10 extends Controller
 
         }
 
-        foreach ($incidents as $key => $incident) 
+        foreach ($incidents as $key => $incident)
         {
             $data = array();
-            
+
             $data['id'] = strval($incident->video_id);
             $data['video_name'] = !empty($incident->video_name)?$incident->video_name:"";
             $data['video_date'] = !empty($incident->video_date)?date('d-m-Y',strtotime($incident->video_date)):"";
@@ -3741,7 +3741,7 @@ class UserapiControllerV10 extends Controller
         {
             return response()->json(['festival' =>$data_festival,'category' =>$data_incident,'status' => true,'message'=>"Video List Successfully" ]);
         }
-        
+
         else
         {
             return response()->json(['status' => false,'message'=>"Video Not Found" ]);
@@ -3751,7 +3751,7 @@ class UserapiControllerV10 extends Controller
 
     public function getAdvetisement(Request $request)
     {
-        $input = $request->all(); 
+        $input = $request->all();
         $user_id = $this->get_userid($input['token']);
         if($user_id == 0){
             return response()->json(['status'=>false,'message'=>'user not valid']);
@@ -3760,7 +3760,7 @@ class UserapiControllerV10 extends Controller
         $adv_datas = DB::table('advetisement')->where('is_delete','=',0)->get();
         $advetisement = array();
 
-        foreach ($adv_datas as $key => $value) 
+        foreach ($adv_datas as $key => $value)
         {
             $data = array();
             $data['id'] = strval($value->id);
@@ -3770,7 +3770,7 @@ class UserapiControllerV10 extends Controller
 
             array_push($advetisement, $data);
         }
-        if (count($adv_datas) != 0) 
+        if (count($adv_datas) != 0)
         {
             return response()->json(['data' =>$advetisement,'status' => true,'message'=>"Advetisement List Successfully" ]);
         }
@@ -3784,7 +3784,7 @@ class UserapiControllerV10 extends Controller
 
     public function getLanguage(Request $request)
     {
-        $input = $request->all(); 
+        $input = $request->all();
         $user_id = $this->get_userid($input['token']);
         if($user_id == 0){
             return response()->json(['status'=>false,'message'=>'user not valid']);
@@ -3795,7 +3795,7 @@ class UserapiControllerV10 extends Controller
 
         $language = array();
 
-        foreach ($languages as $key => $value) 
+        foreach ($languages as $key => $value)
         {
             $data = array();
             $data['id'] = strval($value->id);
@@ -3808,19 +3808,19 @@ class UserapiControllerV10 extends Controller
         {
             return response()->json(['data' =>$language,'status' => true,'message'=>"Language List Successfully" ]);
         }
-        
+
         else
         {
             return response()->json(['status' => false,'message'=>"Language Not Found" ]);
 
         }
 
-        
+
     }
 
     public function getLanguageVideo(Request $request)
     {
-        $input = $request->all(); 
+        $input = $request->all();
         $videoid = $input['videoid'];
         $language_id = $input['languageid'];
         $languageid = explode(',', $language_id);
@@ -3842,7 +3842,7 @@ class UserapiControllerV10 extends Controller
         $sub_category_id = $input['sub_category_id'];
 
         //dd($languageid);
-        if (in_array(0, $languageid)) 
+        if (in_array(0, $languageid))
         {
             if($user_language != null )
             {
@@ -3882,9 +3882,9 @@ class UserapiControllerV10 extends Controller
             array_push($language_id_array, $id->language_id);
         }
         $language_id_array = array_unique($language_id_array, SORT_REGULAR);
-        
+
         $videos = array();
-        foreach ($video as $key => $value) 
+        foreach ($video as $key => $value)
         {
             $data = array();
 
@@ -3902,7 +3902,7 @@ class UserapiControllerV10 extends Controller
             array_push($videos, $data);
         }
 
-        if (in_array(0, $languageid)) 
+        if (in_array(0, $languageid))
         {
             if($user_language != null )
             {
@@ -3939,7 +3939,7 @@ class UserapiControllerV10 extends Controller
 
         $language = array();
 
-        foreach ($languages as $key => $value) 
+        foreach ($languages as $key => $value)
         {
             $data = array();
             $data['id'] = strval($value->id);
@@ -3963,7 +3963,7 @@ class UserapiControllerV10 extends Controller
         // {
             return response()->json(['categories' => $categories, 'data' =>$videos, 'meta'=>$meta, 'language'=>$language, 'status' => true,'message'=>"Video List Successfully" ]);
         // }
-        
+
         // else
         // {
         //     return response()->json(['status' => false,'message'=>"Video Not Found" ]);
@@ -3974,7 +3974,7 @@ class UserapiControllerV10 extends Controller
 
     public function getLanguagePost(Request $request)
     {
-        $input = $request->all(); 
+        $input = $request->all();
         $postid = $input['postid'];
         $language_id = $input['languageid'];
         $languageid = explode(',', $language_id);
@@ -3990,9 +3990,9 @@ class UserapiControllerV10 extends Controller
 
         $user_language = User::where('id',$user_id)->value('user_language');
         //$user_language = !empty($user_language) ? explode(',',$user_language) : array();
-        
+
         //dd($languageid);
-        if (in_array(0, $languageid)) 
+        if (in_array(0, $languageid))
         {
             if($user_language != null)
             {
@@ -4008,14 +4008,14 @@ class UserapiControllerV10 extends Controller
         else
         {
             $post = Post::where('post_category_id','=',$postid)->whereIn('language_id',$languageid)->where('post_is_deleted','=',0)->take($transactionLimit)->skip($offset)->get();
-            
+
         }
-        
+
         $posts = array();
-        foreach ($post as $key => $value) 
+        foreach ($post as $key => $value)
         {
             $data = array();
-            
+
             $data['id'] = strval($value->post_id);
             $data['image'] = !empty($value->post_content) ? Storage::url($value->post_content):"";
             $data['image_thumbnail_url'] = !empty($value->post_thumb) ? Storage::url($value->post_thumb) : Storage::url($value->post_content);
@@ -4023,7 +4023,7 @@ class UserapiControllerV10 extends Controller
             array_push($posts, $data);
         }
 
-        if (in_array(0, $languageid)) 
+        if (in_array(0, $languageid))
         {
             if($user_language != null)
             {
@@ -4058,7 +4058,7 @@ class UserapiControllerV10 extends Controller
         {
             return response()->json(['data' =>$posts, 'meta'=>$meta, 'status' => true,'message'=>"post List Successfully" ]);
         }
-        
+
         else
         {
             return response()->json(['status' => false,'message'=>"post Not Found" ]);
@@ -4070,7 +4070,7 @@ class UserapiControllerV10 extends Controller
     public function getCustomCategoryPosts(Request $request)
     {
 
-        $input = $request->all(); 
+        $input = $request->all();
         $user_id = $this->get_userid($input['token']);
         if($user_id == 0){
             return response()->json(['status'=>false,'message'=>'user not valid']);
@@ -4081,7 +4081,7 @@ class UserapiControllerV10 extends Controller
         foreach ($new_category_data_greetings as $greeting) {
 
             $photo = DB::table('custom_cateogry_data')->where('custom_cateogry_id','=',$greeting->custom_cateogry_id)->where('is_delete','=',0)->orderBy('image_type','ASC')->orderBy('custom_cateogry_data_id','DESC')->limit(10)->get();
-            
+
             $temp1['id'] = $greeting->custom_cateogry_id;
             $temp1['title'] = $greeting->name;
             // $temp1['type'] = $greeting[$i]['new_cat'];
@@ -4101,13 +4101,13 @@ class UserapiControllerV10 extends Controller
                 $data_ph1['images']['img_width'] = $ph_value->img_width;
                 array_push($temp1['img_url'],$data_ph1);
             }
-            
+
             array_push($new_category_data_greetingsArray,$temp1);
         }
 
         $onlycat = DB::table('custom_cateogry')->where('is_active', 1)->whereIn('highlight', array(2,3))->orderBy('slider_img_position','ASC')->get();
 
-        
+
         $finalarry = array();
 
         $slider = array();
@@ -4118,7 +4118,7 @@ class UserapiControllerV10 extends Controller
             $temp['custom_cateogry_id'] = strval($value->custom_cateogry_id);
             $temp['name'] = !empty($value->name)?$value->name:"";
             $temp['custom_image'] = !empty($value->slider_img)?Storage::url($value->slider_img):"";
-            
+
             array_push($finalarry,$temp);
             $slide = array();
             $slide['custom_cateogry_id'] = $value->custom_cateogry_id;
@@ -4130,14 +4130,14 @@ class UserapiControllerV10 extends Controller
 
         $onlycat = DB::table('custom_cateogry')->where('is_active', 1)->whereIn('highlight', array(0,1))->orderBy('slider_img_position','ASC')->get();
 
-        
+
         foreach ($onlycat as $value) {
             $temp = array();
             // $banner_img = '';
             $temp['custom_cateogry_id'] = strval($value->custom_cateogry_id);
             $temp['name'] = !empty($value->name)?$value->name:"";
             $temp['custom_image'] = !empty($value->slider_img)?Storage::url($value->slider_img):"";
-            
+
             array_push($finalarry,$temp);
             $slide = array();
             $slide['custom_cateogry_id'] = $value->custom_cateogry_id;
@@ -4152,7 +4152,7 @@ class UserapiControllerV10 extends Controller
 
     public function getLanguageCustomeCategoryPost(Request $request)
     {
-        $input = $request->all(); 
+        $input = $request->all();
         $catid = $input['catid'];
         $language_id = $input['languageid'];
         $languageid = explode(',', $language_id);
@@ -4175,7 +4175,7 @@ class UserapiControllerV10 extends Controller
         $categories = CustomSubCategory::whereIn('id', $categoriesIds)->where('custom_category_id', $catid)->where('is_delete', 0)->get();
 
         //dd($languageid);
-        if (in_array(0, $languageid)) 
+        if (in_array(0, $languageid))
         {
             if($user_language != null)
             {
@@ -4216,9 +4216,9 @@ class UserapiControllerV10 extends Controller
         }
         $language_id_array = array_unique($language_id_array, SORT_REGULAR);
 
-       
+
         $cats = array();
-        foreach ($cat as $key => $value) 
+        foreach ($cat as $key => $value)
         {
             $data = array();
 
@@ -4235,7 +4235,7 @@ class UserapiControllerV10 extends Controller
             array_push($cats, $data);
         }
 
-        if (in_array(0, $languageid)) 
+        if (in_array(0, $languageid))
         {
             if($user_language != null)
             {
@@ -4270,10 +4270,10 @@ class UserapiControllerV10 extends Controller
 
         $language = array();
         if(!empty($language_id_array)){
-          
+
             $languages = Language::where('is_delete','=',0)->whereIn('id',$language_id_array)->get();
 
-            foreach ($languages as $key => $value) 
+            foreach ($languages as $key => $value)
             {
                 $data = array();
                 $data['id'] = strval($value->id);
@@ -4298,7 +4298,7 @@ class UserapiControllerV10 extends Controller
         // {
             return response()->json(['categories' => $categories, 'data' => $cats, 'meta'=>$meta, 'language'=>$language, 'status' => true,'message'=>"Custome Category Post List Successfully" ]);
         // }
-        
+
         // else
         // {
         //     return response()->json(['status' => false, 'language'=>$language,'message'=>"Custome Category Post Not Found" ]);
@@ -4320,12 +4320,12 @@ class UserapiControllerV10 extends Controller
             $date = str_replace('/', '-', $input['date']);
             $date = date('Y-m-d',strtotime($date));
 
-        
+
             $videos = VideoData::where('video_date', '=', $date)->where('video_type','=','festival')->where('video_is_delete','=',0)->get()->toArray();
         } else {
-            
+
             $videos1 = VideoData::where('video_date', '>=', date('Y-m-d'))->where('video_type','=','festival')->where('video_is_delete','=',0)->get()->toArray();
-            
+
             $videos2 = VideoData::where('video_date', '<', date('Y-m-d'))->where('video_type','=','festival')->where('video_is_delete','=',0)->get()->toArray();
             //dd($videos1);
             $videos = array_merge($videos1,$videos2);
@@ -4336,7 +4336,7 @@ class UserapiControllerV10 extends Controller
         //dd($videos);
         $video = array();
         $data_video = array();
-        for ($i=0; $i < sizeof($videos); $i++) { 
+        for ($i=0; $i < sizeof($videos); $i++) {
             $videos[$i]['video_date'] = date("d-m-Y", strtotime($videos[$i]['video_date']));
             $data_video['video_id'] = strval($videos[$i]['video_id']);
             $data_video['video_name'] = !empty($videos[$i]['video_name'])?$videos[$i]['video_name']:"";
@@ -4346,7 +4346,7 @@ class UserapiControllerV10 extends Controller
             array_push($video, $data_video);
         }
 
-        
+
         $olddate = array();
         $newdate = array();
         $current = date('d-m-Y');
@@ -4357,7 +4357,7 @@ class UserapiControllerV10 extends Controller
                 array_push($olddate,$fest);
             }
         }
-       
+
 
         usort($newdate, function($a, $b){
             return strtotime($a['video_date']) <=> strtotime($b['video_date']);
@@ -4368,15 +4368,15 @@ class UserapiControllerV10 extends Controller
         usort($olddate, function($a, $b){
             return strtotime($a['video_date']) <=> strtotime($b['video_date']);
         });
-        
+
 
         $finalarr = array_merge($newdate,array_reverse($olddate));
 
-        
 
-            
+
+
         if(!empty($videos)){
-          
+
            return response()->json(['video' => $finalarr, 'status' => true,'message'=>'List of all video','current_date' => $currnt_date,]);
         } else {
             return response()->json(['status' => false,'message'=>'There is no video on this date','current_date' => $currnt_date]);
@@ -4394,7 +4394,7 @@ class UserapiControllerV10 extends Controller
         })->where('plan_id','!=',3)->orderBy('order_no','asc')->get();
         $plan = array();
 
-        foreach ($plans as $key => $value) 
+        foreach ($plans as $key => $value)
         {
             $data['id'] = strval($value->plan_id);
             $data['plan_type'] = !empty($value->plan_type)?$value->plan_type:"";
@@ -4406,7 +4406,7 @@ class UserapiControllerV10 extends Controller
             $data['image'] = !empty($value->image)?Storage::url($value->image):"";
             array_push($plan, $data);
         }
-         return response()->json(['data'=> $plan, 'status'=>true,'message'=>'List of Plan']); 
+         return response()->json(['data'=> $plan, 'status'=>true,'message'=>'List of Plan']);
     }
 
     public function getBusinessCategoryImages(Request $request)
@@ -4482,7 +4482,7 @@ class UserapiControllerV10 extends Controller
         $language_id_array = array_unique($language_id_array, SORT_REGULAR);
 
         $buss_images = array();
-            foreach ($images as $img_key => $img_value) 
+            foreach ($images as $img_key => $img_value)
             {
                 if($type == "image") {
                     $img_data['image_id'] = strval($img_value->id);
@@ -4538,7 +4538,7 @@ class UserapiControllerV10 extends Controller
             if(!empty($language_id_array)){
                 $languages = Language::where('is_delete','=',0)->whereIn('id',$language_id_array)->get();
 
-                foreach ($languages as $key => $value) 
+                foreach ($languages as $key => $value)
                 {
                     $data = array();
                     $data['id'] = strval($value->id);
@@ -4576,7 +4576,7 @@ class UserapiControllerV10 extends Controller
     public function CurrntbusinessPhoto(Request $request)
     {
         $input = $request->all();
-       
+
         $user_id = $this->get_userid($input['token']);
         if($user_id == 0){
             return response()->json(['status'=>false,'message'=>'user not valid']);
@@ -4621,14 +4621,14 @@ class UserapiControllerV10 extends Controller
             else
             {
                 if($sub_category_id == 0) {
-                    $currntbusiness_photo = DB::table('business_category_post_data')->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get(); 
+                    $currntbusiness_photo = DB::table('business_category_post_data')->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
                 }
                 else {
-                    $currntbusiness_photo = DB::table('business_category_post_data')->where('business_sub_category_id', $sub_category_id)->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get(); 
+                    $currntbusiness_photo = DB::table('business_category_post_data')->where('business_sub_category_id', $sub_category_id)->where('post_type', $type)->where('buss_cat_post_id','=',$request->busi_id)->where('is_deleted','=',0)->where('festival_id', 0)->orderBy('image_type','ASC')->orderBy('id','DESC')->take($transactionLimit)->skip($offset)->get();
                 }
-            }   
+            }
 
-            
+
         }
         else
         {
@@ -4652,9 +4652,9 @@ class UserapiControllerV10 extends Controller
         }
         $language_id_array = array_unique($language_id_array, SORT_REGULAR);
 
-       
+
             $images = array();
-            foreach ($currntbusiness_photo as $img_key => $img_value) 
+            foreach ($currntbusiness_photo as $img_key => $img_value)
             {
                 if($type == "image") {
                     $img_data['image_id'] = strval($img_value->id);
@@ -4673,7 +4673,7 @@ class UserapiControllerV10 extends Controller
 
                 array_push( $images, $img_data);
             }
-            
+
             if (in_array(0, $languageid))
             {
                 if($user_language != null)
@@ -4709,14 +4709,14 @@ class UserapiControllerV10 extends Controller
 
             $language = array();
 
-            foreach ($languages as $key => $value) 
+            foreach ($languages as $key => $value)
             {
                 $data = array();
                 $data['id'] = strval($value->id);
                 $data['language'] = !empty($value->name)?$value->name:"";
                 array_push($language, $data);
             }
-        
+
             $next = true;
             if(count($currntbusiness_photo_next) == 0) {
                 $next = false;
@@ -4730,7 +4730,7 @@ class UserapiControllerV10 extends Controller
 
 
         // if(!empty($images)){
-          
+
            if($type == "image") {
                 return response()->json(['categories' => $categories, 'isVideoAvailable' => $isVideoAvailable, 'images' => $images, 'meta'=>$meta, 'language'=>$language, 'status' => true,'message'=>'List of all images']);
             }
@@ -4745,7 +4745,7 @@ class UserapiControllerV10 extends Controller
 
 
     }
-    
+
 
     public function newCategoryAllImage(Request $request)
     {
@@ -4756,29 +4756,29 @@ class UserapiControllerV10 extends Controller
         }
         /*$new_category_data = Festival::where('fest_type','=','incident')->where('fest_is_delete','=',0)->where('new_cat',1)->get();
             $new_category_dataArray = array();
-            for ($i=0; $i < sizeof($new_category_data); $i++) { 
+            for ($i=0; $i < sizeof($new_category_data); $i++) {
                 $photo = Post::where('post_category_id','=',$new_category_data[$i]['fest_id'])->where('post_is_deleted','=',0)->select('post_content','post_id','post_category_id')->orderBy('post_id','DESC')->get();
-               
+
                 $temp['id'] = $new_category_data[$i]['fest_id'];
                 $temp['title'] = $new_category_data[$i]['fest_name'];
                 $temp['img_url'] = $photo;
-                
+
                 array_push($new_category_dataArray,$temp);
             }*/
                 $photo = Post::where('post_category_id','=',$request->category_id)->where('post_is_deleted','=',0)->select('post_content','post_id','image_type','post_category_id')->orderBy('post_id','DESC')->get();
 
         if(!empty($photo)){
-          
+
            return response()->json(['images' => $photo, 'status' => true,'message'=>'List of all images']);
         } else {
             return response()->json(['status' => false,'message'=>'There is no images']);
 
-        }       
+        }
     }
 
     public function getLanguageWithImage(Request $request)
     {
-        $input = $request->all(); 
+        $input = $request->all();
         $user_id = $this->get_userid($input['token']);
         if($user_id == 0){
             return response()->json(['status'=>false,'message'=>'user not valid']);
@@ -4789,7 +4789,7 @@ class UserapiControllerV10 extends Controller
 
         $language = array();
 
-        foreach ($languages as $key => $value) 
+        foreach ($languages as $key => $value)
         {
             $data = array();
             $data['id'] = strval($value->id);
@@ -4803,24 +4803,24 @@ class UserapiControllerV10 extends Controller
         {
             return response()->json(['data' =>$language,'status' => true,'message'=>"Language List Successfully" ]);
         }
-        
+
         else
         {
             return response()->json(['status' => false,'message'=>"Language Not Found" ]);
 
         }
 
-        
+
     }
 
     public function SetUserLanguage(Request $request)
     {
-        $input = $request->all(); 
+        $input = $request->all();
         $user_id = $this->get_userid($input['token']);
         if($user_id == 0){
             return response()->json(['status'=>false,'message'=>'user not valid']);
         }
-        
+
         User::where('id',$user_id)->update(['user_language'=>$request->language]);
 
         if(!empty($request->language))
@@ -4831,7 +4831,7 @@ class UserapiControllerV10 extends Controller
         {
             return response()->json(['status' => false,'message'=>"Something Went Wrong. Language Not Set." ]);
         }
-        
+
     }
 
     // -------------------- Political Business
@@ -4867,13 +4867,13 @@ class UserapiControllerV10 extends Controller
         $mobile = $input['mobile'];
         $pb_mobile_second = (isset($input['mobile_second'])) ? $input['mobile_second'] : '';
         $party_id = $input['party_id'];
-        
-        
+
+
         $logo = $request->file('party_logo');
         $watermark = $request->file('watermark');
         $left_image = $request->file('left_image');
         $right_image = $request->file('right_image');
-        
+
         $facebook = isset($input['facebook']) ? $input['facebook'] : "";
         $twitter =  isset($input['twitter']) ? $input['twitter'] : "";
         $instagram =  isset($input['instagram']) ? $input['instagram'] : "";
@@ -4895,13 +4895,13 @@ class UserapiControllerV10 extends Controller
 
         if($left_image != null){
             $left_image_path  =  $this->uploadFile($request, null,"left_image", 'political-business-img');
-        } 
+        }
 
         if($right_image != null){
             $right_image_path  =  $this->uploadFile($request, null,"right_image", 'political-business-img');
         }
 
-        
+
         $business = new PoliticalBusiness();
         $business->pb_name = $name;
         $business->user_id = $user_id;
@@ -4919,13 +4919,13 @@ class UserapiControllerV10 extends Controller
         $business->pb_linkedin = $linkedin;
         $business->pb_youtube = $youtube;
         $business->save();
-        
-        $business_id = $business->id;
+
+        $business_id = $business->pb_id;
 
         $start_date = date('Y-m-d');
 
         // $end_date = date('Y-m-d', strtotime($start_date. ' + 3 days'));
-        
+
 
         $purchase = new Purchase();
         $purchase->purc_user_id = $user_id;
@@ -4934,9 +4934,9 @@ class UserapiControllerV10 extends Controller
         $purchase->purc_start_date = $start_date;
         $purchase->purc_business_type = 2;
         $purchase->save();
-        
+
         $userdata = User::where('id','=',$user_id)->select('default_political_business_id')->first();
-        
+
         if($userdata->default_political_business_id == 0 || $userdata->default_political_business_id == ''){
             User::where('id', $user_id)->update(array(
                 'default_political_business_id' => $business_id,
@@ -4962,12 +4962,12 @@ class UserapiControllerV10 extends Controller
         $mobile = $input['mobile'];
         $pb_mobile_second = (isset($input['mobile_second'])) ? $input['mobile_second'] : '';
         $party_id = $input['party_id'];
-        
+
         $logo = $request->file('party_logo');
         $watermark = $request->file('watermark');
         $left_image = $request->file('left_image');
         $right_image = $request->file('right_image');
-        
+
         $facebook = $input['facebook'];
         $twitter = $input['twitter'];
         $instagram = $input['instagram'];
@@ -4996,7 +4996,7 @@ class UserapiControllerV10 extends Controller
         } else {
             $left_image_path = $getBusiness->pb_left_image;
         }
- 
+
         if($right_image != null){
             $right_image_path  =  $this->uploadFile($request, null,"right_image", 'political-business-img');
         } else {
@@ -5024,7 +5024,7 @@ class UserapiControllerV10 extends Controller
         //     ]);
         // }
 
-        
+
         // $business = PoliticalBusiness::where('pb_id','=',$input['id'])->update([
         // // 'pb_name' => $name;
         // 'user_id' => $user_id,
@@ -5074,7 +5074,7 @@ class UserapiControllerV10 extends Controller
                 ]);
             }
 
-            
+
             $business = PoliticalBusiness::where('pb_id','=',$input['id'])->update([
             // 'pb_name' => $name;
             'user_id' => $user_id,
@@ -5118,7 +5118,7 @@ class UserapiControllerV10 extends Controller
             ]);
             return response()->json(['status'=>true,'message'=>'Business information update']);
         }
-        
+
     }
 
     public function getmyAllPoliticalBusinessList(Request $request){
@@ -5133,7 +5133,7 @@ class UserapiControllerV10 extends Controller
         $businessList = DB::table('political_business')->leftJoin('political_category','political_category.pc_id','=','political_business.pb_pc_id')->leftJoin('purchase_plan','purchase_plan.purc_business_id','=','political_business.pb_id')->leftJoin('plan','plan.plan_id','=','purchase_plan.purc_plan_id')->where('user_id','=',$user_id)->where('pb_is_deleted','=',0)->where('purchase_plan.purc_business_type','=',2)->get();
 
         $defaultBusinessId = User::where('id','=',$user_id)->select('default_political_business_id')->first();
-        
+
 
         foreach($businessList as &$business){
             $business->pb_party_logo = ($business->pb_party_logo) ? Storage::url($business->pb_party_logo) : '';
@@ -5174,7 +5174,7 @@ class UserapiControllerV10 extends Controller
         }
 
         return response()->json(['status' => true,'message'=>"business list retrived Successfully",'business_list'=>$businessList ]);
-        
+
     }
 
     public function removePoliticalBusiness(Request $request){
@@ -5203,7 +5203,7 @@ class UserapiControllerV10 extends Controller
         }
         if($user_data->default_political_business_id == $input['id']) {
             $currntbusiness = Business::where('user_id','=',$user_id)->where('busi_delete','=',0)->select('busi_id')->first();
-                
+
             if(!empty($currntbusiness) || !is_null($currntbusiness)){
                 User::where('id', $user_id)->update(array(
                     'default_business_id' => $currntbusiness->busi_id,
@@ -5238,7 +5238,7 @@ class UserapiControllerV10 extends Controller
         //         Storage::delete($pbal_party_logo);
         //         Storage::delete($pbal_right_image);
         //         DB::table('political_business_approval_list')->where('pb_id', '=', $input['id'])->delete();
-        //     }    
+        //     }
 
         // } else {
         //     return response()->json(['status'=>false,'message'=>'post you are looking for is not availabe']);
@@ -5249,40 +5249,40 @@ class UserapiControllerV10 extends Controller
     }
 
     public function markCurrentBusinessForPolitic(Request $request){
-        $input = $request->all(); 
+        $input = $request->all();
 
         $user_id = $this->get_userid($input['token']);
         if($user_id == 0){
             return response()->json(['status'=>false,'message'=>'user not valid']);
         }
-        
+
         $business_id = $input['business_id'];
-        
+
         User::where('id', $user_id)->update(array(
             'default_political_business_id' => $business_id,
         ));
         $user_data = User::find($user_id);
         $frameList = DB::table('user_frames')->where('user_id','=',$user_id)->where('business_id','=',$user_data->default_business_id)->where('is_deleted','=',0)->where('business_type','=',2)->orderBy('user_frames_id','DESC')->get();
-        
+
         $frameLists = array();
-        
+
         if(!empty($frameList)){
-            foreach ($frameList as $key => $value) 
+            foreach ($frameList as $key => $value)
             {
                 $data = array();
-                
+
                 $data['business_id'] = strval($value->business_id);
                 $data['date_added'] = !empty($value->date_added)?$value->date_added:"";
                 $data['frame_url'] = !empty($value->frame_url)?Storage::url($value->frame_url):"";
                 $data['user_frames_id'] = strval($value->user_frames_id);
                 $data['user_id'] = strval($value->user_id);
-                
+
                 array_push($frameLists, $data);
-                
+
             }
         }
-        
-        
+
+
         $updatedCurrentBusinessDetails = $this->getPoliticalCurrentBusiness($user_data->default_political_business_id, $user_id);
         $retrunData;
         if($updatedCurrentBusinessDetails[0]){
@@ -5301,14 +5301,14 @@ class UserapiControllerV10 extends Controller
         $ispreminum = false;
         if($currntbusiness != null || !empty($currntbusiness) || $currntbusiness != ''){
             $priminum = Purchase::where('purc_business_id','=',$political_business_id)->where('purc_business_type','=',2)->select('purc_id','purc_plan_id','purc_start_date','purc_end_date')->first();
-            
+
             if(!empty($priminum) || $priminum != null || $priminum != ''){
                 $start_dates = date('Y-m-d');
                 if($priminum->purc_plan_id != 3){
                     // $plantrial = Plan::where('plan_sku','=','000FREESKU')->select('plan_validity')->first();
                     $plantrial = Plan::where('plan_id','=',$priminum->purc_plan_id)->select('plan_validity')->first();
-                    $start_date = strtotime($start_dates); 
-                    $end_date = strtotime($priminum->end_date); 
+                    $start_date = strtotime($start_dates);
+                    $end_date = strtotime($priminum->end_date);
                     $days = ($end_date - $start_date)/60/60/24;
                     if($days > $plantrial->plan_validity && $days > 0){
                         $ispreminum = false;
@@ -5319,15 +5319,15 @@ class UserapiControllerV10 extends Controller
                     $ispreminum = false;
                 }
                 // if($priminum->purc_plan_id == 3){
-                   
+
                 //      $ispreminum = false;
-                        
+
                 // }
-                
+
                 // if($priminum->purc_plan_id == 2){
                 //     $ispreminum = true;
                 // }
-                 
+
             } else{
                 $ispreminum = false;
             }
@@ -5354,20 +5354,20 @@ class UserapiControllerV10 extends Controller
 
             $p_plan = Purchase::where('purc_user_id',$user_id)->where('purc_business_id',$political_business_id)->where('purc_business_type','=',2)->get();
             $plan_name = "";
-            if (count($p_plan) != 0) 
+            if (count($p_plan) != 0)
             {
-                foreach ($p_plan as $key => $value) 
+                foreach ($p_plan as $key => $value)
                 {
-                    if ($value->purc_is_cencal == 0 && $value->purc_is_expire == 0) 
+                    if ($value->purc_is_cencal == 0 && $value->purc_is_expire == 0)
                     {
 
-                    //    if ($value->purc_plan_id == 2) 
-                       if ($value->purc_plan_id != 3) 
+                    //    if ($value->purc_plan_id == 2)
+                       if ($value->purc_plan_id != 3)
                        {
                            $plan_name = 'Premium';
                            $updatedCurrentBusinessDetails['status'] = 1;
                        }
-                       elseif ($value->purc_plan_id == 3) 
+                       elseif ($value->purc_plan_id == 3)
                        {
                            $plan_name = 'Free';
                            $updatedCurrentBusinessDetails['status'] = 0;
@@ -5410,14 +5410,14 @@ class UserapiControllerV10 extends Controller
         $category = array();
 
         $keyval = 0;
-        foreach ($category_data as $key => $value) 
+        foreach ($category_data as $key => $value)
         {
-            $data = array();    
+            $data = array();
             $data['id'] = strval($value->id);
             $data['category_name'] = !empty($value->name)?$value->name:"";
             $data['image'] = !empty($value->image)? Storage::url($value->image):"";
             array_push($category,$data);
-            
+
         }
 
         return response()->json(['business_category'=>$category]);
@@ -5559,7 +5559,7 @@ class UserapiControllerV10 extends Controller
             foreach($tmp as $t){
                 array_push($post->sp_social_type,$t->social_media_type);
             }
-            
+
             if($post->sp_media_type == 1){
                 array_push($finalArray['images'],$post);
             } else {
@@ -5636,7 +5636,7 @@ class UserapiControllerV10 extends Controller
             ]);
         }
 
-        return response()->json(['status' => true,'message'=>"Post Schedule added Successfully" ]); 
+        return response()->json(['status' => true,'message'=>"Post Schedule added Successfully" ]);
     }
 
     public function reSchedulePost(Request $request) {
@@ -5843,5 +5843,5 @@ class UserapiControllerV10 extends Controller
 
         return response()->json(['status' => true,'message'=>"Schedule post history fetched Successfully",'data'=>$posts , 'meta' => $meta]);
     }
-    
+
 }

@@ -51,12 +51,10 @@
                             <th>Mobile</th>
                             <th>Category</th>
                             <th>Logo</th>
-                            <th>Logo Dark</th>
                             <th>Watermark</th>
-                            <th>Watermark Dark</th>
                             <th>Left Image</th>
                             <th>Right Image</th>
-                            <th>Premium</th>
+                            <th style="width: 1000px; !important">Premium</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -92,9 +90,7 @@ function getBusinessList() {
             {data: 'pb_mobile', name: 'pb_mobile'},
             {data: 'category.pc_name', name: 'category.pc_name'},
             {data: 'pb_party_logo', name: 'pb_party_logo'},
-            {data: 'pb_party_logo_dark', name: 'pb_party_logo_dark'},
             {data: 'pb_watermark', name: 'pb_watermark'},
-            {data: 'pb_watermark_dark', name: 'pb_watermark_dark'},
             {data: 'pb_left_image', name: 'pb_left_image'},
             {data: 'pb_right_image', name: 'pb_right_image'},
             {data: 'is_premium', name: 'is_premium', orderable: false, searchable: false},

@@ -429,8 +429,6 @@
                             <th>Category</th>
                             <th>Logo</th>
                             <th>Watermark</th>
-                            <th>Logo Dark</th>
-                            <th>Watermark Dark</th>
                             <th>Premium</th>
                             <th>Action</th>
                         </tr>
@@ -463,8 +461,6 @@
                             <th>Category</th>
                             <th>Logo</th>
                             <th>Watermark</th>
-                            <th>Logo Dark</th>
-                            <th>Watermark Dark</th>
                             <th>Left Image</th>
                             <th>Right Image</th>
                             <th>Premium</th>
@@ -862,7 +858,7 @@ function getFrameLists() {
 function deleteFrame(ele){
 
     var id = $(ele).data('id');
-   
+
     swal({
         title: 'Are you sure?',
         text: "Reject this request!",
@@ -930,8 +926,6 @@ function getBusinessList() {
             {data: 'business_category', name: 'business_category'},
             {data: 'busi_logo', name: 'busi_logo'},
             {data: 'watermark_image', name: 'watermark_image'},
-            {data: 'busi_logo_dark', name: 'busi_logo_dark'},
-            {data: 'watermark_image_dark', name: 'watermark_image_dark'},
             {data: 'is_premium', name: 'is_premium', orderable: false, searchable: false},
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ],
@@ -952,8 +946,6 @@ function getPoliticalBusinessList() {
             {data: 'category.pc_name', name: 'category.pc_name'},
             {data: 'pb_party_logo', name: 'pb_party_logo'},
             {data: 'pb_watermark', name: 'pb_watermark'},
-            {data: 'pb_party_logo_dark', name: 'pb_party_logo_dark'},
-            {data: 'pb_watermark_dark', name: 'pb_watermark_dark'},
             {data: 'pb_left_image', name: 'pb_left_image'},
             {data: 'pb_right_image', name: 'pb_right_image'},
             {data: 'is_premium', name: 'is_premium', orderable: false, searchable: false},

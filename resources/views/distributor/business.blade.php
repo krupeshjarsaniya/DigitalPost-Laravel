@@ -54,7 +54,7 @@
                             <th>Watermark</th>
                             <th>Logo Dark</th>
                             <th>Watermark Dark</th>
-                            <th>Premium</th>
+                            <th style="width: 1000px;">Premium</th>
                             <th>Action</th>
                         </tr>
                     </thead>

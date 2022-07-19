@@ -547,7 +547,7 @@ class UserapiControllerV13IOS extends Controller
             $business->busi_youtube = $youtube;
             $business->save();
 
-            $business_id = $business->id;
+            $business_id = $business->busi_id;
 
             $start_date = date('Y-m-d');
 
@@ -5133,7 +5133,7 @@ class UserapiControllerV13IOS extends Controller
         $business->pb_youtube = $youtube;
         $business->save();
 
-        $business_id = $business->id;
+        $business_id = $business->pb_id;
 
         $start_date = date('Y-m-d');
 

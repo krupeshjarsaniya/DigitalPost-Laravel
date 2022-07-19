@@ -11,6 +11,7 @@ use App\DistributorTransaction;
 use App\Purchase;
 use App\PoliticalBusiness;
 use App\PoliticalCategory;
+use App\Plan;
 use DataTables;
 use Validator;
 use Carbon\Carbon;
@@ -92,7 +93,11 @@ class DistributorChannelController extends Controller
 
                 $checkPurchase = Purchase::where('purc_business_type', 1)->where('purc_business_id', $row->busi_id)->where('purc_plan_id', '!=', 3)->first();
                 if (!empty($checkPurchase)) {
-                    $is_premium = "<span class='badge badge-success'>true</span>";
+                    $plan = Plan::where('plan_id', $checkPurchase->purc_plan_id)->first();
+                    $is_premium = "<span class='badge badge-success'>true</span><br />";
+                    $is_premium .= "<span >Plan: ".$plan->plan_or_name."</span><br />";
+                    $is_premium .= "<span >Active Date: ".$checkPurchase->purc_start_date."</span><br />";
+                    $is_premium .= "<span >Expiry Date: ".$checkPurchase->purc_end_date."</span><br />";
                 }
                 return $is_premium;
             })
@@ -165,7 +170,11 @@ class DistributorChannelController extends Controller
 
                 $checkPurchase = Purchase::where('purc_business_type', 2)->where('purc_business_id', $row->pb_id)->where('purc_plan_id', '!=', 3)->first();
                 if (!empty($checkPurchase)) {
-                    $is_premium = "<span class='badge badge-success'>true</span>";
+                    $plan = Plan::where('plan_id', $checkPurchase->purc_plan_id)->first();
+                    $is_premium = "<span class='badge badge-success'>true</span><br />";
+                    $is_premium .= "<span >Plan: ".$plan->plan_or_name."</span><br />";
+                    $is_premium .= "<span >Active Date: ".$checkPurchase->purc_start_date."</span><br />";
+                    $is_premium .= "<span >Expiry Date: ".$checkPurchase->purc_end_date."</span><br />";
                 }
                 return $is_premium;
             })
@@ -221,7 +230,7 @@ class DistributorChannelController extends Controller
 
                 return $businessType;
             })
-            
+
             ->editColumn('frame_url', function ($row) {
                 $image = "";
                 if (!empty($row->frame_url)) {
@@ -229,7 +238,7 @@ class DistributorChannelController extends Controller
                 }
                 return $image;
             })
-           
+
             ->addColumn('action', function ($row) {
                 $button = "";
                 $button .= '<button onclick="deleteFrame(this)" class="btn btn-xs btn-danger btn-edit mb-2" data-id="' . $row->user_frames_id . '">Delete</button>';
@@ -240,7 +249,7 @@ class DistributorChannelController extends Controller
     }
 
     public function deleteFrame(Request $request){
-       
+
         DB::table('user_frames')->where('user_frames_id', $request->id)->update(['is_deleted'=>1]);
         return response()->json(['status' => true, 'message' => "Delete Frame successfully"]);
     }
@@ -329,7 +338,7 @@ class DistributorChannelController extends Controller
                 Route::post('/getPoliticalBusiness', 'DistributorChannelController@getPoliticalBusiness')->name('distributor_channel.getPoliticalBusiness');
                 Route::post('/updatePoliticalBusiness', 'DistributorChannelController@updatePoliticalBusiness')->name('distributor_channel.updatePoliticalBusiness');
                 Route::get('/{id}', 'DistributorChannelController@view')->name('distributor_channel.view');
-            }); 
+            });
             $updateCategory->watermark_image_dark = $watermark_image_dark;
         }
 
@@ -687,14 +696,14 @@ class DistributorChannelController extends Controller
         return response()->json([
             'status' => true,
             'message' => "Frame Rejected successfully"
-          
+
         ]);
     }
 
     public function acceptFrame(Request $request){
 
         $data = DistributorBusinessFrame::where('id', $request->id)->first();
-        
+
         if(empty($data))
         {
             return response()->json([
@@ -713,18 +722,18 @@ class DistributorChannelController extends Controller
 
        DB::table('user_frames')->insert($dataArr);
        $data->delete();
-       
+
        return response()->json([
         'status' => true,
         'message' => "Frame Addes to Distributor Business",
         ]);
-      
+
     }
 
     public function frameList(Request $request)
     {
         $frame_requests = DistributorBusinessFrame::where('distributor_business_frames.status', 'PENDING')->with('distributor');
-       
+
         return DataTables::of($frame_requests)
             ->editColumn('frame_url', function ($frame_request) {
                 $image = "";
@@ -734,7 +743,7 @@ class DistributorChannelController extends Controller
                 return $image;
             })
             ->editColumn('business_name', function ($frame_request) {
-               
+
                 $business_name = "";
                 if($frame_request->business_type == 1)
                 {
@@ -762,7 +771,7 @@ class DistributorChannelController extends Controller
                     $btn .= '<button class="btn btn-primary btn-sm mr-2" onClick="acceptFrames(this)" data-id="' . $frame_request->id . '"  ">Accept</button>';
                     $btn .= '<button class="btn btn-danger btn-sm mr-2" onClick="changeStatus(this)"  data-id="' . $frame_request->id . '"">Reject</button>';
                     return $btn;
-                
+
             })
             ->rawColumns(['created_at', 'frame_url','action'])
             ->make(true);

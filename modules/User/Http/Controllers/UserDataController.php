@@ -764,7 +764,13 @@ class UserDataController extends Controller
 
     public function ListofBusinessApproval(){
 
-        $listofbusiness = DB::table('business')->where('busi_is_approved','=','0')->where('busi_delete','=','0')->join('business_new','business.busi_id','=','business_new.busi_id_old')->join('users','business.user_id','=','users.id')->orderBy('business_new.busi_id_new', 'ASC')->get()->toArray();
+        $listofbusiness = DB::table('business')
+        ->where('busi_is_approved','=','0')
+        ->where('busi_delete','=','0')
+        ->join('business_new','business.busi_id','=','business_new.busi_id_old')
+        ->join('users','business.user_id','=','users.id')
+        ->orderBy('business_new.busi_id_new', 'ASC')
+        ->get()->toArray();
 
         return view('user::approval',['businesses' => $listofbusiness]);
     }
@@ -2239,52 +2245,23 @@ class UserDataController extends Controller
 
     public function cencalPoliticalPurchasedPlan(Request $request){
 
-        // $user_id = PoliticalBusiness::where('pb_id','=',$request->id)->select('user_id')->first();
-        // $lastInsertedId = DB::table('purchase_plan')->where('purc_user_id','=',$user_id->user_id)->where('purc_business_id','=',$request->id)->where('purc_business_type','=',2)->select('purc_id')->first();
-        // $purchasebeforeedata = DB::table('purchase_plan')->where('purc_user_id','=',$user_id->user_id)->where('purc_business_id','=',$request->id)->where('purc_business_type','=',2)->first();
+        Purchase::where('purc_business_id', $request->id)->where('purc_business_type','=',2)->update(array(
+            'purc_plan_id' => 3,
+            'purc_end_date' => null,
+        ));
 
-            // $fromuserOrAdmin = 'FromAdmin';
-            // $adminOruser = 'admin';
+        if(isset($request->from) && $request->from == 'expire_plan_list'){
+            Purchase::where('purc_business_id', $request->id)->where('purc_business_type','=',2)->update(array(
+                'purc_is_expire' => 1, 'purc_tel_status' => 8,
+            ));
+        } else {
+            Purchase::where('purc_business_id', $request->id)->where('purc_business_type','=',2)->update(array(
+                'purc_is_cencal' => 1, 'purc_tel_status' => 8,
+            ));
+            $this->updateCencalDateInHistoryTable($request->id, 2);
+        }
 
-            // if(isset($request->from) && $request->from == 'expire_plan_list'){
-            //     $fromuserOrAdmin = 'FromUser';
-            //     $adminOruser = 'user';
-            // }
-
-            // $values = array(
-            //     'pph_purc_id' => (is_null($purchasebeforeedata)) ? $lastInsertedId->purc_id : $purchasebeforeedata->purc_id,
-            //     'pph_purc_user_id' => $user_id->user_id,
-            //     'pph_purc_order_id'=>  $fromuserOrAdmin,
-            //     'pph_purc_business_id'=>(is_null($purchasebeforeedata)) ? $business_id : $purchasebeforeedata->purc_business_id,
-            //     'pph_purc_business_type'=> 2,
-            //     'pph_purc_plan_id'=> (is_null($purchasebeforeedata)) ? $request->plan_id : $purchasebeforeedata->purc_plan_id,
-            //     'pph_purc_start_date' => (is_null($purchasebeforeedata)) ? $start_date : $purchasebeforeedata->purc_start_date,
-            //     'pph_purc_end_date' => (is_null($purchasebeforeedata)) ? $end_date : $purchasebeforeedata->purc_end_date,
-            //     'pph_purc_is_cencal' => (is_null($purchasebeforeedata)) ? 1 : $purchasebeforeedata->purc_is_cencal,
-            //     'pph_purc_is_expire' => (is_null($purchasebeforeedata)) ? 1 : $purchasebeforeedata->purc_is_expire,
-            //     'pph_purchase_id' =>  $adminOruser,
-            //     'pph_device' =>  $adminOruser
-            // );
-
-            // DB::table('purchase_plan_history')->insert($values);
-
-           Purchase::where('purc_business_id', $request->id)->where('purc_business_type','=',2)->update(array(
-               'purc_plan_id' => 3,
-               'purc_end_date' => null,
-           ));
-
-           if(isset($request->from) && $request->from == 'expire_plan_list'){
-                Purchase::where('purc_business_id', $request->id)->where('purc_business_type','=',2)->update(array(
-                    'purc_is_expire' => 1, 'purc_tel_status' => 8,
-                ));
-           } else {
-                Purchase::where('purc_business_id', $request->id)->where('purc_business_type','=',2)->update(array(
-                    'purc_is_cencal' => 1, 'purc_tel_status' => 8,
-                ));
-                $this->updateCencalDateInHistoryTable($request->id, 2);
-           }
-
-           return response()->json(['status' => true,'message'=>'plan Succesfully cancel']);
+        return response()->json(['status' => true,'message'=>'plan Succesfully cancel']);
     }
 
 
@@ -2299,10 +2276,13 @@ class UserDataController extends Controller
 
     public function ListofPoliticalBusinessApproval(){
 
-        // $listofbusiness = DB::table('political_business_approval_list')->where('pb_is_approved','=','0')->where('pb_is_deleted','=','0')->join('political_business','political_business.pb_id','=','political_business_approval_list.pb_id')->join('users','political_business.user_id','=','users.id')->orderBy('political_business_approval_list.id', 'ASC')->select('users.name','political_business.pb_name','political_business_approval_list.pbal_name','political_business_approval_list.pbal_party_logo','political_business.pb_party_logo','political_business.pb_id')->get()->toArray();
-
-        $listofbusiness = DB::table('political_business_approval_list')->where('political_business_approval_list.pbal_is_approved','=','0')->where('political_business_approval_list.pbal_is_deleted','=','0')->join('political_business','political_business.pb_id','=','political_business_approval_list.pb_id')->join('users','political_business.user_id','=','users.id')->select('users.name','political_business.pb_name','political_business_approval_list.pbal_name','political_business_approval_list.pbal_party_logo','political_business.pb_party_logo','political_business.pb_id','political_business.pb_left_image','political_business.pb_right_image','political_business_approval_list.pbal_left_image','political_business_approval_list.pbal_right_image')->get()->toArray();
-        //   dd($listofbusiness);
+        $listofbusiness = DB::table('political_business_approval_list')
+        ->where('political_business_approval_list.pbal_is_approved','=','0')
+        ->where('political_business_approval_list.pbal_is_deleted','=','0')
+        ->join('political_business','political_business.pb_id','=','political_business_approval_list.pb_id')
+        ->join('users','political_business.user_id','=','users.id')
+        ->select('users.name', 'political_business.is_distributor_business','political_business.pb_name','political_business_approval_list.pbal_name','political_business_approval_list.pbal_party_logo','political_business.pb_party_logo','political_business.pb_id','political_business.pb_left_image','political_business.pb_right_image','political_business_approval_list.pbal_left_image','political_business_approval_list.pbal_right_image')
+        ->get()->toArray();
         return view('user::politicalApproval',['businesses' => $listofbusiness]);
     }
 

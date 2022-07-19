@@ -2,7 +2,7 @@
 @section('title', 'Users')
 @section('content')
 
-@php 
+@php
     use Illuminate\Support\Facades\Storage;
 @endphp
 <div class="page-header">
@@ -68,6 +68,7 @@
                                 <th>No</th>
                                 <th>Name</th>
                                 <th>Business Name</th>
+                                <th>Is Distributor Business</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -79,9 +80,16 @@
                                     <td>{{ $count++ }}</td>
                                     <td>{{ $business->name }}</td>
                                     <td>
-                                       
+
                                         <p>OLD : {{ $business->busi_name }}</p>
                                         <p>New : {{ $business->busi_name_new }}</p>
+                                    </td>
+                                    <td>
+                                        @if($business->is_distributor_business)
+                                        Yes
+                                        @else
+                                        No
+                                        @endif
                                     </td>
                                     <td>
                                         <button type="button" onclick="approvebusiness('{{ $business->busi_id }}')" class="btn btn-primary">Approve</button>

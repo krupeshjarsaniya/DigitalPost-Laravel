@@ -18,7 +18,7 @@ use App\DistributorBusinessUser;
 use App\DistributorBusinessFrame;
 use App\User;
 use Illuminate\Support\Facades\Storage;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class BusinessController extends Controller
 {
@@ -28,71 +28,76 @@ class BusinessController extends Controller
         return view('distributor.business');
     }
 
-    public function businessList(Request $request) {
+    public function businessList(Request $request)
+    {
         $businesses = Business::where('user_id', Auth::user()->id)->where('is_distributor_business', 1);
         return DataTables::of($businesses)
-        ->addIndexColumn()
-        ->editColumn('busi_mobile', function($row) {
-            $mobile = array();
-            if(!empty($row->busi_mobile)) {
-                array_push($mobile, $row->busi_mobile);
-            }
-            if(!empty($row->busi_mobile_second)) {
-                array_push($mobile, $row->busi_mobile_second);
-            }
+            ->addIndexColumn()
+            ->editColumn('busi_mobile', function ($row) {
+                $mobile = array();
+                if (!empty($row->busi_mobile)) {
+                    array_push($mobile, $row->busi_mobile);
+                }
+                if (!empty($row->busi_mobile_second)) {
+                    array_push($mobile, $row->busi_mobile_second);
+                }
 
-            return implode("<br />", $mobile);
-        })
-        ->editColumn('busi_logo', function($row) {
-            $image = "";
-            if(!empty($row->busi_logo)) {
-                $image = "<img height='100' width='100' src='". Storage::url($row->busi_logo) ."' />";
-            }
-            return $image;
-        })
-        ->editColumn('watermark_image', function($row) {
-            $image = "";
-            if(!empty($row->watermark_image)) {
-                $image = "<img height='100' width='100' src='". Storage::url($row->watermark_image) ."' />";
-            }
-            return $image;
-        })
-        ->editColumn('busi_logo_dark', function($row) {
-            $image = "";
-            if(!empty($row->busi_logo_dark)) {
-                $image = "<img height='100' width='100' src='". Storage::url($row->busi_logo_dark) ."' />";
-            }
-            return $image;
-        })
-        ->editColumn('watermark_image_dark', function($row) {
-            $image = "";
-            if(!empty($row->watermark_image_dark)) {
-                $image = "<img height='100' width='100' src='". Storage::url($row->watermark_image_dark) ."' />";
-            }
-            return $image;
-        })
-        ->editColumn('is_premium', function($row) {
-            $is_premium = "<span class='badge badge-danger'>false</span>";
+                return implode("<br />", $mobile);
+            })
+            ->editColumn('busi_logo', function ($row) {
+                $image = "";
+                if (!empty($row->busi_logo)) {
+                    $image = "<img height='100' width='100' src='" . Storage::url($row->busi_logo) . "' />";
+                }
+                return $image;
+            })
+            ->editColumn('watermark_image', function ($row) {
+                $image = "";
+                if (!empty($row->watermark_image)) {
+                    $image = "<img height='100' width='100' src='" . Storage::url($row->watermark_image) . "' />";
+                }
+                return $image;
+            })
+            ->editColumn('busi_logo_dark', function ($row) {
+                $image = "";
+                if (!empty($row->busi_logo_dark)) {
+                    $image = "<img height='100' width='100' src='" . Storage::url($row->busi_logo_dark) . "' />";
+                }
+                return $image;
+            })
+            ->editColumn('watermark_image_dark', function ($row) {
+                $image = "";
+                if (!empty($row->watermark_image_dark)) {
+                    $image = "<img height='100' width='100' src='" . Storage::url($row->watermark_image_dark) . "' />";
+                }
+                return $image;
+            })
+            ->editColumn('is_premium', function ($row) {
+                $is_premium = "<span class='badge badge-danger'>false</span>";
 
-            $checkPurchase = Purchase::where('purc_business_type', 1)->where('purc_business_id', $row->busi_id)->where('purc_plan_id', '!=', 3)->first();
-            if(!empty($checkPurchase)) {
-                $is_premium = "<span class='badge badge-success'>true</span>";
-            }
-            return $is_premium;
-        })
-        ->addColumn('action', function($row) {
-            $url = route('distributors.businessView', $row->busi_id);
-            $button = "";
-            $button .= '<a href="' . $url . '" class="btn btn-primary btn-sm mb-2">View</a>';
-            return $button;
-        })
-        ->rawColumns([ 'busi_mobile' ,'busi_logo', 'watermark_image', 'busi_logo_dark', 'watermark_image_dark', 'is_premium', 'action'])
-        ->make(true);
+                $checkPurchase = Purchase::where('purc_business_type', 1)->where('purc_business_id', $row->busi_id)->where('purc_plan_id', '!=', 3)->first();
+                if (!empty($checkPurchase)) {
+                    $plan = Plan::where('plan_id', $checkPurchase->purc_plan_id)->first();
+                    $is_premium = "<span class='badge badge-success'>true</span><br />";
+                    $is_premium .= "<span >Plan: ".$plan->plan_or_name."</span><br />";
+                    $is_premium .= "<span >Active Date: ".$checkPurchase->purc_start_date."</span><br />";
+                    $is_premium .= "<span >Expiry Date: ".$checkPurchase->purc_end_date."</span><br />";
+                }
+                return $is_premium;
+            })
+            ->addColumn('action', function ($row) {
+                $url = route('distributors.businessView', $row->busi_id);
+                $button = "";
+                $button .= '<a href="' . $url . '" class="btn btn-primary btn-sm mb-2">View</a>';
+                return $button;
+            })
+            ->rawColumns(['busi_mobile', 'busi_logo', 'watermark_image', 'busi_logo_dark', 'watermark_image_dark', 'is_premium', 'action'])
+            ->make(true);
     }
 
     public function businessAdd(Request $request)
     {
-        $busi_cats = DB::table('business_category')->where('is_delete',0)->get();
+        $busi_cats = DB::table('business_category')->where('is_delete', 0)->get();
 
         return view('distributor.businessAdd', compact('busi_cats'));
     }
@@ -102,7 +107,9 @@ class BusinessController extends Controller
         $distributor = Auth::user()->distributor;
 
         $user_id  = auth()->user()->id;
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make(
+            $request->all(),
+            [
                 'busi_name' => 'required',
             ],
             [
@@ -110,29 +117,28 @@ class BusinessController extends Controller
             ]
         );
 
-        if ($validator->fails())
-        {
-            $error=json_decode($validator->errors());
+        if ($validator->fails()) {
+            $error = json_decode($validator->errors());
 
-            return response()->json(['status' => 401,'error1' => $error]);
+            return response()->json(['status' => 401, 'error1' => $error]);
             exit();
         }
 
         $new_balance = $distributor->balance;
         $plan_rate = 0;
         $purc_plan_id = $request->purc_plan_id;
-        if($purc_plan_id == 7) {
+        if ($purc_plan_id == Plan::$start_up_plan_id) {
             $plan_rate = $distributor->start_up_plan_rate;
         }
-        if($purc_plan_id == 8) {
+        if ($purc_plan_id == Plan::$custom_plan_id) {
             $plan_rate = $distributor->custom_plan_rate;
         }
-        if($distributor->balance < $plan_rate) {
-            return response()->json(['status' => false,'message' => "insufficient balance"]);
+        if ($distributor->balance < $plan_rate) {
+            return response()->json(['status' => false, 'message' => "insufficient balance"]);
         }
         $new_balance -= $plan_rate;
 
-        $newBusiness = New Business;
+        $newBusiness = new Business;
         $newBusiness->user_id = $user_id;
         $newBusiness->is_distributor_business = 1;
         $newBusiness->busi_name = $request->busi_name;
@@ -148,19 +154,19 @@ class BusinessController extends Controller
         $newBusiness->busi_linkedin = $request->busi_linkedin;
         $newBusiness->busi_youtube = $request->busi_youtube;
 
-        if($request->hasFile('busi_logo')) {
+        if ($request->hasFile('busi_logo')) {
             $busi_logo = $this->uploadFile($request, null, 'busi_logo', 'business-img');
             $newBusiness->busi_logo = $busi_logo;
         }
-        if($request->hasFile('busi_logo_dark')) {
+        if ($request->hasFile('busi_logo_dark')) {
             $busi_logo_dark = $this->uploadFile($request, null, 'busi_logo_dark', 'business-img');
             $newBusiness->busi_logo_dark = $busi_logo_dark;
         }
-        if($request->hasFile('watermark_image')) {
+        if ($request->hasFile('watermark_image')) {
             $watermark_image = $this->uploadFile($request, null, 'watermark_image', 'business-img');
             $newBusiness->watermark_image = $watermark_image;
         }
-        if($request->hasFile('watermark_image_dark')) {
+        if ($request->hasFile('watermark_image_dark')) {
             $watermark_image_dark = $this->uploadFile($request, null, 'watermark_image_dark', 'business-img');
             $newBusiness->watermark_image_dark = $watermark_image_dark;
         }
@@ -168,13 +174,13 @@ class BusinessController extends Controller
         $newBusiness->business_category = $request->business_category;
         $newBusiness->save();
 
-        $purc_business_id = $newBusiness->id;
+        $purc_business_id = $newBusiness->busi_id;
 
-        $plan = Plan::where('plan_id',$purc_plan_id)->first();
+        $plan = Plan::where('plan_id', $purc_plan_id)->first();
         $start_date = date('Y-m-d', time());
         $end_date = date('Y-m-d', strtotime($start_date . '+ ' . $plan->plan_validity . ' days'));
 
-        $purchase = New Purchase;
+        $purchase = new Purchase;
         $purchase->purc_user_id = $user_id;
         $purchase->purc_business_id = $purc_business_id;
         $purchase->purc_plan_id = $purc_plan_id;
@@ -196,13 +202,14 @@ class BusinessController extends Controller
         $transaction->save();
 
         $this->addPurchasePlanHistory($purc_business_id, 1, $start_date);
-        return response()->json(['status' => true,'message' => "Business Insert successfully"]);
+        return response()->json(['status' => true, 'message' => "Business Insert successfully"]);
     }
 
-    public function businessView($id) {
-        $busi_cats = DB::table('business_category')->where('is_delete',0)->get();
+    public function businessView($id)
+    {
+        $busi_cats = DB::table('business_category')->where('is_delete', 0)->get();
         $business = Business::where('busi_id', $id)->where('user_id', Auth::user()->id)->where('busi_delete', 0)->first();
-        if(empty($business)) {
+        if (empty($business)) {
             return redirect()->back()->with('message', 'Business Not Found');
         }
         return view('distributor.businessView', compact('busi_cats', 'business'));
@@ -211,7 +218,9 @@ class BusinessController extends Controller
     public function businessUpdate(Request $request, $id)
     {
 
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make(
+            $request->all(),
+            [
                 'busi_name' => 'required',
             ],
             [
@@ -219,18 +228,15 @@ class BusinessController extends Controller
             ]
         );
 
-        if ($validator->fails())
-        {
-            $error=json_decode($validator->errors());
+        if ($validator->fails()) {
+            $error = json_decode($validator->errors());
 
-            return response()->json(['status' => 401,'error1' => $error]);
+            return response()->json(['status' => 401, 'error1' => $error]);
             exit();
         }
 
-
-
-        $newBusiness = Business::where('busi_id',$id)->first();
-        $newBusiness->busi_name = $request->busi_name;
+        $message = "";
+        $newBusiness = Business::where('busi_id', $id)->first();
         $newBusiness->busi_email = $request->busi_email;
         $newBusiness->busi_mobile = $request->busi_mobile;
         $newBusiness->busi_mobile_second = $request->busi_mobile_second;
@@ -243,72 +249,103 @@ class BusinessController extends Controller
         $newBusiness->busi_linkedin = $request->busi_linkedin;
         $newBusiness->busi_youtube = $request->busi_youtube;
 
-        if($request->hasFile('busi_logo')) {
+        if ($request->hasFile('busi_logo')) {
             $busi_logo = $this->uploadFile($request, null, 'busi_logo', 'business-img');
             $newBusiness->busi_logo = $busi_logo;
         }
-        if($request->hasFile('busi_logo_dark')) {
+        if ($request->hasFile('busi_logo_dark')) {
             $busi_logo_dark = $this->uploadFile($request, null, 'busi_logo_dark', 'business-img');
             $newBusiness->busi_logo_dark = $busi_logo_dark;
         }
-        if($request->hasFile('watermark_image')) {
+        if ($request->hasFile('watermark_image')) {
             $watermark_image = $this->uploadFile($request, null, 'watermark_image', 'business-img');
             $newBusiness->watermark_image = $watermark_image;
         }
-        if($request->hasFile('watermark_image_dark')) {
+        if ($request->hasFile('watermark_image_dark')) {
             $watermark_image_dark = $this->uploadFile($request, null, 'watermark_image_dark', 'business-img');
             $newBusiness->watermark_image_dark = $watermark_image_dark;
         }
 
         $newBusiness->business_category = $request->business_category;
+
+        $message = "Business Updated successfully";
+        if ($newBusiness->busi_name != $request->busi_name) {
+
+            $checkOldEntry = DB::table('business_new')->where('busi_id_old', $newBusiness->busi_id)->first();
+            if (!empty($checkOldEntry)) {
+                DB::table('business_new')
+                    ->where('busi_id_old', $newBusiness->busi_id)
+                    ->update([
+                        'busi_name_new' => $request->busi_name,
+                        'busi_id_old' => $newBusiness->busi_id,
+                        'user_id_new' => Auth::user()->id,
+                        'busi_is_approved_new' => 0
+                    ]);
+            } else {
+                DB::table('business_new')
+                    ->insert([
+                        'busi_id_old' => $newBusiness->busi_id,
+                        'busi_name_new' => $request->busi_name,
+                        'user_id_new' => Auth::user()->id,
+                        'busi_is_approved_new' => 0
+                    ]);
+            }
+            $newBusiness->busi_is_approved = 0;
+            $message = "Business Updated Request Sent To Admin successfully";
+        }
         $newBusiness->save();
 
-        return response()->json(['status' => true,'message' => "Business Updated successfully"]);
+        return response()->json(['status' => true, 'message' => $message]);
     }
 
-    public function businessUserList(Request $request) {
+    public function businessUserList(Request $request)
+    {
         $businesses = DistributorBusinessUser::with('user')
-        ->where('business_id', $request->id)
-        ->where('business_type', 1);
+            ->where('business_id', $request->id)
+            ->where('business_type', 1);
         return DataTables::of($businesses)
-        ->addIndexColumn()
-        ->addColumn('action', function($row) {
-            $button = "";
-            $button .= '<button onclick="removeUserFromBusiness(this)" data-id="'.$row->user_id.'" class="btn btn-danger btn-sm">Delete</button>';
-            return $button;
-        })
-        ->rawColumns(['action'])
-        ->make(true);
+            ->addIndexColumn()
+            ->addColumn('action', function ($row) {
+                $button = "";
+                $button .= '<button onclick="removeUserFromBusiness(this)" data-id="' . $row->user_id . '" class="btn btn-danger btn-sm">Delete</button>';
+                return $button;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
 
-    public function getPendingFrameList(Request $request) {
+    public function getPendingFrameList(Request $request)
+    {
         $businesses = DistributorBusinessFrame::where('business_id', $request->id)
-        ->where('business_type', 1);
+            ->where('business_type', 1);
         return DataTables::of($businesses)
-        ->addIndexColumn()
-        ->editColumn('status', function($row) {
-            $status = "";
-            if ($row->status == "PENDING") {
-                $status = '<span class="badge badge-primary">'.$row->status.'</span>';
-            }else{
-                $status = '<span class="badge badge-danger">'.$row->status.'</span>';
-            }
-            return $status;
-        })
-        ->addColumn('frame_url', function($row) {
-            $image = "";
-            if (!empty($row->frame_url)) {
-                $image = "<img height='100' width='100' src='" . Storage::url($row->frame_url) . "' />";
-            }
-            return $image;
-        })
-        ->rawColumns(['frame_url','status'])
-        ->make(true);
+            ->addIndexColumn()
+            ->editColumn('status', function ($row) {
+                $status = "";
+                if ($row->status == "PENDING") {
+                    $status = '<span class="badge badge-primary">' . $row->status . '</span>';
+                } else {
+                    $status = '<span class="badge badge-danger">' . $row->status . '</span>';
+                }
+                return $status;
+            })
+            ->addColumn('frame_url', function ($row) {
+                $image = "";
+                if (!empty($row->frame_url)) {
+                    $image = "<img height='100' width='100' src='" . Storage::url($row->frame_url) . "' />";
+                }
+                return $image;
+            })
+            ->rawColumns(['frame_url', 'status'])
+            ->make(true);
     }
 
 
-    public function businessUserAdd(Request $request) {
-        $validator = Validator::make($request->all(), [
+    public function businessUserAdd(Request $request)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
                 'business_id' => 'required',
                 'users' => 'required',
             ],
@@ -318,34 +355,33 @@ class BusinessController extends Controller
             ]
         );
 
-        if ($validator->fails())
-        {
-            $error=json_decode($validator->errors());
+        if ($validator->fails()) {
+            $error = json_decode($validator->errors());
 
-            return response()->json(['status' => 401,'error1' => $error]);
+            return response()->json(['status' => 401, 'error1' => $error]);
             exit();
         }
 
         $mobiles = explode(',', $request->users);
         $user_ids = array();
-        foreach($mobiles as $mobile) {
+        foreach ($mobiles as $mobile) {
             $user = User::where('mobile', trim($mobile))->first();
-            if(!empty($user)) {
-                if(!in_array($user->id, $user_ids)) {
+            if (!empty($user)) {
+                if (!in_array($user->id, $user_ids)) {
                     array_push($user_ids, $user->id);
                 }
             }
         }
-        if(count($user_ids) == 0) {
+        if (count($user_ids) == 0) {
             $error = ['users' => 'Invalid numbers'];
-            return response()->json(['status' => 401,'error1' => $error]);
+            return response()->json(['status' => 401, 'error1' => $error]);
         }
-        foreach($user_ids as $user_id) {
+        foreach ($user_ids as $user_id) {
             $newBusinessUser = DistributorBusinessUser::where('business_id', $request->business_id)
-            ->where('user_id', $user_id)
-            ->where('business_type', 1)
-            ->first();
-            if(empty($newBusinessUser)) {
+                ->where('user_id', $user_id)
+                ->where('business_type', 1)
+                ->first();
+            if (empty($newBusinessUser)) {
                 $newBusinessUser = new DistributorBusinessUser;
             }
             $newBusinessUser->business_id = $request->business_id;
@@ -354,48 +390,53 @@ class BusinessController extends Controller
             $newBusinessUser->save();
         }
 
-        return response()->json(['status' => true,'message' => "Users added successfully"]);
+        return response()->json(['status' => true, 'message' => "Users added successfully"]);
     }
 
-    public function businessUserDelete(Request $request) {
+    public function businessUserDelete(Request $request)
+    {
         $user_id = $request->id;
         $business_id = $request->business_id;
 
         $newBusinessUser = DistributorBusinessUser::where('business_id', $business_id)
-        ->where('user_id', $user_id)
-        ->where('business_type', 1)
-        ->first();
-        if(!empty($newBusinessUser)) {
+            ->where('user_id', $user_id)
+            ->where('business_type', 1)
+            ->first();
+        if (!empty($newBusinessUser)) {
             $newBusinessUser->delete();
         }
-        return response()->json(['status' => true,'message' => "Users removed successfully"]);
+        return response()->json(['status' => true, 'message' => "Users removed successfully"]);
     }
 
-    public function businessFrameList(Request $request) {
+    public function businessFrameList(Request $request)
+    {
         $frames = DB::table('user_frames')
-        ->where('business_id', $request->id)
-        ->where('business_type', 1)
-        ->whereNotNull('frame_url')
-        ->where('frame_url', '!=', '')
-        ->where('is_deleted', 0);
+            ->where('business_id', $request->id)
+            ->where('business_type', 1)
+            ->whereNotNull('frame_url')
+            ->where('frame_url', '!=', '')
+            ->where('is_deleted', 0);
         return DataTables::of($frames)
-        ->addIndexColumn()
-        ->addColumn('frame_url', function($row) {
-            $image = "";
-            if(!empty($row->frame_url)) {
-                $image = "<img width='150px' height='150px' src='" . Storage::url($row->frame_url) . "' />";
-            }
-            return $image;
-        })
-        ->rawColumns(['frame_url'])
-        ->make(true);
+            ->addIndexColumn()
+            ->addColumn('frame_url', function ($row) {
+                $image = "";
+                if (!empty($row->frame_url)) {
+                    $image = "<img width='150px' height='150px' src='" . Storage::url($row->frame_url) . "' />";
+                }
+                return $image;
+            })
+            ->rawColumns(['frame_url'])
+            ->make(true);
     }
 
-    public function businessFrameAdd(Request $request) {
-        if(!Auth::user()->distributor->allow_add_frames) {
-            return response()->json(['status' => false,'message' => "You are not allowed to add frames"]);
+    public function businessFrameAdd(Request $request)
+    {
+        if (!Auth::user()->distributor->allow_add_frames) {
+            return response()->json(['status' => false, 'message' => "You are not allowed to add frames"]);
         }
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make(
+            $request->all(),
+            [
                 'business_id' => 'required',
                 'frames' => 'required',
             ],
@@ -405,16 +446,15 @@ class BusinessController extends Controller
             ]
         );
 
-        if ($validator->fails())
-        {
-            $error=json_decode($validator->errors());
+        if ($validator->fails()) {
+            $error = json_decode($validator->errors());
 
-            return response()->json(['status' => 401,'error1' => $error]);
+            return response()->json(['status' => 401, 'error1' => $error]);
             exit();
         }
 
         foreach ($request->file('frames') as $key => $image) {
-            $image = $this->multipleUploadFile($image,'Political-logo');
+            $image = $this->multipleUploadFile($image, 'Political-logo');
             $newBusinessUser = new DistributorBusinessFrame;
             $newBusinessUser->user_id = Auth::user()->id;
             $newBusinessUser->distributor_id = Auth::user()->distributor->id;
@@ -424,6 +464,6 @@ class BusinessController extends Controller
             $newBusinessUser->save();
         }
 
-        return response()->json(['status' => true,'message' => "Request sent to admin"]);
+        return response()->json(['status' => true, 'message' => "Request sent to admin"]);
     }
 }

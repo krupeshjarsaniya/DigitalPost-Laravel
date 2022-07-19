@@ -539,7 +539,7 @@ class UserapiControllerV13 extends Controller
             $business->busi_youtube = $youtube;
             $business->save();
 
-            $business_id = $business->id;
+            $business_id = $business->busi_id;
 
             $start_date = date('Y-m-d');
 
@@ -5058,7 +5058,7 @@ class UserapiControllerV13 extends Controller
         $business->pb_youtube = $youtube;
         $business->save();
 
-        $business_id = $business->id;
+        $business_id = $business->pb_id;
 
         $start_date = date('Y-m-d');
 
@@ -5744,7 +5744,7 @@ class UserapiControllerV13 extends Controller
             $profile_id = $profile['id'];
         }
         if ($request->type == "instagram") {
-            $ids = explode(',', $request->instagram_ids); 
+            $ids = explode(',', $request->instagram_ids);
             foreach ($ids as $key => $insta_id) {
                 $endpoint = $insta_id.'?fields=biography%2Cid%2Cusername%2Cwebsite%2Cprofile_picture_url';
                 $get_post_status = $this->facebook->InstaGetData($request->auth_token, $endpoint);
