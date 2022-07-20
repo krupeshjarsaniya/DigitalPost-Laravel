@@ -11,7 +11,6 @@ use Carbon\Carbon;
 use App\DistributorChannel;
 use App\DistributorTransaction;
 use App\Business;
-use App\Distributor;
 use App\Purchase;
 use App\Plan;
 use App\DistributorBusinessUser;
@@ -314,6 +313,23 @@ class BusinessController extends Controller
             ->make(true);
     }
 
+    public function businessPurchaseList(Request $request)
+    {
+        $businesses = DB::table('purchase_plan_history')->where('pph_purc_business_id', $request->id)
+            ->where('pph_purc_business_type', 1);
+        return DataTables::of($businesses)
+            ->addIndexColumn()
+            ->addColumn('plan', function ($row) {
+                $plan_name = "Premium";
+                $plan = Plan::where('plan_id', $row->pph_purc_plan_id)->first();
+                if(!empty($plan)) {
+                    $plan_name = $plan->plan_or_name;
+                }
+                return $plan_name;
+            })
+            ->make(true);
+    }
+
     public function getPendingFrameList(Request $request)
     {
         $businesses = DistributorBusinessFrame::where('business_id', $request->id)
@@ -534,7 +550,7 @@ class BusinessController extends Controller
             ->make(true);
         }
     }
-    
+
     public function normalBusinessUpcomingExpirePlan (Request $request)
     {
         $days = DB::table('setting')->value('renewal_days');
@@ -545,6 +561,7 @@ class BusinessController extends Controller
         ->where('business.user_id','=',Auth::user()->id)
         ->where('business.is_distributor_business',1)
         ->where('purchase_plan.purc_business_type',1)
+        ->where('purchase_plan.purc_plan_id', '!=',3)
         ->where('purchase_plan.purc_end_date','<=',$current_date)
         ->get();
 
@@ -578,6 +595,7 @@ class BusinessController extends Controller
         ->where('political_business.user_id','=',Auth::user()->id)
         ->where('political_business.is_distributor_business',1)
         ->where('purchase_plan.purc_business_type',2)
+        ->where('purchase_plan.purc_plan_id', '!=',3)
         ->where('purchase_plan.purc_end_date','<=',$current_date)
         ->get();
 
@@ -603,8 +621,103 @@ class BusinessController extends Controller
     }
 
     public function purchasePlan(Request $request){
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'purc_plan_id' => 'required',
+                'business_id' => 'required',
+                'business_type' => 'required',
+            ],
+            [
+                'purc_plan_id.required' => 'Plan is required',
+                'business_id.required' => 'Business ID is required',
+                'business_type.required' => 'Business Type is required',
+            ]
+        );
 
-        dd($request->all());
+        if ($validator->fails()) {
+            $error = json_decode($validator->errors());
+
+            return response()->json(['status' => 401, 'error1' => $error]);
+            exit();
+        }
+
+        $plan = Plan::where('plan_id', $request->purc_plan_id)->first();
+
+        $distributor = Auth::user()->distributor;
+
+        $new_balance = $distributor->balance;
+        $plan_rate = 0;
+        $purc_plan_id = $request->purc_plan_id;
+        if ($purc_plan_id == Plan::$start_up_plan_id) {
+            $plan_rate = $distributor->start_up_plan_rate;
+        }
+        if ($purc_plan_id == Plan::$custom_plan_id) {
+            $plan_rate = $distributor->custom_plan_rate;
+        }
+        if ($distributor->balance < $plan_rate) {
+            return response()->json(['status' => false, 'message' => "insufficient balance"]);
+        }
+        $new_balance -= $plan_rate;
+
+        $checkPurchase = Purchase::where('purc_business_id', $request->business_id)
+        ->where('purc_business_type', $request->business_type)->first();
+        $start_date = date('Y-m-d', time());
+        if(empty($checkPurchase)) {
+            $end_date = date('Y-m-d', strtotime($start_date . '+ ' . $plan->plan_validity . ' days'));
+            $purchase = new Purchase;
+            $purchase->purc_user_id = Auth::user()->id;
+            $purchase->purc_business_id = $request->business_id;
+            $purchase->purc_plan_id = $request->purc_plan_id;
+            $purchase->purc_start_date = $start_date;
+            $purchase->purc_end_date = $end_date;
+            $purchase->save();
+        }
+        else {
+
+            if($checkPurchase->purc_plan_id == 3 || empty($checkPurchase->purc_end_date)) {
+                $end_date = date('Y-m-d', strtotime($start_date . '+ ' . $plan->plan_validity . ' days'));
+            }
+            else {
+                $end_date = date('Y-m-d', strtotime($start_date . '+ ' . $plan->plan_validity . ' days'));
+                $end_date = Carbon::parse($end_date);
+                $tmp_end_date = Carbon::parse($checkPurchase->purc_end_date);
+                $tmp_start_date = Carbon::now();
+                $diff = $tmp_end_date->diffInDays($tmp_start_date);
+                $start_date = $tmp_start_date->addDays($diff);
+                $end_date = $end_date->addDays($diff);
+            }
+
+            Purchase::where('purc_business_id', $request->business_id)->where('purc_business_type', $request->business_type)->update([
+                'purc_plan_id' => $request->purc_plan_id,
+                'purc_start_date' => date('Y-m-d', time()),
+                'purc_end_date' => $end_date,
+                'purc_order_id' => "",
+                'purchase_id' => "",
+                'device' => "",
+                'purc_is_cencal' => 0,
+                'purc_tel_status' => 7,
+                'purc_follow_up_date' => null,
+                'purc_is_expire' => 0,
+            ]);
+
+        }
+
+        $distributorBalance = DistributorChannel::find($distributor->id);
+        $distributorBalance->balance = $new_balance;
+        $distributorBalance->save();
+
+        $transaction = new DistributorTransaction;
+        $transaction->distributor_id = $distributor->id;
+        $transaction->amount = $plan_rate;
+        $transaction->type = 'purchase_business';
+        $transaction->description = 'Purchase Plan : ' . $plan->plan_or_name;
+        $transaction->business_id = $request->business_id;
+        $transaction->business_type = $request->business_type;
+        $transaction->save();
+
+        $this->addPurchasePlanHistory($request->business_id, $request->business_type, $start_date);
+        return response()->json(['status' => true, 'message' => "Business Purchase successfully"]);
 
     }
 

@@ -311,6 +311,49 @@ class PoliticalBusinessController extends Controller
         return response()->json(['status' => true, 'message' => $message]);
     }
 
+    public function getPendingFrameListPolitical(Request $request)
+    {
+        $businesses = DistributorBusinessFrame::where('business_id', $request->id)
+            ->where('business_type', 2);
+        return DataTables::of($businesses)
+            ->addIndexColumn()
+            ->editColumn('status', function ($row) {
+                $status = "";
+                if ($row->status == "PENDING") {
+                    $status = '<span class="badge badge-primary">' . $row->status . '</span>';
+                } else {
+                    $status = '<span class="badge badge-danger">' . $row->status . '</span>';
+                }
+                return $status;
+            })
+            ->addColumn('frame_url', function ($row) {
+                $image = "";
+                if (!empty($row->frame_url)) {
+                    $image = "<img height='100' width='100' src='" . Storage::url($row->frame_url) . "' />";
+                }
+                return $image;
+            })
+            ->rawColumns(['frame_url', 'status'])
+            ->make(true);
+    }
+
+    public function politicalBusinessPurchaseList(Request $request)
+    {
+        $businesses = DB::table('purchase_plan_history')->where('pph_purc_business_id', $request->id)
+            ->where('pph_purc_business_type', 2);
+        return DataTables::of($businesses)
+            ->addIndexColumn()
+            ->addColumn('plan', function ($row) {
+                $plan_name = "Premium";
+                $plan = Plan::where('plan_id', $row->pph_purc_plan_id)->first();
+                if(!empty($plan)) {
+                    $plan_name = $plan->plan_or_name;
+                }
+                return $plan_name;
+            })
+            ->make(true);
+    }
+
     public function politicalBusinessUserList(Request $request)
     {
         $businesses = DistributorBusinessUser::with('user')

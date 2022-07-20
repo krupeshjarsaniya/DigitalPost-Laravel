@@ -84,7 +84,7 @@ function getFrameList() {
 function changeStatus(ele){
 
     var id = $(ele).attr('data-id');
-    
+
     swal({
         title: 'Are you sure?',
         text: "Reject this request!",
@@ -144,11 +144,11 @@ function acceptFrames(ele){
 
     swal({
         title: 'Are you sure?',
-        text: "Reject this request!",
+        text: "Accept this request!",
         type: 'warning',
         buttons:{
             confirm: {
-                text : 'Yes, Reject it!',
+                text : 'Yes, Accept it!',
                 className : 'btn btn-success'
             },
             cancel: {

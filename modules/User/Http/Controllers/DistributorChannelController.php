@@ -692,10 +692,20 @@ class DistributorChannelController extends Controller
 
     public function changeFrameStatus(Request $request){
 
+        $data = DistributorBusinessFrame::where('id', $request->id)->first();
+
+        if(empty($data))
+        {
+            return response()->json([
+                'status' => false,
+                'message' => "Frame Not Found",
+            ]);
+        }
+
         DistributorBusinessFrame::where('id', $request->id)->update(['status'=>'REJECTED']);
         return response()->json([
             'status' => true,
-            'message' => "Frame Rejected successfully"
+            'message' => "Frame Request Rejected successfully"
 
         ]);
     }
@@ -725,7 +735,7 @@ class DistributorChannelController extends Controller
 
        return response()->json([
         'status' => true,
-        'message' => "Frame Addes to Distributor Business",
+        'message' => "Frame Request Accepted successfully",
         ]);
 
     }

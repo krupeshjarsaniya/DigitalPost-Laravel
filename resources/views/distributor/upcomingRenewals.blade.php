@@ -199,7 +199,7 @@
         getPoliticalBusinessExpirePlanList();
         getPoliticalBusinessUpcomingExpirePlanList();
     })
-    
+
     function getBusinessExpirePlanList() {
         normalBusinessExpireTable = $('#normal-business-expire-plan-table').DataTable({
             processing: true,
@@ -269,7 +269,7 @@
         });
     }
 
-    function purchaseplans(ele) 
+    function purchaseplans(ele)
     {
         var id = $(ele).data('id');
         $('#business_id').val(id);
@@ -340,11 +340,14 @@
                             return false;
                         }
                         alert(response.message);
-                        window.location.href = '{{ route('distributors.business') }}'
+                        $('#myPlan').modal('hide');
+                        normalBusinessExpireTable.ajax.reload();
+                        normalBusinessUpcomingPlanExpireTable.ajax.reload();
+                        politicalBusinessExpireTable.ajax.reload();
+                        politicalBusinessUpcomingPlanExpireTable.ajax.reload();
                     }
                 });
 
-        
             }
             else
             {
@@ -352,7 +355,7 @@
             }
         });
     }
-    
+
 </script>
 
 @endsection

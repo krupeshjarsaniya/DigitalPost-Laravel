@@ -248,6 +248,37 @@
 </div>
 @endif
 
+<!-- Frame Request Table-->
+
+<div class="card">
+    <!-- Modal Header -->
+    <div class="card-header">
+        <h4 class="card-title">Frame Request
+        </h4>
+    </div>
+
+    <!-- Modal body -->
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table class="display table table-striped table-hover text-center w-100" id="frame-request-table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Frame</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="card">
     <!-- Modal Header -->
     <div class="card-header">
@@ -276,6 +307,36 @@
     </div>
 </div>
 
+<div class="card">
+    <!-- Modal Header -->
+    <div class="card-header">
+        <h4 class="card-title">Purchase History
+        </h4>
+    </div>
+
+    <!-- Modal body -->
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table class="display table table-striped table-hover text-center w-100" id="purchase-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Plan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('js')
@@ -283,9 +344,13 @@
 
 var table = "";
 var table2 = "";
+var table3 = "";
+var purchaseTable = "";
 $(document).ready(function() {
     getBusinessUserList("{{ $business->pb_id }}");
     getBusinessFrameList("{{ $business->pb_id }}");
+    getBusinessPurchaseList("{{ $business->pb_id }}");
+    getPendingFramesList("{{ $business->pb_id }}");
 })
 
 $('#add-user').on('click', function(e) {
@@ -362,6 +427,47 @@ function changeFile(ele) {
         $('#' + img_id + '_image').attr('src',oldImage);
         $('#' + img_id + '_image').show();
     }
+}
+
+function getPendingFramesList(id)
+{
+    if(table3 != "") {
+        table3.destroy();
+    }
+    table3 = $('#frame-request-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url : "{{ route('distributors.getpendingFrameListPolitical') }}",
+            data: {id}
+        },
+        columns: [
+            {data: 'DT_RowIndex', name: 'id'},
+            {data: 'frame_url', name: 'frame_url'},
+            {data: 'status', name: 'status'},
+
+        ],
+    });
+}
+
+function getBusinessPurchaseList(id) {
+    if(table2 != "") {
+        table2.destroy();
+    }
+    table2 = $('#purchase-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url : "{{ route('distributors.politicalBusinessPurchaseList') }}",
+            data: {id}
+        },
+        columns: [
+            {data: 'pph_purc_createdat', name: 'pph_purc_createdat'},
+            {data: 'pph_purc_start_date', name: 'pph_purc_start_date'},
+            {data: 'pph_purc_end_date', name: 'pph_purc_end_date'},
+            {data: 'plan', name: 'plan'},
+        ],
+    });
 }
 
 function getBusinessUserList(id) {
@@ -552,6 +658,7 @@ function addFrameToBusiness() {
             }
             $('#frames').val("");
             alert(response.message);
+            table3.ajax.reload();
         }
     });
 }
