@@ -798,11 +798,50 @@
     </div>
 </div>
 
+<!-- Purchase History Model -->
+<div class="modal fade" id="purchaseHistoryModel">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Purchase History</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table class="display table table-striped table-hover text-center w-100" id="purchase-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Plan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 @endsection
 @section('js')
 <script>
 
 var table = "";
+var purchaseHistoryTable = "";
 var businessTable = "";
 var politicalBusinessTable = "";
 
@@ -955,6 +994,36 @@ function getPoliticalBusinessList() {
     });
 }
 
+function purchaseHistory(ele){
+
+    $('#purchaseHistoryModel').modal('show');
+    var id = $(ele).data('id');
+    var type = $(ele).data('type');
+    $.ajaxSetup({
+			headers: {
+			    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+	}});
+    if(purchaseHistoryTable != "") {
+        purchaseHistoryTable.destroy();
+    }
+    purchaseHistoryTable = $('#purchase-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url : "{{ route('distributor_channel.purchasePlanHistory') }}",
+            type: 'POST',
+            data: {id,type}
+        },
+        columns: [
+            {data: 'pph_purc_createdat', name: 'pph_purc_createdat'},
+            {data: 'pph_purc_start_date', name: 'pph_purc_start_date'},
+            {data: 'pph_purc_end_date', name: 'pph_purc_end_date'},
+            {data: 'plan_or_name', name: 'plan_or_name'},
+        ],
+    });
+    
+}
+
 
 function addTransaction(ele) {
 
@@ -1040,6 +1109,9 @@ function editPoliticalBusinessData(ele)
         }
     });
 }
+
+
+
 function editBusinessData(ele)
 {
     var id = $(ele).data('id');

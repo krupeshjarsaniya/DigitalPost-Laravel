@@ -231,6 +231,19 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Trumbowyg/2.21.0/trumbowyg.min.js"></script>
 
+    <script>
+
+        function showSweetAlert(title,text,icon)
+        {
+            swal({
+                title,
+                text,
+                icon,
+            });
+        }
+
+    </script>
+
     @yield('js')
 </body>
 <div id="divLoading">
