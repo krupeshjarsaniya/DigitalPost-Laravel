@@ -7374,7 +7374,7 @@ class UserapiControllerV16 extends Controller
         if($request->type == 1) {
 
             if (!empty($currntbusiness)) {
-
+                $currntbusiness_photos = array();
                 $currntbusiness_photo_id = DB::table('business_category')->where('name', $currntbusiness->business_category)->where('is_delete', 0)->first();
 
                 if (!empty($currntbusiness_photo_id)) {
@@ -7401,7 +7401,6 @@ class UserapiControllerV16 extends Controller
         else {
 
             if(!empty($currntbusinessPolitical)) {
-
                 $currntbusiness_photo_id = DB::table('business_category')->where('name', $political_category_name)->where('is_delete', 0)->first();
                 $currntbusiness_photos = array();
                 if (!empty($currntbusiness_photo_id)) {
