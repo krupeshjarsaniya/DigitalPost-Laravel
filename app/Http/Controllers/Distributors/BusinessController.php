@@ -97,14 +97,12 @@ class BusinessController extends Controller
     public function businessAdd(Request $request)
     {
         $busi_cats = DB::table('business_category')->where('is_delete', 0)->get();
-
         return view('distributor.businessAdd', compact('busi_cats'));
     }
 
     public function businessInsert(Request $request)
     {
         $distributor = Auth::user()->distributor;
-
         $user_id  = auth()->user()->id;
         $validator = Validator::make(
             $request->all(),

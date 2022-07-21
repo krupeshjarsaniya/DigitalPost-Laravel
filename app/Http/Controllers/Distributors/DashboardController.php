@@ -10,13 +10,62 @@ use DataTables;
 use Carbon\Carbon;
 use App\DistributorChannel;
 use App\DistributorTransaction;
+use App\Business;
+use App\PoliticalBusiness;
+use DB;
 
 class DashboardController extends Controller
 {
 
     public function index()
     {
-        return view('distributor.dashboard');
+        $totalBusiness = Business::where('user_id',Auth::user()->id)->where('is_distributor_business',1)->count();
+        $politicalBusiness = PoliticalBusiness::where('user_id',Auth::user()->id)->where('is_distributor_business',1)->count();
+        $getBusinessExpiredplan =  DB::table('purchase_plan')
+        ->leftJoin('business','business.busi_id','=','purchase_plan.purc_business_id')
+        ->leftJoin('plan','plan.plan_id','=','purchase_plan.purc_plan_id')
+        ->where('business.user_id','=',Auth::user()->id)
+        ->where('business.is_distributor_business',1)
+        ->where('purchase_plan.purc_business_type',1)
+        ->where('purchase_plan.purc_plan_id',3)
+        ->count();
+
+        $getPoliticalExpiredplan =  DB::table('purchase_plan')
+        ->leftJoin('political_business','political_business.pb_id','=','purchase_plan.purc_business_id')
+        ->leftJoin('plan','plan.plan_id','=','purchase_plan.purc_plan_id')
+        ->where('political_business.user_id','=',Auth::user()->id)
+        ->where('political_business.is_distributor_business',1)
+        ->where('purchase_plan.purc_business_type',2)
+        ->where('purchase_plan.purc_plan_id',3)
+        ->count();
+     
+        $totalExpirePlan = $getBusinessExpiredplan +  $getPoliticalExpiredplan;
+
+        $days = DB::table('setting')->value('renewal_days');
+        $current_date = Carbon::now()->addDays($days);
+        $getUpcomingBusinessExpiredPlan =  DB::table('purchase_plan')
+        ->leftJoin('business','business.busi_id','=','purchase_plan.purc_business_id')
+        ->leftJoin('plan','plan.plan_id','=','purchase_plan.purc_plan_id')
+        ->where('business.user_id','=',Auth::user()->id)
+        ->where('business.is_distributor_business',1)
+        ->where('purchase_plan.purc_business_type',1)
+        ->where('purchase_plan.purc_plan_id', '!=',3)
+        ->where('purchase_plan.purc_end_date','<=',$current_date)
+        ->count();
+
+        $getUpcomingPoliticalExpiredplan =  DB::table('purchase_plan')
+        ->leftJoin('political_business','political_business.pb_id','=','purchase_plan.purc_business_id')
+        ->leftJoin('plan','plan.plan_id','=','purchase_plan.purc_plan_id')
+        ->where('political_business.user_id','=',Auth::user()->id)
+        ->where('political_business.is_distributor_business',1)
+        ->where('purchase_plan.purc_business_type',2)
+        ->where('purchase_plan.purc_plan_id', '!=',3)
+        ->where('purchase_plan.purc_end_date','<=',$current_date)
+        ->count();
+        $totalUpcomingExpiredPlan = $getUpcomingPoliticalExpiredplan + $getUpcomingBusinessExpiredPlan;
+       
+        
+        return view('distributor.dashboard', compact('totalBusiness','politicalBusiness','totalExpirePlan','totalUpcomingExpiredPlan'));
     }
 
     public function profile()

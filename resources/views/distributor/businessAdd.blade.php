@@ -143,7 +143,6 @@
                 </div>
             </div>
         </form>
-
     </div>
     <div class="card-footer">
         <button type="button" class="btn btn-success" id="add_business">Submit</button>
@@ -214,7 +213,7 @@
                         alert(response.message);
                         return false;
                     }
-                    alert(response.message);
+                    showSweetAlert('Business Insert',response.message,'success');
                     window.location.href = '{{ route('distributors.business') }}'
                 }
             });

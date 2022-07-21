@@ -103,8 +103,10 @@ class DistributorChannelController extends Controller
             })
 
             ->addColumn('action', function ($row) {
+               
                 $button = "";
-                $button .= '<button onclick="editBusinessData(this)" class="btn btn-xs btn-success btn-edit mb-2" data-id="' . $row->busi_id . '">Edit</button>';
+                $button .= '<button onclick="editBusinessData(this)" class="btn btn-xs btn-success btn-edit mb-2" data-id="' . $row->busi_id . '">Edit</button> 
+                            <button onclick="purchaseHistory(this)" class="btn btn-xs btn-primary btn-edit mb-2" data-type="1" data-id="' . $row->busi_id . '">Purchase History</button>';
                 return $button;
             })
             ->rawColumns(['busi_logo', 'busi_mobile', 'watermark_image', 'busi_logo_dark', 'watermark_image_dark', 'is_premium', 'action'])
@@ -180,7 +182,8 @@ class DistributorChannelController extends Controller
             })
             ->addColumn('action', function ($row) {
                 $button = "";
-                $button .= '<button onclick="editPoliticalBusinessData(this)" class="btn btn-xs btn-success btn-edit mb-2" data-id="' . $row->pb_id . '">Edit</button>';
+                $button .= '<button onclick="editPoliticalBusinessData(this)" class="btn btn-xs btn-success btn-edit mb-2" data-id="' . $row->pb_id . '">Edit</button>
+                            <button onclick="purchaseHistory(this)" class="btn btn-xs btn-primary btn-edit mb-2" data-type="2" data-id="' . $row->pb_id . '">Purchase History</button>';
                 return $button;
             })
             ->rawColumns(['pb_party_logo', 'pb_mobile', 'pb_watermark', 'pb_party_logo_dark', 'pb_watermark_dark', 'pb_left_image', 'pb_right_image', 'is_premium', 'action'])
@@ -785,5 +788,20 @@ class DistributorChannelController extends Controller
             })
             ->rawColumns(['created_at', 'frame_url','action'])
             ->make(true);
+    }
+
+    public function purchasePlanHistory(Request $request)
+    {
+        $purchasePlans = DB::table('purchase_plan_history')->where('pph_purc_business_id',$request->id)->where('pph_purc_business_type',$request->type);
+        
+            return DataTables::of($purchasePlans)
+            ->addIndexColumn()
+            ->addColumn('plan_or_name', function ($purchasePlan) {
+                $plan = DB::table('plan')->where('plan_id',$purchasePlan->pph_purc_plan_id)->first();
+                return $plan->plan_or_name;
+              
+            })
+            ->make(true);
+        
     }
 }

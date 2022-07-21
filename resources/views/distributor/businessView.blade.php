@@ -352,7 +352,6 @@ $('#add-user').on('click', function(e) {
     $('#UsersModal').modal('show');
 })
 
-
 $('#update_business').on('click', function(e) {
 
     $.ajaxSetup({
@@ -397,11 +396,13 @@ $('#update_business').on('click', function(e) {
                 return false;
             }
             if(!response.status) {
-                    alert(response.message);
+                    showSweetAlert('Business Update',response.message,'error');
                     return false;
                 }
-                alert(response.message);
-                location.reload();
+                showSweetAlert('Business Update',response.message,'success');
+                setTimeout(()=> {
+                    location.reload();
+                }, 5000)
             }
     });
 
@@ -530,10 +531,10 @@ function addUserToBusiness() {
                 return false;
             }
             if(!response.status) {
-                alert(response.message);
+                howSweetAlert('User Added',response.message,'error');
                 return false;
             }
-            alert(response.message);
+            showSweetAlert('User Added',response.message,'success');
             table2.ajax.reload();
             $('#UsersModal').modal('hide');
         }
@@ -649,11 +650,11 @@ function addFrameToBusiness() {
                 return false;
             }
             if(!response.status) {
-                alert(response.message);
+                showSweetAlert('Frame Added',response.message,'error');
                 return false;
             }
             $('#frames').val("");
-            alert(response.message);
+            showSweetAlert('Frame Added',response.message,'success');
         }
     });
 }

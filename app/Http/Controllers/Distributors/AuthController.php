@@ -51,7 +51,7 @@ class AuthController extends Controller
             ],
             [
                 'email.required' => 'Email Required',
-                'email.email' => 'Email Not Fotmated',
+                'email.email' => 'Email Not Formated',
                 'password.required' => 'Password Required',
                 'password.min' => 'Password Length Minimum 8',
                 'full_name.required' => 'Name Required',
