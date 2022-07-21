@@ -7366,7 +7366,7 @@ class UserapiControllerV16 extends Controller
             }
         }
 
-        $currntbusiness_photos = array();
+        $currntbusiness_photos = (object)[];
         $sub_categories = array();
         $sub_categories_post = array();
         $sub_categories_post_data = array();
