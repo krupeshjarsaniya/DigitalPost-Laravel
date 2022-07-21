@@ -78,6 +78,7 @@
 @endsection
 
 @section('js')
+    <script src="{{ asset('public/admin/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
     <script>
         $(document).ready(function() {
             document.title = "Login";
@@ -119,9 +120,21 @@
                         return false;
                     }
                     if(data.status) {
-                        window.location.href = "{{ route('distributors.dashboard') }}"
+                        swal({
+                            title: "Login",
+                            text: data.message,
+                            icon: 'success',
+                        }).then(() => {
+                            window.location.href = "{{ route('distributors.dashboard') }}"
+                        });
                     }
-                    alert(data.message);
+                    else {
+                        swal({
+                            title: "Login",
+                            text: data.message,
+                            icon: 'error',
+                        });
+                    }
                 }
             });
         }

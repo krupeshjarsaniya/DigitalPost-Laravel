@@ -155,6 +155,7 @@
 @endsection
 
 @section('js')
+    <script src="{{ asset('public/admin/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
     <script>
         $(document).ready(function() {
             document.title = "Register";
@@ -196,9 +197,21 @@
                         return false;
                     }
                     if(data.status) {
-                        window.location.href = "{{ route('distributors.loginForm') }}"
+                        swal({
+                            title: "Register",
+                            text: data.message,
+                            icon: 'success',
+                        }).then(() => {
+                            window.location.href = "{{ route('distributors.loginForm') }}"
+                        });
                     }
-                    alert(data.message);
+                    else {
+                        swal({
+                            title: "Register",
+                            text: data.message,
+                            icon: 'succes',
+                        });
+                    }
                 }
             });
         }

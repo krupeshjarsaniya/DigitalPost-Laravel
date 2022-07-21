@@ -233,13 +233,24 @@
 
     <script>
 
-        function showSweetAlert(title,text,icon)
+        function showSweetAlert(title,text,icon, url = "")
         {
-            swal({
-                title,
-                text,
-                icon,
-            });
+            if(url == "") {
+                swal({
+                    title,
+                    text,
+                    icon,
+                });
+            }
+            else {
+                swal({
+                    title,
+                    text,
+                    icon,
+                }).then(() => {
+                    window.location.href = url;
+                });
+            }
         }
 
     </script>

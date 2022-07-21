@@ -399,10 +399,7 @@ $('#update_business').on('click', function(e) {
                     showSweetAlert('Business Update',response.message,'error');
                     return false;
                 }
-                showSweetAlert('Business Update',response.message,'success');
-                setTimeout(()=> {
-                    location.reload();
-                }, 5000)
+                showSweetAlert('Business Update',response.message,'success', "{{ route('distributors.businessView', ['id' => $business->busi_id]) }}");
             }
     });
 

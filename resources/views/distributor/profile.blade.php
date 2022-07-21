@@ -328,11 +328,11 @@ function updateProfile() {
                 return false;
             }
             if(!response.status) {
-                alert(response.message);
+                showSweetAlert('Profile Update',response.message,'error');
                 return false;
             }
-            alert(response.message);
-            location.reload(true);
+            $('#ProfileModal').modal('hide');
+            showSweetAlert('Profile Update',response.message,'success', "{{ route('distributors.profile') }}");
         },
         error: function(error) {
             $('.loader-custom').css('display','none');
