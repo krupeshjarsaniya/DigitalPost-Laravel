@@ -144,6 +144,7 @@
                                 <option value="Select Category" disabled>Select Plan</option>
                                 <option value="{{ \App\Plan::$custom_plan_id }}">Custom Plan Rate</option>
                                 <option value="{{  \App\Plan::$start_up_plan_id  }}">Start Up Plan Rate</option>
+                                <option value="{{ \App\Plan::$combo_plan_id }}">combo Plan Rate</option>
                             </select>
                         </div>
                     </div>

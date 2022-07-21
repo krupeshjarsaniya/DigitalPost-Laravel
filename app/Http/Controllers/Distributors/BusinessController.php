@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use App\DistributorChannel;
 use App\DistributorTransaction;
 use App\Business;
+use App\PoliticalBusiness;
 use App\Purchase;
 use App\Plan;
 use App\DistributorBusinessUser;
@@ -130,6 +131,9 @@ class BusinessController extends Controller
         if ($purc_plan_id == Plan::$custom_plan_id) {
             $plan_rate = $distributor->custom_plan_rate;
         }
+        if ($purc_plan_id == Plan::$combo_plan_id) {
+            $plan_rate = $distributor->combo_plan_rate;
+        }
         if ($distributor->balance < $plan_rate) {
             return response()->json(['status' => false, 'message' => "insufficient balance"]);
         }
@@ -185,6 +189,43 @@ class BusinessController extends Controller
         $purchase->purc_end_date = $end_date;
         $purchase->save();
 
+        $this->addPurchasePlanHistory($purc_business_id, 1, $start_date);
+
+        if ($purc_plan_id == Plan::$combo_plan_id) {
+
+            $busi_cats = DB::table('political_category')->where('pc_is_deleted', 0)->first();
+
+            $newPoliticalBusiness = new PoliticalBusiness();
+            $newPoliticalBusiness->user_id = $user_id;
+            $newPoliticalBusiness->is_distributor_business = 1;
+            $newPoliticalBusiness->pb_name = $request->busi_name;
+            $newPoliticalBusiness->pb_designation = "";
+            $newPoliticalBusiness->pb_mobile = $request->busi_mobile;
+            $newPoliticalBusiness->pb_mobile_second = $request->busi_mobile_second;
+            $newPoliticalBusiness->pb_pc_id = $busi_cats ? $busi_cats->pc_id : 0;
+            $newPoliticalBusiness->hashtag = $request->hashtag;
+            $newPoliticalBusiness->pb_facebook = $request->busi_facebook;
+            $newPoliticalBusiness->pb_twitter = $request->busi_twitter;
+            $newPoliticalBusiness->pb_instagram = $request->busi_instagram;
+            $newPoliticalBusiness->pb_linkedin = $request->busi_linkedin;
+            $newPoliticalBusiness->pb_youtube = $request->busi_youtube;
+
+            $newPoliticalBusiness->save();
+
+            $purc_political_business_id = $newPoliticalBusiness->pb_id;
+
+            $purchase = new Purchase;
+            $purchase->purc_user_id = $user_id;
+            $purchase->purc_business_id = $purc_political_business_id;
+            $purchase->purc_business_type = 2;
+            $purchase->purc_plan_id = $purc_plan_id;
+            $purchase->purc_start_date = $start_date;
+            $purchase->purc_end_date = $end_date;
+            $purchase->save();
+
+            $this->addPurchasePlanHistory($purc_political_business_id, 2, $start_date);
+        }
+
         $distributorBalance = DistributorChannel::find($distributor->id);
         $distributorBalance->balance = $new_balance;
         $distributorBalance->save();
@@ -198,7 +239,6 @@ class BusinessController extends Controller
         $transaction->business_type = 1;
         $transaction->save();
 
-        $this->addPurchasePlanHistory($purc_business_id, 1, $start_date);
         return response()->json(['status' => true, 'message' => "Business Insert successfully"]);
     }
 

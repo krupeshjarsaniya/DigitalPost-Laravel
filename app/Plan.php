@@ -11,4 +11,5 @@ class Plan extends Model
 
     static $custom_plan_id = 8;
     static $start_up_plan_id = 7;
+    static $combo_plan_id = 13;
 }

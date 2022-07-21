@@ -162,22 +162,28 @@
 
                 <div class="row mb-4">
 
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label>Distributor Referral Benefit: </label>
                         <br />
                         <b>{{ $distributor->referral_benefits }}</b>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label>Distributor Custom Plan Rate: </label>
                         <br />
                         <b>{{ $distributor->custom_plan_rate }}</b>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label>Distributor Startup Plan Rate: </label>
                         <br />
                         <b>{{ $distributor->start_up_plan_rate }}</b>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label>Distributor Combo Plan Rate: </label>
+                        <br />
+                        <b>{{ $distributor->combo_plan_rate }}</b>
                     </div>
 
                 </div>

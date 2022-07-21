@@ -103,9 +103,9 @@ class DistributorChannelController extends Controller
             })
 
             ->addColumn('action', function ($row) {
-               
+
                 $button = "";
-                $button .= '<button onclick="editBusinessData(this)" class="btn btn-xs btn-success btn-edit mb-2" data-id="' . $row->busi_id . '">Edit</button> 
+                $button .= '<button onclick="editBusinessData(this)" class="btn btn-xs btn-success btn-edit mb-2" data-id="' . $row->busi_id . '">Edit</button>
                             <button onclick="purchaseHistory(this)" class="btn btn-xs btn-primary btn-edit mb-2" data-type="1" data-id="' . $row->busi_id . '">Purchase History</button>';
                 return $button;
             })
@@ -438,12 +438,14 @@ class DistributorChannelController extends Controller
                 'referral_benefits' => 'required',
                 'start_up_plan_rate' => 'required',
                 'custom_plan_rate' => 'required',
+                'combo_plan_rate' => 'required',
             ],
             [
                 'id.required' => 'ID Is required',
                 'referral_benefits.required' => 'Referral Benefits Is Required',
                 'start_up_plan_rate.required' => 'Start Up Plan Rate Is Required',
                 'custom_plan_rate.required' => 'Custom Plan Rate Is Required',
+                'combo_plan_rate.required' => 'Combo Plan Rate Is Required',
             ]
         );
 
@@ -460,6 +462,7 @@ class DistributorChannelController extends Controller
             $checkRequest->referral_benefits = $request->referral_benefits;
             $checkRequest->start_up_plan_rate = $request->start_up_plan_rate;
             $checkRequest->custom_plan_rate = $request->custom_plan_rate;
+            $checkRequest->combo_plan_rate = $request->combo_plan_rate;
             $checkRequest->status = 'approved';
         }
         $checkRequest->save();
@@ -603,6 +606,7 @@ class DistributorChannelController extends Controller
                 'referral_benefits' => 'required',
                 'custom_plan_rate' => 'required',
                 'start_up_plan_rate' => 'required',
+                'combo_plan_rate' => 'required',
                 'status' => 'required',
             ],
             [
@@ -618,6 +622,7 @@ class DistributorChannelController extends Controller
                 'referral_benefits.required' => 'Referral Benefits Is Required',
                 'custom_plan_rate.required' => 'Custom plan rate Is Required',
                 'start_up_plan_rate.required' => 'Start up plan rate Is Required',
+                'combo_plan_rate.required' => 'Combo plan rate Is Required',
                 'status.required' => 'Status Is Required',
                 'status.required' => 'Status Is Required',
             ]
@@ -666,6 +671,7 @@ class DistributorChannelController extends Controller
         $distributor->referral_benefits = $request->referral_benefits;
         $distributor->custom_plan_rate = $request->custom_plan_rate;
         $distributor->start_up_plan_rate = $request->start_up_plan_rate;
+        $distributor->combo_plan_rate = $request->combo_plan_rate;
         $distributor->status = $request->status;
         $distributor->allow_add_frames = $request->allow_add_frames;
 
@@ -793,15 +799,15 @@ class DistributorChannelController extends Controller
     public function purchasePlanHistory(Request $request)
     {
         $purchasePlans = DB::table('purchase_plan_history')->where('pph_purc_business_id',$request->id)->where('pph_purc_business_type',$request->type);
-        
+
             return DataTables::of($purchasePlans)
             ->addIndexColumn()
             ->addColumn('plan_or_name', function ($purchasePlan) {
                 $plan = DB::table('plan')->where('plan_id',$purchasePlan->pph_purc_plan_id)->first();
                 return $plan->plan_or_name;
-              
+
             })
             ->make(true);
-        
+
     }
 }

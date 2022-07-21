@@ -94,6 +94,12 @@
                                 <input type="text" id="custom_plan_rate" name="custom_plan_rate" class="form-control">
                             </div>
                         </div>
+                        <div class="col-12">
+                            <div class="form-group err_combo_plan_rate">
+                                <label for="combo_plan_rate">Combo Plan Rate</label>
+                                <input type="text" id="combo_plan_rate" name="combo_plan_rate" class="form-control">
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -159,6 +165,7 @@
                 $('#referral_benefits').val(data.referral_benefits);
                 $('#start_up_plan_rate').val(data.start_up_plan_rate);
                 $('#custom_plan_rate').val(data.custom_plan_rate);
+                $('#combo_plan_rate').val(data.combo_plan_rate);
                 $('#distributorModal').modal('show');
             },
             error: function(error) {
