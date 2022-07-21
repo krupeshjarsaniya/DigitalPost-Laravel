@@ -336,10 +336,10 @@
                             return false;
                         }
                         if (!response.status) {
-                            alert(response.message);
+                            showSweetAlert('Purchase Plan',response.message,'error');
                             return false;
                         }
-                        alert(response.message);
+                        showSweetAlert('Purchase Plan',response.message,'success');
                         $('#myPlan').modal('hide');
                         normalBusinessExpireTable.ajax.reload();
                         normalBusinessUpcomingPlanExpireTable.ajax.reload();

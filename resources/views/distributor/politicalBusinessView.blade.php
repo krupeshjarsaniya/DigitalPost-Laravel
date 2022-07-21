@@ -346,6 +346,7 @@ var table = "";
 var table2 = "";
 var table3 = "";
 var purchaseTable = "";
+var businessTable = "";
 $(document).ready(function() {
     getBusinessUserList("{{ $business->pb_id }}");
     getBusinessFrameList("{{ $business->pb_id }}");
@@ -401,11 +402,11 @@ $('#update_business').on('click', function(e) {
                 return false;
             }
             if(!response.status) {
-                    alert(response.message);
+                    showSweetAlert('Political Business Update',response.message,'error');
                     return false;
                 }
-                alert(response.message);
-                location.reload();
+                showSweetAlert('Political Business Update',response.message,'success','{{ route('distributors.politicalBusiness') }}');
+              
             }
     });
 
@@ -471,10 +472,10 @@ function getBusinessPurchaseList(id) {
 }
 
 function getBusinessUserList(id) {
-    if(table2 != "") {
-        table2.destroy();
+    if(businessTable != "") {
+        businessTable.destroy();
     }
-    table2 = $('#users-table').DataTable({
+    businessTable = $('#users-table').DataTable({
         processing: true,
         serverSide: true,
         ajax: {
@@ -534,11 +535,11 @@ function addUserToBusiness() {
                 return false;
             }
             if(!response.status) {
-                alert(response.message);
+                showSweetAlert('Add User',response.message,'error');
                 return false;
             }
-            alert(response.message);
-            table2.ajax.reload();
+            showSweetAlert('Add User',response.message,'success');
+            businessTable.ajax.reload();
             $('#UsersModal').modal('hide');
         }
     });
@@ -576,11 +577,11 @@ function removeUserFromBusiness(ele) {
                 data: {id, business_id},
                 success: function (data) {
                     if(data.status) {
-                        table2.ajax.reload();
-                        alert(data.message)
+                        businessTable.ajax.reload();
+                        showSweetAlert('Remove User',data.message,'success');
                     }
                     else {
-                        alert(data.message)
+                        showSweetAlert('Remove User',data.message,'error');
                     }
                     $('.loader-custom').css('display','none');
                 }
@@ -653,11 +654,11 @@ function addFrameToBusiness() {
                 return false;
             }
             if(!response.status) {
-                alert(response.message);
+                 showSweetAlert('Add Frame',response.message,'error');
                 return false;
             }
             $('#frames').val("");
-            alert(response.message);
+            showSweetAlert('Add Frame',response.message,'success');
             table3.ajax.reload();
         }
     });

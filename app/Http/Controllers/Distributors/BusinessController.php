@@ -759,5 +759,24 @@ class BusinessController extends Controller
 
     }
 
+    public function referralUser ()
+    {
+        return view('distributor.referralUser');
+
+    }
+
+    public function referralUserList()
+    {
+        $users = User::where('referral_by',Auth::user()->id);
+        return DataTables::of($users)
+        ->addIndexColumn()
+        ->addColumn('created_at',function($row) {
+            $date1 = date('d-m-Y',strtotime($row->created_at));
+            return $date1;
+        })
+        ->make(true);
+        // dd($user);
+    }
+
 
 }

@@ -218,11 +218,11 @@
                         return false;
                     }
                     if (!response.status) {
-                        alert(response.message);
+                        showSweetAlert('Political Business Insert',response.message,'error');
                         return false;
                     }
-                    alert(response.message);
-                    window.location.href = '{{ route('distributors.politicalBusiness') }}'
+                   
+                    showSweetAlert('Political Business Insert',response.message,'success','{{ route('distributors.politicalBusiness') }}');
                 }
             });
 

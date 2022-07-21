@@ -211,7 +211,7 @@
                         return false;
                     }
                     if (!response.status) {
-                        alert(response.message);
+                        showSweetAlert('Business Insert',response.message,'error');
                         return false;
                     }
                     showSweetAlert('Business Insert',response.message,'success');

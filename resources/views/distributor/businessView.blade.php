@@ -528,7 +528,7 @@ function addUserToBusiness() {
                 return false;
             }
             if(!response.status) {
-                howSweetAlert('User Added',response.message,'error');
+                showSweetAlert('User Added',response.message,'error');
                 return false;
             }
             showSweetAlert('User Added',response.message,'success');
@@ -571,10 +571,10 @@ function removeUserFromBusiness(ele) {
                 success: function (data) {
                     if(data.status) {
                         table2.ajax.reload();
-                        alert(data.message)
+                        showSweetAlert('Remove User',response.message,'success');
                     }
                     else {
-                        alert(data.message)
+                        showSweetAlert('Remove User',response.message,'error');
                     }
                     $('.loader-custom').css('display','none');
                 }

@@ -41,6 +41,9 @@ Route::middleware('distributorAuth')->group(function() {
     Route::get('/normalBusinessUpcomingExpirePlan/', 'Distributors\BusinessController@normalBusinessUpcomingExpirePlan')->name('distributors.normalBusinessUpcomingExpirePlan');
     Route::get('/politicalBusinessUpcomingExpirePlan/', 'Distributors\BusinessController@politicalBusinessUpcomingExpirePlan')->name('distributors.politicalBusinessUpcomingExpirePlan');
     Route::post('/purchasePlan/', 'Distributors\BusinessController@purchasePlan')->name('distributors.purchasePlan');
+    
+    Route::get('/referralUser/', 'Distributors\BusinessController@referralUser')->name('distributors.referralUser');
+    Route::get('/referralUserList/', 'Distributors\BusinessController@referralUserList')->name('distributors.referralUserList');
 
 
 
