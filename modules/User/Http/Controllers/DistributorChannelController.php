@@ -51,7 +51,7 @@ class DistributorChannelController extends Controller
     public function businessList(Request $request, $id)
     {
 
-        $businesses = Business::where('user_id', $id)->where('is_distributor_business', 1);
+        $businesses = Business::where('user_id', $id)->where('is_distributor_business', 1)->where('busi_delete', 0);
         return DataTables::of($businesses)
             ->addIndexColumn()
             ->editColumn('busi_mobile', function ($row) {
@@ -116,7 +116,7 @@ class DistributorChannelController extends Controller
     public function politicalBusinessList(Request $request, $id)
     {
 
-        $politicalBusinesses = PoliticalBusiness::where('user_id', $id)->where('is_distributor_business', 1)->with('category');;
+        $politicalBusinesses = PoliticalBusiness::where('user_id', $id)->where('is_distributor_business', 1)->where('pb_is_deleted', 0)->with('category');;
         return DataTables::of($politicalBusinesses)
             ->addIndexColumn()
             ->editColumn('pb_mobile', function ($row) {
@@ -192,7 +192,10 @@ class DistributorChannelController extends Controller
 
     public function getBusiness(Request $request)
     {
-        $getData = Business::where('busi_id', $request->id)->first();
+        $getData = Business::where('busi_id', $request->id)->where('busi_delete', 0)->first();
+        if(empty($getData)) {
+            return response()->json(['status' => false, 'message' => "Business Not Found"]);
+        }
         return response()->json(['status' => true, 'data' => $getData]);
     }
     public function getFrameList(Request $request,$id)
@@ -259,7 +262,10 @@ class DistributorChannelController extends Controller
 
     public function getPoliticalBusiness(Request $request)
     {
-        $getData = PoliticalBusiness::where('pb_id', $request->id)->first();
+        $getData = PoliticalBusiness::where('pb_id', $request->id)->where('pb_is_deleted', 0)->first();
+        if(empty($getData)) {
+            return response()->json(['status' => false, 'message' => "Business Not Found"]);
+        }
         return response()->json(['status' => true, 'data' => $getData]);
     }
 
@@ -438,14 +444,16 @@ class DistributorChannelController extends Controller
                 'referral_benefits' => 'required',
                 'start_up_plan_rate' => 'required',
                 'custom_plan_rate' => 'required',
-                'combo_plan_rate' => 'required',
+                'combo_custom_plan_rate' => 'required',
+                'combo_start_up_plan_rate' => 'required',
             ],
             [
                 'id.required' => 'ID Is required',
                 'referral_benefits.required' => 'Referral Benefits Is Required',
                 'start_up_plan_rate.required' => 'Start Up Plan Rate Is Required',
                 'custom_plan_rate.required' => 'Custom Plan Rate Is Required',
-                'combo_plan_rate.required' => 'Combo Plan Rate Is Required',
+                'combo_custom_plan_rate.required' => 'Combo Custom Plan Rate Is Required',
+                'combo_start_up_plan_rate.required' => 'Combo Start Up Plan Rate Is Required',
             ]
         );
 
@@ -462,7 +470,8 @@ class DistributorChannelController extends Controller
             $checkRequest->referral_benefits = $request->referral_benefits;
             $checkRequest->start_up_plan_rate = $request->start_up_plan_rate;
             $checkRequest->custom_plan_rate = $request->custom_plan_rate;
-            $checkRequest->combo_plan_rate = $request->combo_plan_rate;
+            $checkRequest->combo_custom_plan_rate = $request->combo_custom_plan_rate;
+            $checkRequest->combo_start_up_plan_rate = $request->combo_start_up_plan_rate;
             $checkRequest->status = 'approved';
         }
         $checkRequest->save();
@@ -505,7 +514,7 @@ class DistributorChannelController extends Controller
         $transactions = DistributorTransaction::where('distributor_id', $id);
         return DataTables::of($transactions)
             ->editColumn('type', function ($transaction) {
-                if ($transaction->type == 'deposit') {
+                if ($transaction->type == 'deposit' || $transaction->type == 'user_referral') {
                     return "<span style='font-size: 12px; text-transform: uppercase;' class='badge badge-success'>$transaction->type</span>";
                 } else {
                     return "<span style='font-size: 12px; text-transform: uppercase;' class='badge badge-danger'>$transaction->type</span>";
@@ -606,7 +615,8 @@ class DistributorChannelController extends Controller
                 'referral_benefits' => 'required',
                 'custom_plan_rate' => 'required',
                 'start_up_plan_rate' => 'required',
-                'combo_plan_rate' => 'required',
+                'combo_start_up_plan_rate' => 'required',
+                'combo_custom_plan_rate' => 'required',
                 'status' => 'required',
             ],
             [
@@ -622,7 +632,8 @@ class DistributorChannelController extends Controller
                 'referral_benefits.required' => 'Referral Benefits Is Required',
                 'custom_plan_rate.required' => 'Custom plan rate Is Required',
                 'start_up_plan_rate.required' => 'Start up plan rate Is Required',
-                'combo_plan_rate.required' => 'Combo plan rate Is Required',
+                'combo_start_up_plan_rate.required' => 'Combo start up plan rate Is Required',
+                'combo_custom_plan_rate.required' => 'Combo custom plan rate Is Required',
                 'status.required' => 'Status Is Required',
                 'status.required' => 'Status Is Required',
             ]
@@ -671,7 +682,8 @@ class DistributorChannelController extends Controller
         $distributor->referral_benefits = $request->referral_benefits;
         $distributor->custom_plan_rate = $request->custom_plan_rate;
         $distributor->start_up_plan_rate = $request->start_up_plan_rate;
-        $distributor->combo_plan_rate = $request->combo_plan_rate;
+        $distributor->combo_start_up_plan_rate = $request->combo_start_up_plan_rate;
+        $distributor->combo_custom_plan_rate = $request->combo_custom_plan_rate;
         $distributor->status = $request->status;
         $distributor->allow_add_frames = $request->allow_add_frames;
 

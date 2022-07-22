@@ -58,6 +58,9 @@ use App\UserDownloadHistory;
 use App\BackgroundRemoveRequest;
 use App\ContentCreator;
 use App\Distributor;
+use App\DistributorBusinessUser;
+use App\DistributorChannel;
+use App\DistributorTransaction;
 
 class UserapiControllerV16 extends Controller
 {
@@ -988,11 +991,32 @@ class UserapiControllerV16 extends Controller
             'purchase_plan.purc_plan_id',
             '=',
             'plan.plan_id'
-        )->select('business.busi_id', 'busi_logo_dark', 'watermark_image_dark', 'business.busi_name', 'business.business_category', 'business.busi_email', 'business.busi_address', 'business.busi_mobile', 'business.busi_mobile_second', 'business.busi_logo', 'business.watermark_image', 'business.busi_website', 'plan.plan_name', 'plan.plan_id', 'purchase_plan.purc_start_date', 'purchase_plan.purc_end_date', 'purchase_plan.purc_plan_id', 'business.watermark_image', 'business.busi_facebook', 'business.busi_instagram', 'business.busi_twitter', 'business.busi_linkedin', 'business.busi_youtube', 'purchase_plan.purc_is_expire')->distinct()->get()->toArray();
+        )->select('business.busi_id', 'business.is_distributor_business', 'busi_logo_dark', 'watermark_image_dark', 'business.busi_name', 'business.business_category', 'business.busi_email', 'business.busi_address', 'business.busi_mobile', 'business.busi_mobile_second', 'business.busi_logo', 'business.watermark_image', 'business.busi_website', 'plan.plan_name', 'plan.plan_id', 'purchase_plan.purc_start_date', 'purchase_plan.purc_end_date', 'purchase_plan.purc_plan_id', 'business.watermark_image', 'business.busi_facebook', 'business.busi_instagram', 'business.busi_twitter', 'business.busi_linkedin', 'business.busi_youtube', 'purchase_plan.purc_is_expire')->distinct()->get()->toArray();
 
         $listofbusiness = array_map(function ($value) {
             return (array)$value;
         }, $listofbusiness);
+
+        $distributorBusinessIds = DistributorBusinessUser::where('user_id', $user_id)
+        ->where('business_type', 1)->pluck('business_id')->toArray();
+
+        $listofDistributorbusiness = DB::table('business')
+        ->whereIn('business.busi_id',$distributorBusinessIds)
+        ->where('business.busi_delete', '=', 0)
+        ->leftJoin('purchase_plan', 'business.busi_id', '=', 'purchase_plan.purc_business_id')
+        ->leftJoin(
+            'plan',
+            'purchase_plan.purc_plan_id',
+            '=',
+            'plan.plan_id'
+        )
+        ->select('business.busi_id', 'business.is_distributor_business', 'busi_logo_dark', 'watermark_image_dark', 'business.busi_name', 'business.business_category', 'business.busi_email', 'business.busi_address', 'business.busi_mobile', 'business.busi_mobile_second', 'business.busi_logo', 'business.watermark_image', 'business.busi_website', 'plan.plan_name', 'plan.plan_id', 'purchase_plan.purc_start_date', 'purchase_plan.purc_end_date', 'purchase_plan.purc_plan_id', 'business.watermark_image', 'business.busi_facebook', 'business.busi_instagram', 'business.busi_twitter', 'business.busi_linkedin', 'business.busi_youtube', 'purchase_plan.purc_is_expire')
+        ->distinct()
+        ->get()->toArray();
+
+        $listofDistributorbusiness = array_map(function ($value) {
+            return (array)$value;
+        }, $listofDistributorbusiness);
 
         $finalarr = array();
         for ($i = 0; $i < count($listofbusiness); $i++) {
@@ -1000,6 +1024,15 @@ class UserapiControllerV16 extends Controller
             $newdata = array_map(function ($v) {
                 return (is_null($v)) ? "" : $v;
             }, $listofbusiness[$i]);
+
+            array_push($finalarr, $newdata);
+        }
+
+        for ($i = 0; $i < count($listofDistributorbusiness); $i++) {
+
+            $newdata = array_map(function ($v) {
+                return (is_null($v)) ? "" : $v;
+            }, $listofDistributorbusiness[$i]);
 
             array_push($finalarr, $newdata);
         }
@@ -1065,44 +1098,73 @@ class UserapiControllerV16 extends Controller
         if ($user_id == 0) {
             return response()->json(['status' => false, 'message' => 'user not valid']);
         }
-        $getbusiness = Business::where('busi_id', $input['id'])->where('user_id', $user_id)->first();
+        $getbusiness = Business::where('busi_id', $input['id'])->first();
         if (empty($getbusiness)) {
             return response()->json(['status' => false, 'message' => 'Something goes wrong']);
         }
         $userdata = User::where('id', '=', $user_id)->select('default_business_id')->first();
-
-        if ($userdata->default_business_id != $input['id']) {
-
-            Business::where('busi_id', $input['id'])->update(array(
-                'busi_delete' => 1,
-            ));
-            Photos::where('photo_business_id', $input['id'])->update(array(
-                'photo_is_delete' => 1,
-            ));
-
-            return response()->json(['status' => true, 'message' => 'Business Succesfully Removed']);
-        } else {
-
-            Business::where('busi_id', $input['id'])->update(array(
-                'busi_delete' => 1,
-            ));
-            Photos::where('photo_business_id', $input['id'])->update(array(
-                'photo_is_delete' => 1,
-            ));
-
-            $currntbusiness = Business::where('user_id', '=', $user_id)->where('busi_delete', '=', 0)->select('busi_id')->first();
-
-            if (!empty($currntbusiness) || !is_null($currntbusiness)) {
-                User::where('id', $user_id)->update(array(
-                    'default_business_id' => $currntbusiness->busi_id,
-                ));
-            } else {
-                User::where('id', $user_id)->update(array(
-                    'default_business_id' => 0,
-                ));
+        if($getBusiness->is_distributor_business == 0) {
+            if($getBusiness->user_id != $user_id) {
+                return response()->json(['status' => false, 'message' => 'Something goes wrong']);
             }
-            return response()->json(['status' => true, 'message' => 'Business Succesfully Removed']);
+            if ($userdata->default_business_id != $input['id']) {
+
+                Business::where('busi_id', $input['id'])->update(array(
+                    'busi_delete' => 1,
+                ));
+                Photos::where('photo_business_id', $input['id'])->update(array(
+                    'photo_is_delete' => 1,
+                ));
+
+                return response()->json(['status' => true, 'message' => 'Business Succesfully Removed']);
+            } else {
+
+                Business::where('busi_id', $input['id'])->update(array(
+                    'busi_delete' => 1,
+                ));
+                Photos::where('photo_business_id', $input['id'])->update(array(
+                    'photo_is_delete' => 1,
+                ));
+
+                $currntbusiness = Business::where('user_id', '=', $user_id)->where('busi_delete', '=', 0)->select('busi_id')->first();
+
+                if (!empty($currntbusiness) || !is_null($currntbusiness)) {
+                    User::where('id', $user_id)->update(array(
+                        'default_business_id' => $currntbusiness->busi_id,
+                    ));
+                } else {
+                    User::where('id', $user_id)->update(array(
+                        'default_business_id' => 0,
+                    ));
+                }
+                return response()->json(['status' => true, 'message' => 'Business Succesfully Removed']);
+            }
         }
+        else {
+            $checkBusiness = DistributorBusinessUser::where('user_id', $user_id)
+            ->where('business_id', $input['id'])
+            ->where('business_type', 1)
+            ->first();
+            if(empty($checkBusiness)) {
+                return response()->json(['status' => false, 'message' => 'Something goes wrong']);
+            }
+            if ($userdata->default_business_id == $input['id']) {
+                $checkBusiness->delete();
+
+                $currntbusiness = Business::where('user_id', '=', $user_id)->where('busi_delete', '=', 0)->select('busi_id')->first();
+
+                if (!empty($currntbusiness) || !is_null($currntbusiness)) {
+                    User::where('id', $user_id)->update(array(
+                        'default_business_id' => $currntbusiness->busi_id,
+                    ));
+                } else {
+                    User::where('id', $user_id)->update(array(
+                        'default_business_id' => 0,
+                    ));
+                }
+            }
+        }
+
 
     }
 
@@ -2527,6 +2589,64 @@ class UserapiControllerV16 extends Controller
         DB::table('user_business_comment')->where('business_id', $business_id)->where('business_type', $input['business_type'])->delete();
         $this->addPurchasePlanHistory($business_id, $input['business_type'], $new_start_date);
 
+        if($checkBusiness->is_distributor_business) {
+            $distributor = DistributorChannel::where('user_id', $checkBusiness->user_id)->first();
+            if(!empty($distributor)) {
+                $plan_rate = $plantrial->plan_actual_price;
+                if ($plantrial->plan_id == Plan::$start_up_plan_id) {
+                    $plan_rate = $distributor->start_up_plan_rate;
+                }
+                if ($plantrial->plan_id == Plan::$custom_plan_id) {
+                    $plan_rate = $distributor->custom_plan_rate;
+                }
+                if ($plantrial->plan_id == Plan::$combo_start_up_plan_id) {
+                    $plan_rate = $distributor->combo_start_up_plan_rate;
+                }
+                if ($plantrial->plan_id == Plan::$combo_custom_plan_id) {
+                    $plan_rate = $distributor->combo_custom_plan_rate;
+                }
+
+                $distributorBenefit = $plantrial->plan_actual_price - $plan_rate;
+                if($distributorBenefit > 0) {
+                    $distributor->balance = $distributor->balance + $distributorBenefit;
+                    $distributor->save();
+
+                    $transaction = new DistributorTransaction;
+                    $transaction->distributor_id = $distributor->id;
+                    $transaction->amount = $distributorBenefit;
+                    $transaction->type = 'purchase_business_user';
+                    $transaction->description = 'Purchase Plan : ' . $plantrial->plan_or_name;
+                    $transaction->business_id = $business_id;
+                    $transaction->business_type = $input['business_type'];
+                    $transaction->save();
+                }
+            }
+        }
+
+        if ($userData->referral_by != 0) {
+            $distributorUser = DistributorChannel::where('user_id',$userData->referral_by)->where('status', 'approved')->first();
+            if(!empty($distributorUser)) {
+                $referral_percentage = $distributorUser->referral_benefits;
+                $plan_price = $plantrial->plan_actual_price;
+
+                $percentInDecimal = $referral_percentage / 100;
+                $referralAmount = $percentInDecimal * $plan_price;
+
+                $distributorUser->referral_earnings = $distributorUser->referral_earnings + $referralAmount;
+                $distributorUser->balance = $distributorUser->balance + $referralAmount;
+                $distributorUser->save();
+
+                $transaction = new DistributorTransaction;
+                $transaction->distributor_id = $distributorUser->id;
+                $transaction->amount = $referralAmount;
+                $transaction->type = "user_referral";
+                $transaction->description = "";
+                $transaction->business_id = $business_id;
+                $transaction->business_type = $input['business_type'];
+                $transaction->save();
+            }
+        }
+
         if ($input['plan_type'] == 3) {
             $userdata = User::where('id', '=', $user_id)->select(['default_business_id', 'default_political_business_id'])->first();
             $getPurchaseData = Purchase::where('purc_business_id', $business_id)->where('purc_business_type', $input['business_type'])->first();
@@ -2546,8 +2666,6 @@ class UserapiControllerV16 extends Controller
                     }
                 }
 
-                // $this->addPoliticalBusinessWhilePlanIsThree($user_id, $plan_id, $userdata->default_political_business_id);
-
             } else {
 
                 $purchase = Purchase::where('purc_business_id', $userdata->default_business_id)->where('purc_business_type', 1)->first();
@@ -2557,8 +2675,6 @@ class UserapiControllerV16 extends Controller
                 else {
                     $this->addSimpleBusinessWhilePlanIsThree($user_id,$plan_id, 0);
                 }
-
-                // $this->addSimpleBusinessWhilePlanIsThree($user_id, $plan_id, $userdata->default_business_id);
 
             }
         }
@@ -4881,8 +4997,22 @@ class UserapiControllerV16 extends Controller
 
         $businessList = DB::table('political_business')->leftJoin('political_category', 'political_category.pc_id', '=', 'political_business.pb_pc_id')->leftJoin('purchase_plan', 'purchase_plan.purc_business_id', '=', 'political_business.pb_id')->leftJoin('plan', 'plan.plan_id', '=', 'purchase_plan.purc_plan_id')->where('user_id', '=', $user_id)->where('pb_is_deleted', '=', 0)->where('purchase_plan.purc_business_type', '=', 2)->get();
 
+        $distributorBusinessIds = DistributorBusinessUser::where('user_id', $user_id)
+        ->where('business_type', 2)->pluck('business_id')->toArray();
+
+        $distributorBusinessList = DB::table('political_business')
+        ->leftJoin('political_category', 'political_category.pc_id', '=', 'political_business.pb_pc_id')
+        ->leftJoin('purchase_plan', 'purchase_plan.purc_business_id', '=', 'political_business.pb_id')
+        ->leftJoin('plan', 'plan.plan_id', '=', 'purchase_plan.purc_plan_id')
+        ->whereIn('pb_id', $distributorBusinessIds)
+        ->where('user_id', '!=', $user_id)
+        ->where('pb_is_deleted', '=', 0)
+        ->where('purchase_plan.purc_business_type', '=', 2)
+        ->get();
+
         $defaultBusinessId = User::where('id', '=', $user_id)->select('default_political_business_id')->first();
 
+        $businessArray = array();
 
         foreach ($businessList as &$business) {
             $business->pb_party_logo = ($business->pb_party_logo) ? Storage::url($business->pb_party_logo) : '';
@@ -4916,9 +5046,46 @@ class UserapiControllerV16 extends Controller
             } else {
                 $business->remaining_days = '0 Days';
             }
+            array_push($businessArray, $business);
         }
 
-        if (!$businessList) {
+        foreach ($distributorBusinessList as &$business) {
+            $business->pb_party_logo = ($business->pb_party_logo) ? Storage::url($business->pb_party_logo) : '';
+            $business->pb_watermark = ($business->pb_watermark) ? Storage::url($business->pb_watermark) : '';
+            $business->pb_party_logo_dark = ($business->pb_party_logo_dark) ? Storage::url($business->pb_party_logo_dark) : '';
+            $business->pb_watermark_dark = ($business->pb_watermark_dark) ? Storage::url($business->pb_watermark_dark) : '';
+            $business->pb_left_image = ($business->pb_left_image) ? Storage::url($business->pb_left_image) : '';
+            $business->pb_right_image = ($business->pb_right_image) ? Storage::url($business->pb_right_image) : '';
+            if ($defaultBusinessId->default_political_business_id == $business->pb_id) {
+                $business->is_Default = 'yes';
+            } else {
+                $business->is_Default = 'no';
+            }
+            $business->purc_order_id = ($business->purc_order_id) ? $business->purc_order_id : '';
+            $business->purc_end_date = ($business->purc_end_date) ? $business->purc_end_date : '';
+            $business->device = ($business->device) ? $business->device : '';
+
+            $business->plan_information = ($business->plan_information) ? unserialize($business->plan_information) : '';
+
+            if ($business->purc_plan_id != 3) {
+                $start_date = strtotime($business->purc_start_date);
+                $end_date = strtotime($business->purc_end_date);
+                $business->remaining_days = '0 Days';
+                $today = strtotime(date('Y-m-d'));
+                if ($today > $end_date && ($business->purc_is_expire == 1 || $business->purc_is_expire == "1")) {
+                    $business->remaining_days = '0 Days';
+                } else {
+                    $days = ($end_date - $today) / 60 / 60 / 24;
+                    $business->remaining_days = $days . ' Days';
+                }
+            } else {
+                $business->remaining_days = '0 Days';
+            }
+
+            array_push($businessArray, $business);
+        }
+
+        if (count($businessArray) == 0) {
             return response()->json(['status' => false, 'message' => "Business not available"]);
         }
 
@@ -4938,18 +5105,36 @@ class UserapiControllerV16 extends Controller
             return response()->json(['status' => false, 'message' => 'post you are looking for is not availabe']);
         }
 
-        $getbusiness = DB::table('political_business')->select('pb_party_logo', 'pb_watermark', 'pb_left_image', 'pb_right_image')->where('pb_id', '=', $input['id'])->where('user_id', $user_id)->first();
-        $user_data = User::find($user_id);
+        $getbusiness = DB::table('political_business')->select('pb_party_logo', 'pb_watermark', 'pb_left_image', 'pb_right_image')->where('pb_id', '=', $input['id'])->first();
         if (empty($getbusiness)) {
             return response()->json(['status' => false, 'message' => 'Something goes wrong']);
         }
-        if ($getbusiness) {
-            DB::table('political_business')->where('pb_id', $input['id'])->update(['pb_is_deleted' => 1]);
-            $getbusiness_approve = DB::table('political_business_approval_list')->select('pbal_party_logo', 'pbal_watermark', 'pbal_left_image', 'pbal_right_image')->where('pb_id', '=', $input['id'])->first();
-            if ($getbusiness_approve) {
-                DB::table('political_business_approval_list')->where('pb_id', $input['id'])->update(['pbal_is_deleted' => 1]);
+        if($getbusiness->is_distributor_business == 0) {
+            if($getbusiness->user_id != $user_id) {
+                return response()->json(['status' => false, 'message' => 'Something goes wrong']);
+            }
+            $user_data = User::find($user_id);
+            if ($getbusiness) {
+                DB::table('political_business')->where('pb_id', $input['id'])->update(['pb_is_deleted' => 1]);
+                $getbusiness_approve = DB::table('political_business_approval_list')->select('pbal_party_logo', 'pbal_watermark', 'pbal_left_image', 'pbal_right_image')->where('pb_id', '=', $input['id'])->first();
+                if ($getbusiness_approve) {
+                    DB::table('political_business_approval_list')->where('pb_id', $input['id'])->update(['pbal_is_deleted' => 1]);
+                }
             }
         }
+        else {
+            $checkBusiness = DistributorBusinessUser::where('user_id', $user_id)
+            ->where('business_id', $input['id'])
+            ->where('business_type', 2)
+            ->first();
+            if(!empty($checkBusiness)) {
+                $checkBusiness->delete();
+            }
+            else {
+                return response()->json(['status' => false, 'message' => 'Something goes wrong']);
+            }
+        }
+
         if ($user_data->default_political_business_id == $input['id']) {
             $currntbusiness = PoliticalBusiness::where('user_id','=',$user_id)->where('pb_is_deleted','=',0)->select('pb_id')->first();
 
@@ -4963,6 +5148,7 @@ class UserapiControllerV16 extends Controller
                 ));
             }
         }
+
 
         return response()->json(['status' => true, 'message' => "Business successfully removed"]);
     }

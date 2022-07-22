@@ -44,7 +44,7 @@
 
                 <div class="row mb-4">
 
-                    <div class="col-4">
+                    <div class="col-3">
                         <span style="font-size: 16px;">Status :
                         @if($distributor->status == 'pending')
                             <span="badge badge-secondary">Pending</span>
@@ -56,13 +56,19 @@
                         </span>
                     </div>
 
-                    <div class="col-4">
+                    <div class="col-3">
                         <div class="mt-2">
-                            <span style="font-size: 16px;">Wallet Amount: <b id="distributor_balance">{{ $distributor->balance }}</b></span>
+                            <span style="font-size: 16px;">Total Wallet Balance: <b id="distributor_balance">{{ $distributor->balance }}</b></span>
                         </div>
                     </div>
 
-                    <div class="col-4 text-right">
+                    <div class="col-3">
+                        <div class="mt-2">
+                            <span style="font-size: 16px;">Earning Using Referral: <b id="distributor_balance">{{ $distributor->referral_earnings }}</b></span>
+                        </div>
+                    </div>
+
+                    <div class="col-3 text-right">
                         <div class="mt-2">
                             <button onclick="editDistributor()" class="btn btn-primary float-right">Edit</button>
                         </div>
@@ -100,12 +106,12 @@
                     </div>
 
                     <div class="col-md-3">
-                        <label>Distributor Name: </label>
+                        <label>Name: </label>
                         <b>{{ $distributor->full_name }}</b>
                     </div>
 
                     <div class="col-md-3">
-                        <label>Distributor Contact Number: </label>
+                        <label>Contact Number: </label>
                         <b>{{ $distributor->contact_number }}</b>
                     </div>
 
@@ -114,22 +120,22 @@
                 <div class="row mb-4">
 
                     <div class="col-md-3">
-                        <label>Distributor Email: </label>
+                        <label>Email: </label>
                         <b>{{ $distributor->email }}</b>
                     </div>
 
                     <div class="col-md-3">
-                        <label>Distributor Area: </label>
+                        <label>Area: </label>
                         <b>{{ $distributor->area }}</b>
                     </div>
 
                     <div class="col-md-3">
-                        <label>Distributor City: </label>
+                        <label>City: </label>
                         <b>{{ $distributor->city }}</b>
                     </div>
 
                     <div class="col-md-3">
-                        <label>Distributor State: </label>
+                        <label>State: </label>
                         <b>{{ $distributor->state }}</b>
                     </div>
                 </div>
@@ -139,19 +145,19 @@
                 <div class="row mb-4">
 
                     <div class="col-md-4">
-                        <label>Distributor Current Work: </label>
+                        <label>Current Work: </label>
                         <br />
                         <b>{{ $distributor->current_work }}</b>
                     </div>
 
                     <div class="col-md-4">
-                        <label>Distributor Work Experience: </label>
+                        <label>Work Experience: </label>
                         <br />
                         <b>{{ $distributor->work_experience }}</b>
                     </div>
 
                     <div class="col-md-4">
-                        <label>Distributor Skills: </label>
+                        <label>Skills: </label>
                         <br />
                         <b>{{ $distributor->skills }}</b>
                     </div>
@@ -162,28 +168,34 @@
 
                 <div class="row mb-4">
 
-                    <div class="col-md-3">
-                        <label>Distributor Referral Benefit: </label>
+                    <div class="col-md-4">
+                        <label>Referral Benefit (%): </label>
                         <br />
                         <b>{{ $distributor->referral_benefits }}</b>
                     </div>
 
-                    <div class="col-md-3">
-                        <label>Distributor Custom Plan Rate: </label>
+                    <div class="col-md-4">
+                        <label>Custom Plan Rate: </label>
                         <br />
                         <b>{{ $distributor->custom_plan_rate }}</b>
                     </div>
 
-                    <div class="col-md-3">
-                        <label>Distributor Startup Plan Rate: </label>
+                    <div class="col-md-4">
+                        <label>Startup Plan Rate: </label>
                         <br />
                         <b>{{ $distributor->start_up_plan_rate }}</b>
                     </div>
 
-                    <div class="col-md-3">
-                        <label>Distributor Combo Plan Rate: </label>
+                    <div class="col-md-4">
+                        <label>Combo Custom Plan Rate: </label>
                         <br />
-                        <b>{{ $distributor->combo_plan_rate }}</b>
+                        <b>{{ $distributor->combo_custom_plan_rate }}</b>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Combo Startup Plan Rate: </label>
+                        <br />
+                        <b>{{ $distributor->combo_start_up_plan_rate }}</b>
                     </div>
 
                 </div>

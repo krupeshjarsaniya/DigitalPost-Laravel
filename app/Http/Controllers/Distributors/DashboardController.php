@@ -38,7 +38,7 @@ class DashboardController extends Controller
         ->where('purchase_plan.purc_business_type',2)
         ->where('purchase_plan.purc_plan_id',3)
         ->count();
-     
+
         $totalExpirePlan = $getBusinessExpiredplan +  $getPoliticalExpiredplan;
 
         $days = DB::table('setting')->value('renewal_days');
@@ -63,8 +63,8 @@ class DashboardController extends Controller
         ->where('purchase_plan.purc_end_date','<=',$current_date)
         ->count();
         $totalUpcomingExpiredPlan = $getUpcomingPoliticalExpiredplan + $getUpcomingBusinessExpiredPlan;
-       
-        
+
+
         return view('distributor.dashboard', compact('totalBusiness','politicalBusiness','totalExpirePlan','totalUpcomingExpiredPlan'));
     }
 
@@ -172,7 +172,7 @@ class DashboardController extends Controller
         $transactions = DistributorTransaction::where('distributor_id', $id);
         return DataTables::of($transactions)
         ->editColumn('type', function ($transaction) {
-            if($transaction->type == 'deposit') {
+            if($transaction->type == 'deposit' || $transaction->type == 'user_referral') {
                 return "<span style='font-size: 12px; text-transform: uppercase;' class='badge badge-success'>$transaction->type</span>";
             }
             else {

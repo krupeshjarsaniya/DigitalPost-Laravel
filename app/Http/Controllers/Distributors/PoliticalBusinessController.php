@@ -30,7 +30,7 @@ class PoliticalBusinessController extends Controller
 
     public function politicalBusinessList(Request $request)
     {
-        $businesses = PoliticalBusiness::where('user_id', Auth::user()->id)->where('is_distributor_business', 1)->with('category');
+        $businesses = PoliticalBusiness::where('user_id', Auth::user()->id)->where('is_distributor_business', 1)->where('pb_is_deleted', 0)->with('category');
         return DataTables::of($businesses)
             ->addIndexColumn()
             ->editColumn('pb_mobile', function ($row) {
@@ -147,8 +147,11 @@ class PoliticalBusinessController extends Controller
         if ($purc_plan_id == Plan::$custom_plan_id) {
             $plan_rate = $distributor->custom_plan_rate;
         }
-        if ($purc_plan_id == Plan::$combo_plan_id) {
-            $plan_rate = $distributor->combo_plan_rate;
+        if ($purc_plan_id == Plan::$combo_start_up_plan_id) {
+            $plan_rate = $distributor->combo_start_up_plan_rate;
+        }
+        if ($purc_plan_id == Plan::$combo_custom_plan_id) {
+            $plan_rate = $distributor->combo_custom_plan_rate;
         }
         if ($distributor->balance < $plan_rate) {
             return response()->json(['status' => false, 'message' => "insufficient balance"]);
@@ -212,8 +215,7 @@ class PoliticalBusinessController extends Controller
         $purchase->purc_end_date = $end_date;
         $purchase->save();
         $this->addPurchasePlanHistory($purc_business_id, 2, $start_date);
-
-        if ($purc_plan_id == Plan::$combo_plan_id) {
+        if ($purc_plan_id == Plan::$combo_start_up_plan_id || $purc_plan_id == Plan::$combo_custom_plan_id) {
 
             $busi_cats = DB::table('business_category')->where('is_delete', 0)->first();
 
@@ -293,7 +295,7 @@ class PoliticalBusinessController extends Controller
             exit();
         }
 
-        $newBusiness = PoliticalBusiness::where('pb_id', $id)->first();
+        $newBusiness = PoliticalBusiness::where('pb_id', $id)->where('pb_is_deleted', 0)->first();
         // $newBusiness->pb_name = $request->pb_name;
         $newBusiness->pb_designation = $request->pb_designation;
         $newBusiness->pb_mobile = $request->pb_mobile;

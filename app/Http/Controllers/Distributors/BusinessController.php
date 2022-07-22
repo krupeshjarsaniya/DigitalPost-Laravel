@@ -30,7 +30,7 @@ class BusinessController extends Controller
 
     public function businessList(Request $request)
     {
-        $businesses = Business::where('user_id', Auth::user()->id)->where('is_distributor_business', 1);
+        $businesses = Business::where('user_id', Auth::user()->id)->where('is_distributor_business', 1)->where('busi_delete', 0);
         return DataTables::of($businesses)
             ->addIndexColumn()
             ->editColumn('busi_mobile', function ($row) {
@@ -131,8 +131,11 @@ class BusinessController extends Controller
         if ($purc_plan_id == Plan::$custom_plan_id) {
             $plan_rate = $distributor->custom_plan_rate;
         }
-        if ($purc_plan_id == Plan::$combo_plan_id) {
-            $plan_rate = $distributor->combo_plan_rate;
+        if ($purc_plan_id == Plan::$combo_start_up_plan_id) {
+            $plan_rate = $distributor->combo_start_up_plan_rate;
+        }
+        if ($purc_plan_id == Plan::$combo_custom_plan_id) {
+            $plan_rate = $distributor->combo_custom_plan_rate;
         }
         if ($distributor->balance < $plan_rate) {
             return response()->json(['status' => false, 'message' => "insufficient balance"]);
@@ -191,7 +194,7 @@ class BusinessController extends Controller
 
         $this->addPurchasePlanHistory($purc_business_id, 1, $start_date);
 
-        if ($purc_plan_id == Plan::$combo_plan_id) {
+        if ($purc_plan_id == Plan::$combo_start_up_plan_id || $purc_plan_id == Plan::$combo_custom_plan_id) {
 
             $busi_cats = DB::table('political_category')->where('pc_is_deleted', 0)->first();
 
@@ -273,7 +276,7 @@ class BusinessController extends Controller
         }
 
         $message = "";
-        $newBusiness = Business::where('busi_id', $id)->first();
+        $newBusiness = Business::where('busi_id', $id)->where('busi_delete', 0)->first();
         $newBusiness->busi_email = $request->busi_email;
         $newBusiness->busi_mobile = $request->busi_mobile;
         $newBusiness->busi_mobile_second = $request->busi_mobile_second;

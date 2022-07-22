@@ -95,9 +95,15 @@
                             </div>
                         </div>
                         <div class="col-12">
-                            <div class="form-group err_combo_plan_rate">
-                                <label for="combo_plan_rate">Combo Plan Rate</label>
-                                <input type="text" id="combo_plan_rate" name="combo_plan_rate" class="form-control">
+                            <div class="form-group err_combo_start_up_plan_rate">
+                                <label for="combo_start_up_plan_rate">Combo Startup Plan Rate</label>
+                                <input type="text" id="combo_start_up_plan_rate" name="combo_start_up_plan_rate" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group err_combo_custom_plan_rate">
+                                <label for="combo_custom_plan_rate">Combo Custom Plan Rate</label>
+                                <input type="text" id="combo_custom_plan_rate" name="combo_custom_plan_rate" class="form-control">
                             </div>
                         </div>
                     </div>
@@ -165,7 +171,8 @@
                 $('#referral_benefits').val(data.referral_benefits);
                 $('#start_up_plan_rate').val(data.start_up_plan_rate);
                 $('#custom_plan_rate').val(data.custom_plan_rate);
-                $('#combo_plan_rate').val(data.combo_plan_rate);
+                $('#combo_custom_plan_rate').val(data.combo_custom_plan_rate);
+                $('#combo_start_up_plan_rate').val(data.combo_start_up_plan_rate);
                 $('#distributorModal').modal('show');
             },
             error: function(error) {
@@ -274,7 +281,8 @@
         $('#id').val('');
         $('#referral_benefits').val("");
         $('#start_up_plan_rate').val("");
-        $('#custom_plan_rate').val("");
+        $('#combo_custom_plan_rate').val("");
+        $('#combo_start_up_plan_rate').val("");
     }
 
 

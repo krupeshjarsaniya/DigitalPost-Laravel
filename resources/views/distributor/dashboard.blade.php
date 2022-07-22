@@ -18,7 +18,7 @@
                     </div>
                     <div class="col-7 col-stats">
                         <div class="numbers">
-                            <p class="card-category">Total Business</p>
+                            <p class="card-category">Total Normal Business</p>
                             <h4 class="card-title">{{$totalBusiness}}</h4>
                         </div>
                     </div>
@@ -75,7 +75,7 @@
                     </div>
                     <div class="col-7 col-stats">
                         <div class="numbers">
-                            <p class="card-category">Total Upcoming Expire Plan </p>
+                            <p class="card-category">Total Upcoming Renewal</p>
                             <h4 class="card-title">{{$totalUpcomingExpiredPlan}}</h4>
                         </div>
                     </div>
@@ -94,7 +94,7 @@
                     </div>
                     <div class="col-7 col-stats">
                         <div class="numbers">
-                            <p class="card-category">Distributor Wallet</p>
+                            <p class="card-category">Total Wallet Balance</p>
                             <h4 class="card-title">{{Auth::user()->distributor->balance}}</h4>
                         </div>
                     </div>
@@ -113,7 +113,7 @@
                     </div>
                     <div class="col-7 col-stats">
                         <div class="numbers">
-                            <p class="card-category">Referral Earning</p>
+                            <p class="card-category">Earning Using Referral</p>
                             <h4 class="card-title">{{Auth::user()->distributor->referral_earnings}}</h4>
                         </div>
                     </div>

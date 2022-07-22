@@ -175,28 +175,34 @@
 
                 <div class="row mb-4">
 
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label>Distributor Referral Benefit: </label>
                         <br />
                         <b>{{ $distributor->referral_benefits }}</b>
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label>Distributor Custom Plan Rate: </label>
                         <br />
                         <b>{{ $distributor->custom_plan_rate }}</b>
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label>Distributor Startup Plan Rate: </label>
                         <br />
                         <b>{{ $distributor->start_up_plan_rate }}</b>
                     </div>
 
-                    <div class="col-md-3">
-                        <label>Distributor Combo Plan Rate: </label>
+                    <div class="col-md-4">
+                        <label>Distributor Combo Custom Plan Rate: </label>
                         <br />
-                        <b>{{ $distributor->combo_plan_rate }}</b>
+                        <b>{{ $distributor->combo_custom_plan_rate }}</b>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Distributor Combo Startup Plan Rate: </label>
+                        <br />
+                        <b>{{ $distributor->combo_start_up_plan_rate }}</b>
                     </div>
 
                 </div>
@@ -293,9 +299,15 @@
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="form-group err_combo_plan_rate">
-                                <label for="combo_plan_rate">Combo Plan Rate</label>
-                                <input type="text" id="combo_plan_rate" value="{{ $distributor->combo_plan_rate }}" name="combo_plan_rate" class="form-control">
+                            <div class="form-group err_combo_custom_plan_rate">
+                                <label for="combo_custom_plan_rate">Combo Custom Plan Rate</label>
+                                <input type="text" id="combo_custom_plan_rate" value="{{ $distributor->combo_custom_plan_rate }}" name="combo_custom_plan_rate" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group err_combo_start_up_plan_rate">
+                                <label for="combo_start_up_plan_rate">Combo Startup Plan Rate</label>
+                                <input type="text" id="combo_start_up_plan_rate" value="{{ $distributor->combo_start_up_plan_rate }}" name="combo_start_up_plan_rate" class="form-control">
                             </div>
                         </div>
                         <div class="col-6">
