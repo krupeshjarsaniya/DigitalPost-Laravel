@@ -1158,7 +1158,7 @@ class UserapiControllerV10 extends Controller
         $user_language_check = false;
         $date = date('Y-m');
 
-        $currnt_date = date('Y-m-d');
+        $currnt_date = date('Y-m-d',strtotime('+5 hours +30 minutes'));
         $prev_date = date('Y-m-d', strtotime($currnt_date .' -1 day'));
         $next_date = date('Y-m-d', strtotime($currnt_date .' +1 day'));
 

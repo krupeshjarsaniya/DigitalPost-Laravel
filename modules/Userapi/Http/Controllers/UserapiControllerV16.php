@@ -1002,6 +1002,7 @@ class UserapiControllerV16 extends Controller
 
         $listofDistributorbusiness = DB::table('business')
         ->whereIn('business.busi_id',$distributorBusinessIds)
+        ->where('business.user_id', '!=', $user_id)
         ->where('business.busi_delete', '=', 0)
         ->leftJoin('purchase_plan', 'business.busi_id', '=', 'purchase_plan.purc_business_id')
         ->leftJoin(
@@ -1337,7 +1338,7 @@ class UserapiControllerV16 extends Controller
         $user_language_check = false;
         $date = date('Y-m');
 
-        $currnt_date = date('Y-m-d');
+        $currnt_date = date('Y-m-d',strtotime('+5 hours +30 minutes'));
         $prev_date = date('Y-m-d', strtotime($currnt_date . ' -1 day'));
         $next_date = date('Y-m-d', strtotime($currnt_date . ' +1 day'));
 
@@ -4995,7 +4996,7 @@ class UserapiControllerV16 extends Controller
             return response()->json(['status' => false, 'message' => 'user not valid']);
         }
 
-        $businessList = DB::table('political_business')->leftJoin('political_category', 'political_category.pc_id', '=', 'political_business.pb_pc_id')->leftJoin('purchase_plan', 'purchase_plan.purc_business_id', '=', 'political_business.pb_id')->leftJoin('plan', 'plan.plan_id', '=', 'purchase_plan.purc_plan_id')->where('user_id', '=', $user_id)->where('pb_is_deleted', '=', 0)->where('purchase_plan.purc_business_type', '=', 2)->get();
+        $businessList = DB::table('political_business')->leftJoin('political_category', 'political_category.pc_id', '=', 'political_business.pb_pc_id')->leftJoin('purchase_plan', 'purchase_plan.purc_business_id', '=', 'political_business.pb_id')->leftJoin('plan', 'plan.plan_id', '=', 'purchase_plan.purc_plan_id')->where('political_business.user_id', '=', $user_id)->where('political_business.pb_is_deleted', '=', 0)->where('purchase_plan.purc_business_type', '=', 2)->get();
 
         $distributorBusinessIds = DistributorBusinessUser::where('user_id', $user_id)
         ->where('business_type', 2)->pluck('business_id')->toArray();
@@ -5004,9 +5005,9 @@ class UserapiControllerV16 extends Controller
         ->leftJoin('political_category', 'political_category.pc_id', '=', 'political_business.pb_pc_id')
         ->leftJoin('purchase_plan', 'purchase_plan.purc_business_id', '=', 'political_business.pb_id')
         ->leftJoin('plan', 'plan.plan_id', '=', 'purchase_plan.purc_plan_id')
-        ->whereIn('pb_id', $distributorBusinessIds)
-        ->where('user_id', '!=', $user_id)
-        ->where('pb_is_deleted', '=', 0)
+        ->whereIn('political_business.pb_id', $distributorBusinessIds)
+        ->where('political_business.user_id', '!=', $user_id)
+        ->where('political_business.pb_is_deleted', '=', 0)
         ->where('purchase_plan.purc_business_type', '=', 2)
         ->get();
 
@@ -6493,6 +6494,8 @@ class UserapiControllerV16 extends Controller
         }
 
         $referralData = UserReferral::where('user_id', $user_id)->first();
+        $referral_code = User::where('id', $user_id)->first();
+      
         if (empty($referralData)) {
             return response()->json(['status' => false, 'message' => "Referral data not found"]);
         }
@@ -6500,6 +6503,7 @@ class UserapiControllerV16 extends Controller
         $premiumReferralUsersCount = User::where('referral_by', $user_id)->where('referral_premium', 1)->where('is_verified', 1)->count();
         $referralData->total_referral_users = $referralUsersCount;
         $referralData->total_preminum_referral_users = $premiumReferralUsersCount;
+        $referralData->referral_code = $referral_code->ref_code;
         $banner_image = "";
         $settingData = DB::table('setting')->first();
         $minimum_withdraw_amount = 0;
@@ -6670,6 +6674,8 @@ class UserapiControllerV16 extends Controller
                         ->where('business_id', $business_id)
                         ->where('business_type', $business_type)
                         ->where('is_deleted', 0)
+                        ->whereNotNull('frame_url')
+                        ->where('frame_url', '!=' ,'')
                         ->orderBy('user_frames_id', 'DESC')
                         ->get();
 

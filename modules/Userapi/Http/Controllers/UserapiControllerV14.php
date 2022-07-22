@@ -5790,7 +5790,15 @@ class UserapiControllerV14 extends Controller
             }
         }
 
-        $frameLists = DB::table('user_frames')->where('user_id', $user_id)->where('business_id', $business_id)->where('business_type', $business_type)->where('is_deleted', 0)->orderBy('user_frames_id','DESC')->get();
+        $frameLists = DB::table('user_frames')
+        ->where('user_id', $user_id)
+        ->where('business_id', $business_id)
+        ->where('business_type', $business_type)
+        ->whereNotNull('frame_url')
+        ->where('frame_url', '!=' ,'')
+        ->where('is_deleted', 0)
+        ->orderBy('user_frames_id','DESC')
+        ->get();
 
         foreach($frameLists as &$frameList) {
             $frame_image = Storage::url($frameList->frame_url);

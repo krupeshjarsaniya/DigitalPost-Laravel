@@ -1274,7 +1274,7 @@ class UserapiControllerV15 extends Controller
         $user_language_check = false;
         $date = date('Y-m');
 
-        $currnt_date = date('Y-m-d');
+        $currnt_date = date('Y-m-d',strtotime('+5 hours +30 minutes'));
         $prev_date = date('Y-m-d', strtotime($currnt_date . ' -1 day'));
         $next_date = date('Y-m-d', strtotime($currnt_date . ' +1 day'));
 
@@ -6482,6 +6482,8 @@ class UserapiControllerV15 extends Controller
                         ->where('user_id', $user_id)
                         ->where('business_id', $business_id)
                         ->where('business_type', $business_type)
+                        ->whereNotNull('frame_url')
+                        ->where('frame_url', '!=' ,'')
                         ->where('is_deleted', 0)
                         ->orderBy('user_frames_id', 'DESC')
                         ->get();
